@@ -2,4 +2,4 @@
 
 Based on shadcn template and my NextStack template. Uses Turborepo and shadcn.
 
-Meant for personal use, though.
+Public code but not putting effort into making it reusable for others right now.
