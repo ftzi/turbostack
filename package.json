@@ -1,25 +1,43 @@
 {
-  "name": "shadcn-ui-monorepo",
-  "version": "0.0.1",
+  "name": "my-project",
   "private": true,
   "scripts": {
     "build": "turbo build",
-    "dev": "turbo dev",
+    "dev": "bun && turbo dev",
     "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "typecheck": "turbo typecheck",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "ok": "turbo typecheck lint format",
+    "tsw": "turbo tsw",
+    "dev:TODO": "bun i && concurrently -c yellow,blue,green -n db,tsw,next, \"bun db:studio\" \"bun tsw --preserveWatchOutput\" \"next dev --turbo\"",
+    "format:dry:TODO": "biome check --unsafe && next lint",
+    "db:studio": "drizzle-kit studio",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "env": "bunx vercel env pull .env"
   },
   "devDependencies": {
     "@workspace/eslint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
-    "prettier": "^3.6.2",
-    "turbo": "^2.5.5",
+    "prettier": "3.6.2",
+    "turbo": "2.6.0",
     "typescript": "5.7.3"
   },
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
-  "packageManager": "pnpm@10.4.1",
+  "workspaces": {
+    "packages": [
+      "apps/*",
+      "packages/*"
+    ],
+    "catalog": {
+      "react": "19.2.0",
+      "react-dom": "19.2.0",
+      "@types/react": "19.2.2",
+      "@types/react-dom": "19.2.2",
+      "typescript": "5.9.3",
+      "lucide-react": "0.552.0"
+    }
+  },
+  "packageManager": "bun@1.3.1",
   "engines": {
     "node": ">=20"
   }

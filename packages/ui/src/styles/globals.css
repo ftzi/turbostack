@@ -125,3 +125,8 @@
     @apply bg-background text-foreground;
   }
 }
+
+html {
+  /* When accessing `example.com/#faq`, it will scroll to the element with that id. */
+  scroll-behavior: smooth;
+}

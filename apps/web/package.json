@@ -1,30 +1,33 @@
 {
   "name": "web",
-  "version": "0.0.1",
   "type": "module",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "lint:fix": "next lint --fix",
-    "typecheck": "tsc --noEmit"
+    "lint": "eslint --fix",
+    "lint:dry": "eslint",
+    "typecheck": "tsc --noEmit",
+    "tsw": "tsc --noEmit --watch --preserveWatchOutput"
   },
   "dependencies": {
+    "@t3-oss/env-nextjs": "0.13.8",
     "@workspace/ui": "workspace:*",
-    "lucide-react": "^0.475.0",
-    "next": "^15.4.5",
-    "next-themes": "^0.4.6",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "lucide-react": "catalog:",
+    "next": "16.0.1",
+    "next-themes": "0.4.6",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-hook-form": "7.66.0",
+    "zod": "4.1.12"
   },
   "devDependencies": {
-    "@types/node": "^20.19.9",
-    "@types/react": "^19.1.9",
-    "@types/react-dom": "^19.1.7",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "typescript": "catalog:",
     "@workspace/eslint-config": "workspace:^",
     "@workspace/typescript-config": "workspace:*",
-    "typescript": "^5.9.2"
+    "@types/node": "20.19.9"
   }
 }
