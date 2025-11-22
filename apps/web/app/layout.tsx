@@ -1,9 +1,10 @@
+import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import "@workspace/ui/globals.css";
-import type { Metadata } from "next";
 import { Providers } from "@/components/providers";
 import { consts, env } from "@/lib/consts";
+import { DEFAULT_METADATA, DEFAULT_OPENGRAPH } from "@/lib/opengraph/defaults";
 
 /**
  * https://nextjs.org/docs/pages/building-your-application/optimizing/fonts
@@ -18,7 +19,6 @@ import { consts, env } from "@/lib/consts";
  * Noto - https://fonts.google.com/noto
  * Rubik - https://fonts.google.com/specimen/Rubik
  */
-
 const fontSans = Geist({
 	subsets: ["latin"],
 	variable: "--font-sans",
@@ -29,39 +29,38 @@ const fontMono = Geist_Mono({
 	variable: "--font-mono",
 });
 
-/**
- * The `metadata` is very important for SEO and social media sharing.
- *
- * https://nextjs.org/docs/app/api-reference/functions/generate-metadata
- */
 export const metadata: Metadata = {
-	// This is the default title for all pages. You can override it in each page.
-	// https://nextjs.org/docs/app/api-reference/functions/generate-metadata#title
 	title: {
-		default: `${consts.appName}`, // You can add here a ` | The Project you need` (or `-` instead of `|`), that is shown in the tab title.
+		default: consts.appName,
 		template: `%s | ${consts.appName}`,
 	},
-	description: consts.description,
+	description: DEFAULT_METADATA.description,
 	applicationName: consts.appName,
-	metadataBase: new URL(env.NEXT_PUBLIC_URL),
-	// `keywords` is said to be ignored by Search Engine, but it doesn't hurt to add it.
+	metadataBase: env.NEXT_PUBLIC_URL ? new URL(env.NEXT_PUBLIC_URL) : undefined,
 	keywords: [],
 	openGraph: {
-		siteName: consts.appName, // some websites prefer `youtube.com` pattern, though. This is sometimes shown before title.
-		title: consts.appName, // Shown above description
-		description: consts.description,
-		url: env.NEXT_PUBLIC_URL,
-		emails: [consts.email.contact],
-		type: "website",
-		locale: "en_US",
+		...DEFAULT_OPENGRAPH,
+		...(consts.email.contact && { emails: [consts.email.contact] }),
+	},
+	icons: {
+		icon: [
+			{
+				url: "/api/icon?theme=light",
+				media: "(prefers-color-scheme: light)",
+			},
+			{
+				url: "/api/icon?theme=dark",
+				media: "(prefers-color-scheme: dark)",
+			},
+		],
 	},
 };
 
 export default function RootLayout({
 	children,
-}: Readonly<{
+}: {
 	children: React.ReactNode;
-}>): React.ReactElement {
+}): React.ReactElement {
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<body className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased `}>

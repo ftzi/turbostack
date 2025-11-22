@@ -48,7 +48,7 @@ export const serverConsts = {
 	/** Which integrations are active and which related ENV vars should be required and considered. */
 	integrations: {
 		/** Note that we need Resend to send Magic Links to do the authentication! This isn't required if your app has no authentication. */
-		resend: true,
+		resend: consts.emailEnabled,
 	},
 
 	email: {
@@ -57,7 +57,9 @@ export const serverConsts = {
 		 * https://resend.com/docs/knowledge-base/is-it-better-to-send-emails-from-a-subdomain-or-the-root-domain
 		 * The first part is the name that appear as the sender, the second part is the actual email.
 		 */
-		sender: `${consts.appName} <notifications@${env.NEXT_PUBLIC_EMAIL_DOMAIN}>`,
+		sender: consts.emailEnabled
+			? `${consts.appName} <notifications@${env.NEXT_PUBLIC_EMAIL_DOMAIN}>`
+			: undefined,
 	},
 } as const;
 
@@ -76,7 +78,7 @@ export const serverEnv = createEnv({
 	server: {
 		DATABASE_URL: z.url(),
 
-		RESEND_API_KEY: z.string().min(1),
+		RESEND_API_KEY: serverConsts.integrations.resend ? z.string().min(1) : z.string().optional(),
 
 		GOOGLE_CLIENT_ID: z.string().min(1),
 		GOOGLE_CLIENT_SECRET: z.string().min(1),
@@ -87,7 +89,7 @@ export const serverEnv = createEnv({
 	 */
 	runtimeEnv: {
 		DATABASE_URL: process.env.DATABASE_URL,
-		RESEND_API_KEY: process.env.RESEND_API_KEY,
+		RESEND_API_KEY: serverConsts.integrations.resend ? process.env.RESEND_API_KEY : disabledEnv,
 
 		GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
 		GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,

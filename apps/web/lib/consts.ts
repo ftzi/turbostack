@@ -1,10 +1,19 @@
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
+/** Whether email functionality is enabled in the app. */
+const emailEnabled = false;
+
+/** To be used in the place of a disabled/undefined env var if it's required where used. */
+const disabledEnv = "DISABLED";
+
 /** Consts used by the client and server. */
 export const consts = {
 	appName: "MyProject",
 	description: "My Project Description",
+
+	/** Whether email functionality is enabled. */
+	emailEnabled,
 
 	/**
 	 * Either 'light' or 'dark'. It depends on your app's design and your users' preferences.
@@ -22,7 +31,7 @@ export const consts = {
 	// } satisfies Partial<Record<SocialMedia, string>>,
 
 	email: {
-		contact: `contact@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}`,
+		contact: emailEnabled ? `contact@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}` : undefined,
 	},
 
 	/** Where to redirect to after a successful authentication. */
@@ -50,7 +59,7 @@ export const env = createEnv({
 		 * For development, it's `http://localhost:3000`
 		 */
 		NEXT_PUBLIC_URL: z.url(),
-		NEXT_PUBLIC_EMAIL_DOMAIN: z.string().min(1),
+		NEXT_PUBLIC_EMAIL_DOMAIN: emailEnabled ? z.string().min(1) : z.string().optional(),
 	},
 	/**
 	 * Due to how Next.js bundles environment variables on Edge and Client,
@@ -63,7 +72,7 @@ export const env = createEnv({
 			(process.env.NEXT_PUBLIC_VERCEL_URL
 				? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}` // Preview URL automatically set by Vercel
 				: "http://localhost:3000"), // Local Development URL
-		NEXT_PUBLIC_EMAIL_DOMAIN: process.env.NEXT_PUBLIC_EMAIL_DOMAIN,
+		NEXT_PUBLIC_EMAIL_DOMAIN: emailEnabled ? process.env.NEXT_PUBLIC_EMAIL_DOMAIN : disabledEnv,
 	},
 	/** Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. Useful for Docker builds.  */
 	skipValidation: Boolean(process.env.SKIP_ENV_VALIDATION),

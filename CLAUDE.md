@@ -76,7 +76,7 @@ This is a Turborepo monorepo with two main workspace types:
 ### Package Management
 
 - Uses **Bun 1.3.1** as package manager (defined in package.json)
-- Workspace catalog manages shared dependencies (React 19.2.0, TypeScript 5.9.3, etc.)
+- Workspace catalog manages shared dependencies (React 19.2.0, TypeScript 5.9.3, Zod 4.1.12, etc.)
 - All internal packages use `workspace:*` protocol for dependencies
 
 ### Web App (apps/web/)
@@ -93,11 +93,19 @@ This is a Turborepo monorepo with two main workspace types:
 - `lib/consts.ts` - App constants and client-side env vars (`NEXT_PUBLIC_*`)
 - `server/serverConsts.ts` - Server-only constants and env vars (database, API keys, payment processor config)
 - Both use `createEnv()` from `@t3-oss/env-nextjs` for type-safe env validation
+- Pattern: Feature flags (e.g., `emailEnabled`) control which env vars are required via conditional Zod schemas
 
 **Email Integration:**
 - Email sending via Resend (configured in `server/serverConsts.ts`)
 - Email templates in `apps/email/templates/`
 - Main email logic in `apps/email/email.tsx`
+
+**Metadata & OpenGraph:**
+- OpenGraph utilities in `apps/web/lib/opengraph/` with Zod schema validation
+- API route: `app/api/og/route.tsx` - Generates dynamic OG images with 1-hour cache
+- API route: `app/api/icon/route.tsx` - Generates dynamic favicons based on theme (`?theme=light|dark`)
+- Layout pattern: Import DEFAULT_OPENGRAPH from `@/lib/opengraph/defaults`, spread and override as needed
+- Note: Use `.tsx` extension for API routes containing JSX (required for Biome formatting)
 
 ### UI Package (packages/ui/)
 
@@ -125,71 +133,30 @@ This is a Turborepo monorepo with two main workspace types:
 
 ### Linting & Code Quality
 
-**Code Quality Tools:**
-- **Biome** - Fast formatter for code formatting only (linting disabled)
-- **ESLint** - TypeScript and React linting with auto-fix enabled
-
-**Biome Configuration** (`biome.json`):
-- Formatting only (linting disabled)
-- Tab indentation, 100 character line width
-- Double quotes, trailing commas, semicolons
-- Respects `.gitignore` for excluded files
-
-**ESLint Configuration:**
-- Base config: `packages/eslint-config/base.js` (TypeScript, Prettier compat, Turbo plugin)
-- Next.js config: `packages/eslint-config/next.js`
-- React internal config: `packages/eslint-config/react-internal.js`
-- All ESLint errors converted to warnings via `eslint-plugin-only-warn`
+- **Biome** - Code formatting only (linting disabled)
+- **ESLint** - TypeScript and React linting, all errors converted to warnings via `eslint-plugin-only-warn`
+- Shared ESLint configs in `packages/eslint-config/` (base, Next.js, React)
 
 ### TypeScript Configuration
 
-Shared TypeScript configs in `packages/typescript-config/`:
-- Strict mode enabled across all packages
-- Next.js-specific config for web app
-- React 19 with new JSX transform
+- Shared configs in `packages/typescript-config/` with strict mode
+- Incremental compilation enabled for faster builds
 
-**TypeScript Go:** This project has [TypeScript Go](https://github.com/microsoft/typescript-go) installed (`@typescript/native-preview` in catalog) - Microsoft's native TypeScript implementation written in Go for faster type checking. Use `npx tsgo` as an alternative to `tsc`. Note: This is in preview and not yet at full feature parity with TypeScript, so the project currently uses regular `tsc` for the `ts` scripts.
+### Turborepo Configuration
 
-### Turborepo Tasks
-
-Defined in `turbo.json`:
-- **build** - Depends on upstream builds, outputs to `.next/`, includes `.env*` in inputs
-- **dev** - Persistent task, no caching
-- **lint** - Depends on upstream lint tasks
-- **ts** - TypeScript type checking, depends on upstream ts tasks
-- **tsw** - TypeScript watch mode (no dependencies)
-
-**Environment Variables:**
-All environment variables used in the codebase are declared in `turbo.json` under `globalEnv` to satisfy the `turbo/no-undeclared-env-vars` ESLint rule. This includes both public (`NEXT_PUBLIC_*`) and server-only variables.
+- All environment variables must be declared in `turbo.json` under `globalEnv` (enforced by ESLint)
+- Tasks configured in `turbo.json` with dependency chains for build, lint, and type checking
 
 ## Adding New UI Components
 
-Use shadcn CLI to add components to the UI package:
-```bash
-npx shadcn@latest add <component-name>
-```
-
-The `components.json` configuration points to:
-- CSS: `packages/ui/src/styles/globals.css`
-- Utils alias: `@workspace/ui/lib/utils`
-- UI alias: `@workspace/ui/components`
-- Style: "new-york" variant
+Use shadcn CLI to add components: `npx shadcn@latest add <component-name>`
 
 ## Environment Variables
 
-**Required Client Variables:**
-- `NEXT_PUBLIC_URL` - Application URL (auto-set by Vercel, defaults to localhost:3000 in dev)
-- `NEXT_PUBLIC_EMAIL_DOMAIN` - Email domain for contact emails
-
-**Required Server Variables:**
-- `DATABASE_URL` - Database connection string
-- `RESEND_API_KEY` - Resend API key for email sending
-- `GOOGLE_CLIENT_ID` - Google OAuth client ID
-- `GOOGLE_CLIENT_SECRET` - Google OAuth client secret
-
-**Environment Validation:**
-- Set `SKIP_ENV_VALIDATION=1` to skip validation (useful for Docker builds)
-- Validation happens at build time and will fail the build if required vars are missing
+- Configured in `lib/consts.ts` (client) and `server/serverConsts.ts` (server)
+- Feature flags control which env vars are required (e.g., `emailEnabled` in `lib/consts.ts`)
+- All env vars must be declared in `turbo.json` under `globalEnv`
+- Skip validation with `SKIP_ENV_VALIDATION=1` (useful for Docker builds)
 
 ## Code Quality Standards
 
@@ -255,6 +222,7 @@ The `components.json` configuration points to:
 - **Server Components:** Default to Server Components; use `"use client"` directive only when needed
 - **Import Paths:** Use workspace aliases (`@workspace/ui`, `@workspace/eslint-config`, etc.)
 - **Authentication:** Configured for Google OAuth (client ID and secret in server env)
+- **API Routes with JSX:** Use `.tsx` extension for API routes that contain JSX (required for Biome formatting)
 
 
 
