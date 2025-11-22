@@ -1,18 +1,16 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Terms of Service",
+	title: "Terms of Service",
 };
 
 /* The <Content/> can be generated using the prompt at the bottom of this file. */
 
-export default function Page() {
-  return (
-        <Content />
-  );
+export default function Page(): React.ReactElement {
+	return <Content />;
 }
 
-const Content = () => <h2>TBD</h2>;
+const Content = (): React.ReactElement => <h2>TBD</h2>;
 
 /*
  * Below is an AI prompt you can use to generate the Terms of Service.

@@ -1,6 +1,17 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "ui": "tui",
+  "ui": "stream",
+  "globalEnv": [
+    "NODE_ENV",
+    "SKIP_ENV_VALIDATION",
+    "NEXT_PUBLIC_URL",
+    "NEXT_PUBLIC_EMAIL_DOMAIN",
+    "NEXT_PUBLIC_VERCEL_URL",
+    "DATABASE_URL",
+    "RESEND_API_KEY",
+    "GOOGLE_CLIENT_ID",
+    "GOOGLE_CLIENT_SECRET"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
@@ -11,8 +22,8 @@
       "dependsOn": ["^lint"]
     },
     "tsw": {},
-    "typecheck": {
-      "dependsOn": ["^typecheck"]
+    "ts": {
+      "dependsOn": ["^ts"]
     },
     "dev": {
       "cache": false,

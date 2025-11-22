@@ -1,34 +1,34 @@
 {
-  "name": "web",
-  "type": "module",
-  "private": true,
-  "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
-    "lint": "biome check --unsafe --fix && eslint --fix ",
-    "lint:dry": "eslint",
-    "typecheck": "tsc --noEmit",
-    "tsw": "tsc --noEmit --watch --preserveWatchOutput"
-  },
-  "dependencies": {
-    "@t3-oss/env-nextjs": "0.13.8",
-    "@workspace/ui": "workspace:*",
-    "lucide-react": "catalog:",
-    "next": "16.0.1",
-    "next-themes": "0.4.6",
-    "react": "catalog:",
-    "react-dom": "catalog:",
-    "react-hook-form": "7.66.0",
-    "zod": "4.1.12"
-  },
-  "devDependencies": {
-    "@workspace/eslint-config": "workspace:^",
-    "@workspace/typescript-config": "workspace:*",
-    "@biomejs/biome": "catalog:",
-    "@types/react": "catalog:",
-    "@types/react-dom": "catalog:",
-    "typescript": "catalog:",
-    "@types/node": "20.19.9"
-  }
+	"name": "web",
+	"type": "module",
+	"private": true,
+	"scripts": {
+		"dev": "next dev --turbopack",
+		"build": "next build",
+		"start": "next start",
+		"lint": "biome check --fix . && eslint --fix",
+		"lint:dry": "biome check . && eslint",
+		"ts": "tsc --noEmit",
+		"tsw": "tsc --noEmit --watch --preserveWatchOutput"
+	},
+	"dependencies": {
+		"@t3-oss/env-nextjs": "0.13.8",
+		"@workspace/ui": "workspace:*",
+		"lucide-react": "catalog:",
+		"next": "16.0.1",
+		"next-themes": "0.4.6",
+		"react": "catalog:",
+		"react-dom": "catalog:",
+		"react-hook-form": "7.66.0",
+		"zod": "4.1.12"
+	},
+	"devDependencies": {
+		"@workspace/eslint-config": "workspace:^",
+		"@workspace/typescript-config": "workspace:*",
+		"@biomejs/biome": "catalog:",
+		"@types/react": "catalog:",
+		"@types/react-dom": "catalog:",
+		"typescript": "catalog:",
+		"@types/node": "20.19.9"
+	}
 }

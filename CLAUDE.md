@@ -2,6 +2,27 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+**Important:** If you discover any information in this file that is no longer accurate or has become outdated, please update it immediately to reflect the current state of the codebase.
+
+**Workflow Rule:** Always run `bun run ok` after finishing a task or when facing issues. This command runs type checking and linting across the entire codebase and must fully pass before considering a task complete.
+
+## Maintaining This File
+
+Update CLAUDE.md when you make changes that affect:
+- **Architecture & Structure**: Monorepo organization, new workspaces, routing patterns, data flow
+- **Development Workflow**: New commands, build process changes, testing setup
+- **Key Patterns & Conventions**: Environment variables, authentication, API patterns, file organization
+- **Tool & Library Migrations**: Package manager changes, major dependency updates, framework migrations
+- **Configuration Changes**: TypeScript, ESLint, or build tool configurations that affect how developers work
+
+Do NOT update for:
+- Individual bug fixes or routine component additions
+- Code-level details that can be read from files
+- Temporary workarounds or one-off solutions
+- Generic best practices unrelated to this specific project
+
+Keep entries brief and structural. Focus on "why" and "how the pieces fit together", not "what's in each file".
+
 ## Project Overview
 
 Turbostack is a monorepo based on shadcn and NextStack templates. It uses Turborepo for build orchestration, Bun as the package manager, Next.js for the web app, and includes a shared UI component library.
@@ -14,9 +35,9 @@ Turbostack is a monorepo based on shadcn and NextStack templates. It uses Turbor
 - `bun run tsw` - Run TypeScript in watch mode across all workspaces
 
 ### Type Checking & Linting
-- `bun run typecheck` - Type check all workspaces with TypeScript
-- `bun run lint` - Lint all workspaces (uses Biome + ESLint)
-- `bun run ok` - Run both typecheck and lint (quick verification)
+- `bun ts` - Type check all workspaces with TypeScript
+- `bun run lint` - Format with Biome + lint with ESLint across all workspaces
+- `bun run ok` - Run both ts and lint (quick verification)
 
 ### Building
 - `bun run build` - Build all apps and packages
@@ -32,9 +53,10 @@ Turbostack is a monorepo based on shadcn and NextStack templates. It uses Turbor
 ### Web App Specific (in apps/web/)
 - `bun dev` - Start Next.js dev server with Turbopack
 - `bun run build` - Build the Next.js app
-- `bun run typecheck` - Type check web app
+- `bun ts` - Type check web app
 - `bun run tsw` - TypeScript watch mode for web app
-- `bun lint` - Lint with Biome + ESLint (auto-fix enabled)
+- `bun lint` - Format with Biome + lint with ESLint (auto-fix enabled)
+- `bun run lint:dry` - Check formatting and linting without auto-fix
 
 ## Architecture
 
@@ -103,9 +125,15 @@ This is a Turborepo monorepo with two main workspace types:
 
 ### Linting & Code Quality
 
-**Dual Linting System:**
-- **Biome** - Fast formatter and linter (runs first with `--unsafe --fix`)
-- **ESLint** - Additional checks with TypeScript and React plugins
+**Code Quality Tools:**
+- **Biome** - Fast formatter for code formatting only (linting disabled)
+- **ESLint** - TypeScript and React linting with auto-fix enabled
+
+**Biome Configuration** (`biome.json`):
+- Formatting only (linting disabled)
+- Tab indentation, 100 character line width
+- Double quotes, trailing commas, semicolons
+- Respects `.gitignore` for excluded files
 
 **ESLint Configuration:**
 - Base config: `packages/eslint-config/base.js` (TypeScript, Prettier compat, Turbo plugin)
@@ -120,14 +148,19 @@ Shared TypeScript configs in `packages/typescript-config/`:
 - Next.js-specific config for web app
 - React 19 with new JSX transform
 
+**TypeScript Go:** This project has [TypeScript Go](https://github.com/microsoft/typescript-go) installed (`@typescript/native-preview` in catalog) - Microsoft's native TypeScript implementation written in Go for faster type checking. Use `npx tsgo` as an alternative to `tsc`. Note: This is in preview and not yet at full feature parity with TypeScript, so the project currently uses regular `tsc` for the `ts` scripts.
+
 ### Turborepo Tasks
 
 Defined in `turbo.json`:
 - **build** - Depends on upstream builds, outputs to `.next/`, includes `.env*` in inputs
 - **dev** - Persistent task, no caching
 - **lint** - Depends on upstream lint tasks
-- **typecheck** - Depends on upstream typecheck tasks
+- **ts** - TypeScript type checking, depends on upstream ts tasks
 - **tsw** - TypeScript watch mode (no dependencies)
+
+**Environment Variables:**
+All environment variables used in the codebase are declared in `turbo.json` under `globalEnv` to satisfy the `turbo/no-undeclared-env-vars` ESLint rule. This includes both public (`NEXT_PUBLIC_*`) and server-only variables.
 
 ## Adding New UI Components
 
@@ -158,6 +191,61 @@ The `components.json` configuration points to:
 - Set `SKIP_ENV_VALIDATION=1` to skip validation (useful for Docker builds)
 - Validation happens at build time and will fail the build if required vars are missing
 
+## Code Quality Standards
+
+**Development Workflow:**
+- Do NOT attempt to run development servers - they're already running and not accessible to Claude Code
+- Do NOT try to call API endpoints - you don't have authentication access
+- NEVER use `sleep` commands - they are unnecessary and wasteful
+- Use `bun ts` for type checking, not `bun build` (unless you specifically need to build)
+- Use `bun ok` instead of direct `tsc` commands - it leverages Turbo cache and is much faster
+- NEVER commit or push code - all git operations must be explicitly requested by the user
+- NEVER run `git stash` or `git stash pop` - do not hide or restore changes without explicit instruction
+
+**Code Principles:** Follow Clean Code + SOLID + KISS + YAGNI
+- **Clean Code**: Self-documenting, readable code with meaningful names and single responsibility
+- **SOLID**: Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, Dependency Inversion
+- **KISS**: Simplest solution that solves the problem, avoid over-engineering
+- **YAGNI**: Don't add functionality until actually needed
+
+**TypeScript Conventions:**
+- **NEVER use `any` type** - Use `unknown` if type is truly unknown, but even that should be avoided
+- **NEVER use `as any` assertions** - Find the proper type or use specific type assertions
+- **NEVER use `interface`** - Always use `type` instead
+- Reuse existing types - don't create duplicate types
+- Use Zod schemas for runtime validation when appropriate
+- Add comments to object type properties only when not self-explanatory (skip obvious ones like `className`)
+- Prefer optional chaining for callbacks: `onComplete?.(data)` instead of `if (onComplete) onComplete(data)`
+
+**Function Parameters:**
+- Prefer object parameters over multiple direct parameters
+- Example: `function foo({ name, age }: { name: string; age: number })` instead of `function foo(name: string, age: number)`
+
+**Comments:**
+- Do NOT add comments explaining what changes you just made
+- Only add comments for complex logic that isn't self-evident
+- Use JSDoc-style comments for public APIs
+
+**Console Logging:**
+- Always stringify objects: `console.log('DEBUG:', JSON.stringify(data, null, 2))`
+- Use a common keyword prefix (e.g., `DEBUG:`, `LOG:`) for easy filtering and bulk copying
+- **Always clean up debug code** - Remove all console logs and debugging code once the root cause is found
+
+**React Conventions:**
+- **ALWAYS follow the Rules of Hooks**:
+  - Only call hooks at the top level - never inside loops, conditions, or nested functions
+  - Do not return early if there's a hook later in the component
+  - Hooks must be called in the same order every render
+
+**Testing:**
+- NEVER use `timeout` parameters when running tests - run tests normally without artificial timeouts
+- Trust the test framework's default timeout behavior
+
+**Implementation Standards:**
+- When asked to implement something, implement it FULLY and completely
+- NEVER add placeholder comments like "to be implemented later" or "this will be done when API supports it"
+- If something cannot be completed, explain why explicitly rather than leaving incomplete code
+
 ## Important Notes
 
 - **Package Manager:** Always use `bun` instead of npm/yarn/pnpm
@@ -167,3 +255,6 @@ The `components.json` configuration points to:
 - **Server Components:** Default to Server Components; use `"use client"` directive only when needed
 - **Import Paths:** Use workspace aliases (`@workspace/ui`, `@workspace/eslint-config`, etc.)
 - **Authentication:** Configured for Google OAuth (client ID and secret in server env)
+
+
+

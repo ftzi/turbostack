@@ -1,9 +1,5 @@
-import { ChevronRight } from "lucide-react";
-
 export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
-  return (
-    <>{children}</>
-  );
+	children,
+}: Readonly<{ children: React.ReactNode }>): React.ReactElement {
+	return <>{children}</>;
 }

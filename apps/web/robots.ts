@@ -1,5 +1,5 @@
-import { env } from "@/lib/consts";
 import type { MetadataRoute } from "next";
+import { env } from "@/lib/consts";
 
 /**
  * This is a special Next.js file which tells search engine crawlers whether they can access a file or not.
@@ -10,12 +10,12 @@ import type { MetadataRoute } from "next";
  * https://nextjs.org/docs/app/api-reference/file-conventions/metadata/robots
  */
 export default function robots(): MetadataRoute.Robots {
-  return {
-    rules: {
-      userAgent: "*",
-      allow: "/",
-    },
-    sitemap: new URL("sitemap.xml", env.NEXT_PUBLIC_URL).href,
-    host: env.NEXT_PUBLIC_URL,
-  };
+	return {
+		rules: {
+			userAgent: "*",
+			allow: "/",
+		},
+		sitemap: new URL("sitemap.xml", env.NEXT_PUBLIC_URL).href,
+		host: env.NEXT_PUBLIC_URL,
+	};
 }

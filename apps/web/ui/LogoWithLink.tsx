@@ -1,7 +1,7 @@
-import { consts } from "@/lib/consts";
 import { Logo } from "@workspace/ui/components/Logo.js";
 import Link from "next/link";
 import type { SVGProps } from "react";
+import { consts } from "@/lib/consts";
 
 /**
  * Quick usage component that uses the @/lib/resources/logo.svg and links to home.
@@ -11,7 +11,7 @@ import type { SVGProps } from "react";
  */
 
 export const LogoWithLink = ({ href = "/", ...props }: SVGProps<SVGElement>) => (
-  <Link href={href} aria-label={`Go to ${consts.appName} home`}>
-    <Logo aria-hidden="true" {...props} />
-  </Link>
+	<Link href={href} aria-label={`Go to ${consts.appName} home`}>
+		<Logo aria-hidden="true" {...props} />
+	</Link>
 );

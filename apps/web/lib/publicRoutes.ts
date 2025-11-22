@@ -3,18 +3,18 @@ import type { MetadataRoute } from "next";
 export type Href = `/${string}`;
 
 export type Nav = {
-  label: string;
-  href: Href;
+	label: string;
+	href: Href;
 };
 
 type PublicRoute = Nav &
-  (
-    | (Omit<MetadataRoute.Sitemap[number], "url"> & { noSitemap?: false })
-    | {
-        /** If true, this public route won't be added to the sitemaps.xml. */
-        noSitemap: true;
-      }
-  );
+	(
+		| (Omit<MetadataRoute.Sitemap[number], "url"> & { noSitemap?: false })
+		| {
+				/** If true, this public route won't be added to the sitemaps.xml. */
+				noSitemap: true;
+		  }
+	);
 
 /**
  * This servers some purposes:
@@ -31,56 +31,55 @@ type PublicRoute = Nav &
  * We default `lastModified` to `new Date()` in the sitemap.ts.
  */
 export const publicRoutes = {
-  home: {
-    label: "Home",
-    href: "/",
-    changeFrequency: "weekly",
-    priority: 1,
-  },
-  features: {
-    label: "Features",
-    href: "/#features",
-  },
-  pricing: {
-    label: "Pricing",
-    href: "/#pricing",
-  },
-  faq: {
-    label: "FAQ",
-    href: "/#faq",
-  },
+	home: {
+		label: "Home",
+		href: "/",
+		changeFrequency: "weekly",
+		priority: 1,
+	},
+	features: {
+		label: "Features",
+		href: "/#features",
+	},
+	pricing: {
+		label: "Pricing",
+		href: "/#pricing",
+	},
+	faq: {
+		label: "FAQ",
+		href: "/#faq",
+	},
 
-  affiliates: {
-    label: "Affiliates",
-    href: "/affiliates",
-    changeFrequency: "monthly",
-    priority: 0.8,
-  },
+	affiliates: {
+		label: "Affiliates",
+		href: "/affiliates",
+		changeFrequency: "monthly",
+		priority: 0.8,
+	},
 
-  terms: {
-    label: "Terms of Service",
-    href: "/terms",
-    changeFrequency: "yearly",
-    priority: 0,
-  },
-  privacy: {
-    label: "Privacy Policy",
-    href: "/privacy",
-    changeFrequency: "yearly",
-    priority: 0,
-  },
+	terms: {
+		label: "Terms of Service",
+		href: "/terms",
+		changeFrequency: "yearly",
+		priority: 0,
+	},
+	privacy: {
+		label: "Privacy Policy",
+		href: "/privacy",
+		changeFrequency: "yearly",
+		priority: 0,
+	},
 
-  auth: {
-    label: "Authenticate",
-    href: "/auth",
-    noSitemap: true,
-  },
+	auth: {
+		label: "Authenticate",
+		href: "/auth",
+		noSitemap: true,
+	},
 } satisfies Record<string, PublicRoute>;
 
-export type PublicPath =
-  (typeof publicRoutes)[keyof typeof publicRoutes]["href"];
+export type PublicPath = (typeof publicRoutes)[keyof typeof publicRoutes]["href"];
 
 /** Doesn't include URL fragments (e.g.: `/#faq`). */
-export const publicPaths = Object.values(
-  publicRoutes as Record<string, PublicRoute>,
-).filter((route) => !route.href.includes("#"));
+export const publicPaths = Object.values(publicRoutes as Record<string, PublicRoute>).filter(
+	(route) => !route.href.includes("#"),
+);
