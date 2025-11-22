@@ -12,8 +12,12 @@
 		"tsw": "tsc --noEmit --watch --preserveWatchOutput"
 	},
 	"dependencies": {
+		"@neondatabase/serverless": "1.0.2",
 		"@t3-oss/env-nextjs": "0.13.8",
+		"@workspace/email": "workspace:*",
 		"@workspace/ui": "workspace:*",
+		"better-auth": "1.4.0",
+		"drizzle-orm": "0.44.7",
 		"lucide-react": "catalog:",
 		"next": "16.0.1",
 		"next-themes": "0.4.6",
@@ -23,12 +27,13 @@
 		"zod": "catalog:"
 	},
 	"devDependencies": {
-		"@workspace/eslint-config": "workspace:^",
-		"@workspace/typescript-config": "workspace:*",
 		"@biomejs/biome": "catalog:",
+		"@svgr/webpack": "8.1.0",
+		"@types/node": "20.19.9",
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
-		"typescript": "catalog:",
-		"@types/node": "20.19.9"
+		"@workspace/eslint-config": "workspace:^",
+		"@workspace/typescript-config": "workspace:*",
+		"typescript": "catalog:"
 	}
 }

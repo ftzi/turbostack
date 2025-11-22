@@ -1,0 +1,29 @@
+{
+  "name": "@workspace/email",
+  "version": "1.1.0",
+  "private": true,
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "scripts": {
+    "build": "email build",
+    "dev": "email dev",
+    "export": "email export"
+  },
+  "dependencies": {
+    "@react-email/components": "1.0.1",
+    "@react-email/tailwind": "2.0.1",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "resend": "6.5.2"
+  },
+  "devDependencies": {
+    "@react-email/preview-server": "5.0.5",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@workspace/typescript-config": "workspace:*",
+    "react-email": "5.0.5"
+  }
+}
