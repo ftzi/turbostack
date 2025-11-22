@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint --fix",
+    "lint": "biome check --unsafe --fix && eslint --fix ",
     "lint:dry": "eslint",
     "typecheck": "tsc --noEmit",
     "tsw": "tsc --noEmit --watch --preserveWatchOutput"
@@ -23,11 +23,12 @@
     "zod": "4.1.12"
   },
   "devDependencies": {
+    "@workspace/eslint-config": "workspace:^",
+    "@workspace/typescript-config": "workspace:*",
+    "@biomejs/biome": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "typescript": "catalog:",
-    "@workspace/eslint-config": "workspace:^",
-    "@workspace/typescript-config": "workspace:*",
     "@types/node": "20.19.9"
   }
 }
