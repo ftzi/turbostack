@@ -13,7 +13,11 @@
 	},
 	"dependencies": {
 		"@neondatabase/serverless": "1.0.2",
+		"@orpc/client": "catalog:",
+		"@orpc/contract": "catalog:",
+		"@orpc/server": "catalog:",
 		"@t3-oss/env-nextjs": "0.13.8",
+		"@workspace/api-contract": "workspace:*",
 		"@workspace/email": "workspace:*",
 		"@workspace/ui": "workspace:*",
 		"better-auth": "1.4.0",

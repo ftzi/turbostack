@@ -77,7 +77,7 @@ export default async function Image() {
 const loadGoogleFont = async (font: string, text: string) => {
 	const url = `https://fonts.googleapis.com/css2?family=${font}&text=${encodeURIComponent(text)}`;
 	const css = await (await fetch(url)).text();
-	const resource = css.match(/src: url\((.+)\) format\('(opentype|truetype)'\)/);
+	const resource = /src: url\((.+)\) format\('(opentype|truetype)'\)/.exec(css);
 
 	if (resource?.[1]) {
 		const response = await fetch(resource[1]);

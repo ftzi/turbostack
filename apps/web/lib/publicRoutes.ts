@@ -2,10 +2,10 @@ import type { MetadataRoute } from "next";
 
 export type Href = `/${string}`;
 
-export type Nav = {
+export interface Nav {
 	label: string;
 	href: Href;
-};
+}
 
 type PublicRoute = Nav &
 	(

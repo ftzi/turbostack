@@ -69,6 +69,7 @@ This is a Turborepo monorepo with two main workspace types:
   - **email/** - Email templates using react-email
 
 - **packages/** - Shared packages
+  - **api-contract/** - oRPC contract definitions and Zod schemas
   - **ui/** - Shared UI component library (shadcn-based)
   - **eslint-config/** - Shared ESLint configurations
   - **typescript-config/** - Shared TypeScript configurations
@@ -106,6 +107,27 @@ This is a Turborepo monorepo with two main workspace types:
 - API route: `app/api/icon/route.tsx` - Generates dynamic favicons based on theme (`?theme=light|dark`)
 - Layout pattern: Import DEFAULT_OPENGRAPH from `@/lib/opengraph/defaults`, spread and override as needed
 - Note: Use `.tsx` extension for API routes containing JSX (required for Biome formatting)
+
+**oRPC API (Type-Safe RPC):**
+- Uses contract-first pattern with shared Zod schemas in `packages/api-contract`
+- Contract definitions in `packages/api-contract/src/contract.ts` using `oc` from `@orpc/contract`
+- Schemas organized in `packages/api-contract/src/schemas/` (auth.ts, user.ts)
+- Server procedures in `apps/web/server/orpc/procedures/`
+- Main router in `apps/web/server/orpc/router.ts`
+- API route handler: `app/api/rpc/[[...rest]]/route.ts` with compression plugin
+- Client setup: `lib/orpc/client.ts` (works in both client and server components)
+- Server-optimized client: `lib/orpc/server.ts` (direct calls without HTTP overhead, server-only)
+- Better Auth integration via middleware in `server/orpc/middleware/auth.ts`
+- Pattern: Use `base` for public procedures, `authorized` for authenticated procedures
+- All procedures automatically type-safe based on contract definitions
+
+### API Contract Package (packages/api-contract/)
+
+**Structure:** Contract-first oRPC setup with TypeScript Project References
+- `src/contract.ts` - Main contract definition using `@orpc/contract`
+- `src/schemas/` - Zod input/output schemas for all procedures
+- Uses `composite: true` in tsconfig.json for proper monorepo type references
+- All relative imports must use `.js` extensions (required by NodeNext module resolution)
 
 ### UI Package (packages/ui/)
 

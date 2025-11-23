@@ -10,10 +10,10 @@ export const OG_DEFAULTS = {
 	revalidate: 3600,
 } as const;
 
-type OGWrapperProps = {
+interface OGWrapperProps {
 	children: ReactNode;
 	style?: CSSProperties;
-};
+}
 
 /**
  * Standard wrapper for OpenGraph images with consistent styling
