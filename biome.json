@@ -11,7 +11,7 @@
 	"formatter": {
 		"enabled": true,
 		"indentStyle": "tab",
-		"lineWidth": 100
+		"lineWidth": 140
 	},
 	"linter": {
 		"enabled": false
@@ -20,7 +20,7 @@
 		"formatter": {
 			"quoteStyle": "double",
 			"trailingCommas": "all",
-			"semicolons": "always"
+			"semicolons": "asNeeded"
 		}
 	}
 }

@@ -1,18 +1,18 @@
-import type { CSSProperties, ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react"
 
 export const OG_SIZES = {
 	opengraph: { width: 1200, height: 630 },
 	twitter: { width: 1200, height: 675 },
-} as const;
+} as const
 
 export const OG_DEFAULTS = {
 	alt: "MyProject",
 	revalidate: 3600,
-} as const;
+} as const
 
-interface OGWrapperProps {
-	children: ReactNode;
-	style?: CSSProperties;
+type OGWrapperProps = {
+	children: ReactNode
+	style?: CSSProperties
 }
 
 /**
@@ -36,4 +36,4 @@ export const OGWrapper = ({ children, style }: OGWrapperProps) => (
 	>
 		{children}
 	</div>
-);
+)

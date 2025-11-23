@@ -1,0 +1,26 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "ignoreExportsUsedInFile": {
+    "type": true
+  },
+  "tags": [
+    "-lintignore"
+  ],
+  "ignore": [
+    "**/*.config.*",
+    "**/tools/**",
+    "apps/web/opengraph-image.tsx",
+    "apps/web/robots.ts",
+    "apps/web/sitemap.ts",
+    "apps/web/lib/auth-client.ts",
+    "apps/web/lib/query.ts",
+    "apps/web/lib/publicRoutes.ts",
+    "apps/web/ui/**"
+  ],
+  "ignoreDependencies": [
+    "@svgr/webpack",
+    "pino-pretty",
+    "@react-email/preview-server",
+    "@workspace/eslint-config"
+  ]
+}

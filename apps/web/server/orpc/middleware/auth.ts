@@ -1,43 +1,46 @@
-import "server-only";
-import { ORPCError } from "@orpc/server";
-import { auth, type Session, type User } from "@/lib/auth";
-import { base } from "../base";
+import "server-only"
+import { implement, ORPCError } from "@orpc/server"
+import { contract } from "@workspace/api-contract/contract"
+import { auth, type Session, type User } from "@/server/auth"
+import { os } from "../base"
 
 /**
  * Better Auth middleware for oRPC
- * Validates the session and adds user/session to context
- * Throws UNAUTHORIZED error if session is invalid
+ * Reference: https://www.better-auth.com/docs/guides/optimizing-for-performance#ssr-optimizations
+ * Reference: https://orpc.unnoq.com/docs/middleware
  */
-export const authMiddleware = base.middleware(async ({ context, next }) => {
-	const sessionData = await auth.api.getSession({
-		headers: context.headers,
-	});
+const authMiddleware = implement(contract)
+	.$context<{ headers: Headers }>()
+	.middleware(async ({ context, next }) => {
+		const sessionData = await auth.api.getSession({
+			headers: context.headers,
+		})
 
-	if (!sessionData?.session || !sessionData?.user) {
-		throw new ORPCError("UNAUTHORIZED", {
-			message: "You must be logged in to access this resource",
-		});
-	}
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		if (!sessionData?.session || !sessionData.user) {
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "You must be logged in to access this resource",
+			})
+		}
 
-	return next({
-		context: {
-			session: sessionData.session,
-			user: sessionData.user,
-		},
-	});
-});
+		return next({
+			context: {
+				session: sessionData.session,
+				user: sessionData.user,
+			},
+		})
+	})
 
 /**
- * Authorized base with authentication
- * Use this for procedures that require authentication
- * Guarantees that context.session and context.user are defined
+ * Implementer with logger + auth middlewares chained
+ * Guarantees that context.logger, context.session, and context.user are defined
  */
-export const authorized = base.use(authMiddleware);
+export const authorized = os.use(authMiddleware)
 
 /**
  * Type helpers for authenticated context
  */
-export interface AuthenticatedContext {
-	session: Session;
-	user: User;
+export type AuthenticatedContext = {
+	session: Session
+	user: User
 }

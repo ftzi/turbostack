@@ -1,11 +1,11 @@
-import { ImageResponse } from "next/og";
-import type { NextRequest } from "next/server";
+import { ImageResponse } from "next/og"
+import type { NextRequest } from "next/server"
 
-import { DefaultOG } from "@/lib/opengraph/default-og";
-import { ogParamsSchema } from "@/lib/opengraph/og-params";
-import { OG_SIZES } from "@/lib/opengraph/og-wrapper";
+import { DefaultOG } from "@/lib/opengraph/default-og"
+import { ogParamsSchema } from "@/lib/opengraph/og-params"
+import { OG_SIZES } from "@/lib/opengraph/og-wrapper"
 
-export const revalidate = 3600;
+export const revalidate = 3600
 
 /**
  * To use custom fonts in OG images:
@@ -62,28 +62,23 @@ export const revalidate = 3600;
  *    ```
  */
 
-const createDefaultOGResponse = () => new ImageResponse(<DefaultOG />, OG_SIZES.opengraph);
+const createDefaultOGResponse = () => new ImageResponse(<DefaultOG />, OG_SIZES.opengraph)
 
-export const GET = async (request: NextRequest) => {
+export const GET = (request: NextRequest) => {
 	try {
-		const { searchParams } = new URL(request.url);
+		const { searchParams } = new URL(request.url)
 
-		const rawParams = Object.fromEntries(searchParams.entries());
-		const validationResult = ogParamsSchema.safeParse(rawParams);
+		const rawParams = Object.fromEntries(searchParams.entries())
+		const validationResult = ogParamsSchema.safeParse(rawParams)
 
 		if (!validationResult.success) {
-			console.error("Invalid OG params:", validationResult.error);
-			return createDefaultOGResponse();
+			console.error("Invalid OG params:", validationResult.error)
+			return createDefaultOGResponse()
 		}
 
-		const params = validationResult.data;
-
-		switch (params.type) {
-			case "default":
-				return createDefaultOGResponse();
-		}
+		return createDefaultOGResponse()
 	} catch (error) {
-		console.error("Error generating OG image:", error);
-		return createDefaultOGResponse();
+		console.error("Error generating OG image:", error)
+		return createDefaultOGResponse()
 	}
-};
+}

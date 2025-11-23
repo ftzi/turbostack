@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata } from "next"
+import { Geist, Geist_Mono } from "next/font/google"
 
-import "@workspace/ui/globals.css";
-import { Providers } from "@/components/providers";
-import { consts, env } from "@/lib/consts";
-import { DEFAULT_METADATA, DEFAULT_OPENGRAPH } from "@/lib/opengraph/defaults";
+import "@workspace/ui/globals.css"
+import { Providers } from "@/components/providers"
+import { consts, env } from "@/lib/consts"
+import { DEFAULT_METADATA, DEFAULT_OPENGRAPH } from "@/lib/opengraph/defaults"
 
 /**
  * https://nextjs.org/docs/pages/building-your-application/optimizing/fonts
@@ -22,12 +22,12 @@ import { DEFAULT_METADATA, DEFAULT_OPENGRAPH } from "@/lib/opengraph/defaults";
 const fontSans = Geist({
 	subsets: ["latin"],
 	variable: "--font-sans",
-});
+})
 
 const fontMono = Geist_Mono({
 	subsets: ["latin"],
 	variable: "--font-mono",
-});
+})
 
 export const metadata: Metadata = {
 	title: {
@@ -54,18 +54,14 @@ export const metadata: Metadata = {
 			},
 		],
 	},
-};
+}
 
-export default function RootLayout({
-	children,
-}: {
-	children: React.ReactNode;
-}): React.ReactElement {
+export default function RootLayout({ children }: { children: React.ReactNode }): React.ReactElement {
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<body className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased `}>
 				<Providers>{children}</Providers>
 			</body>
 		</html>
-	);
+	)
 }

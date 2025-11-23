@@ -5,6 +5,7 @@ import {
 	pingInputSchema,
 	pingOutputSchema,
 } from "./schemas/auth.js"
+import { commonErrors } from "./schemas/errors.js"
 import {
 	getCurrentUserInputSchema,
 	getCurrentUserOutputSchema,
@@ -13,18 +14,25 @@ import {
 } from "./schemas/user.js"
 
 /**
- * oRPC Contract Definition
+ * oRPC Contract Definition with generic error handling
+ * Reference: https://orpc.unnoq.com/docs/error-handling
+ *
  * Defines the API contract shared between client and server
+ * All procedures inherit commonErrors for consistent error handling
  */
+const baseContract = oc.errors(commonErrors)
+
 export const contract = {
-	ping: oc.input(pingInputSchema).output(pingOutputSchema),
+	ping: baseContract.input(pingInputSchema).output(pingOutputSchema),
 
 	auth: {
-		ping: oc.input(authPingInputSchema).output(authPingOutputSchema),
-		getCurrentUser: oc
+		ping: baseContract.input(authPingInputSchema).output(authPingOutputSchema),
+		getCurrentUser: baseContract
 			.input(getCurrentUserInputSchema)
 			.output(getCurrentUserOutputSchema),
-		updateUser: oc.input(updateUserInputSchema).output(updateUserOutputSchema),
+		updateUser: baseContract
+			.input(updateUserInputSchema)
+			.output(updateUserOutputSchema),
 	},
 }
 

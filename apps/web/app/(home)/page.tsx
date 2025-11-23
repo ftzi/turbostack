@@ -1,4 +1,4 @@
-import { Button } from "@workspace/ui/components/button";
+import { Button } from "@workspace/ui/components/button"
 
 export default function Page(): React.ReactElement {
 	return (
@@ -8,5 +8,5 @@ export default function Page(): React.ReactElement {
 				<Button />
 			</div>
 		</div>
-	);
+	)
 }

@@ -1,6 +1,6 @@
-import type { MetadataRoute } from "next";
-import { env } from "@/lib/consts";
-import { publicPaths } from "@/lib/publicRoutes";
+import type { MetadataRoute } from "next"
+import { env } from "@/lib/consts"
+import { publicPaths } from "@/lib/publicRoutes"
 
 /**
  * This is a special Next.js file which helps Search Engine to index your website.
@@ -24,5 +24,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
 				videos: route.videos,
 			})) as MetadataRoute.Sitemap),
 		// Manually add here other routes you might have that are not included in the public routes, if you have a reason to do so.
-	];
+	]
 }

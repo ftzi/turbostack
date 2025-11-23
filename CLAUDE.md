@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Important:** If you discover any information in this file that is no longer accurate or has become outdated, please update it immediately to reflect the current state of the codebase.
 
-**Workflow Rule:** Always run `bun run ok` after finishing a task or when facing issues. This command runs type checking and linting across the entire codebase and must fully pass before considering a task complete.
+**Workflow Rule:** Always run `bun ok` after finishing a task or when facing issues. This command runs type checking and linting across the entire codebase and must fully pass before considering a task complete.
 
 ## Maintaining This File
 
@@ -31,32 +31,35 @@ Turbostack is a monorepo based on shadcn and NextStack templates. It uses Turbor
 
 ### Development
 - `bun dev` - Install dependencies and start dev server with TypeScript watch mode
-- `bun run dev` - Start all apps in development mode (runs `turbo dev tsw`)
-- `bun run tsw` - Run TypeScript in watch mode across all workspaces
+- `bun dev` - Start all apps in development mode (runs `turbo dev tsw`)
+- `bun tsw` - Run TypeScript in watch mode across all workspaces
 
 ### Type Checking & Linting
 - `bun ts` - Type check all workspaces with TypeScript
-- `bun run lint` - Format with Biome + lint with ESLint across all workspaces
-- `bun run ok` - Run both ts and lint (quick verification)
+- `bun lint` - Format with Biome + lint with ESLint across all workspaces
+- `bun ok` - Run both ts and lint (quick verification)
+- `bun knip` - Find unused files, dependencies, and exports (Reference: https://knip.dev)
+  - Note: Knip may report infrastructure files (auth-client.ts, orpc/client.ts, etc.) as unused until features are built
+  - Review Knip output carefully - not all reports are actionable
 
 ### Building
-- `bun run build` - Build all apps and packages
+- `bun build` - Build all apps and packages
 
 ### Database (Drizzle ORM)
-- `bun run db:studio` - Open Drizzle Studio
-- `bun run db:generate` - Generate database migrations
-- `bun run db:migrate` - Run database migrations
+- `bun db:studio` - Open Drizzle Studio
+- `bun db:generate` - Generate database migrations
+- `bun db:migrate` - Run database migrations
 
 ### Environment Variables
-- `bun run env` - Pull environment variables from Vercel
+- `bun env` - Pull environment variables from Vercel
 
 ### Web App Specific (in apps/web/)
 - `bun dev` - Start Next.js dev server with Turbopack
-- `bun run build` - Build the Next.js app
+- `bun build` - Build the Next.js app
 - `bun ts` - Type check web app
-- `bun run tsw` - TypeScript watch mode for web app
+- `bun tsw` - TypeScript watch mode for web app
 - `bun lint` - Format with Biome + lint with ESLint (auto-fix enabled)
-- `bun run lint:dry` - Check formatting and linting without auto-fix
+- `bun lint:dry` - Check formatting and linting without auto-fix
 
 ## Architecture
 
@@ -70,6 +73,7 @@ This is a Turborepo monorepo with two main workspace types:
 
 - **packages/** - Shared packages
   - **api-contract/** - oRPC contract definitions and Zod schemas
+  - **shared/** - Generic utilities and helpers (error handling, etc.)
   - **ui/** - Shared UI component library (shadcn-based)
   - **eslint-config/** - Shared ESLint configurations
   - **typescript-config/** - Shared TypeScript configurations
@@ -83,6 +87,11 @@ This is a Turborepo monorepo with two main workspace types:
 ### Web App (apps/web/)
 
 **Framework:** Next.js 16 with App Router and React Server Components
+
+**Versions & Features:**
+- React 19.2.0 with `<Activity>` component, `useEffectEvent()` hook, and View Transitions
+- Next.js 16 with DevTools MCP integration for AI-assisted debugging
+- React Compiler enabled (`reactCompiler: true`) for automatic component memoization
 
 **Key Patterns:**
 - Uses App Router with route groups: `app/(home)/` for public pages
@@ -111,15 +120,50 @@ This is a Turborepo monorepo with two main workspace types:
 **oRPC API (Type-Safe RPC):**
 - Uses contract-first pattern with shared Zod schemas in `packages/api-contract`
 - Contract definitions in `packages/api-contract/src/contract.ts` using `oc` from `@orpc/contract`
-- Schemas organized in `packages/api-contract/src/schemas/` (auth.ts, user.ts)
-- Server procedures in `apps/web/server/orpc/procedures/`
-- Main router in `apps/web/server/orpc/router.ts`
-- API route handler: `app/api/rpc/[[...rest]]/route.ts` with compression plugin
-- Client setup: `lib/orpc/client.ts` (works in both client and server components)
-- Server-optimized client: `lib/orpc/server.ts` (direct calls without HTTP overhead, server-only)
+- Schemas organized in `packages/api-contract/src/schemas/` (auth.ts, user.ts, errors.ts)
+- Generic `OPERATION_FAILED` error defined at contract level for consistent error handling
+- Server implementation uses `implement(contract)` to bind contract to procedures
+- Base implementer in `server/orpc/base.ts` with logger middleware applied
+- Middleware composition: Logger middleware → Auth middleware (Reference: https://orpc.unnoq.com/docs/middleware)
+- Procedures access contract paths: `os.ping.handler()` or `authorized.auth.ping.handler()`
+- Router uses `.router()` method to enforce contract at runtime in `server/orpc/router.ts`
+- API route handler: `app/api/rpc/[[...rest]]/route.ts` with compression and logging plugins
+- Client setup: `lib/query.ts` exports `client` (HTTP client) and `orpc` (TanStack Query utils)
+- Server-optimized client: `server/orpc/server-client.ts` (direct calls without HTTP overhead, server-only)
 - Better Auth integration via middleware in `server/orpc/middleware/auth.ts`
-- Pattern: Use `base` for public procedures, `authorized` for authenticated procedures
-- All procedures automatically type-safe based on contract definitions
+- Pattern: Use `os` for public procedures, `authorized` for authenticated procedures
+- **Critical**: Never re-define `.input()` and `.output()` in procedures - contract already defines these
+- **Critical**: Always use `.router()` method at root level to enforce contract at runtime
+
+**oRPC Error Handling:**
+- Reference: https://orpc.unnoq.com/docs/client/error-handling
+- Import error utilities directly: `import { safe, isDefinedError } from "@orpc/client"`
+- Use `safe()` to wrap procedure calls: `const [error, data] = await safe(client.auth.updateUser({...}))`
+- Use `isDefinedError(error)` to distinguish defined errors from unexpected ones
+- All procedures inherit `OPERATION_FAILED` error with `{ message: string }` data
+- Keep it simple: Don't create specific error types for each operation
+- Frontend validation is automatic via contract schemas - no need for VALIDATION_ERROR types
+
+**TanStack Query Integration:**
+- Reference: https://orpc.unnoq.com/docs/integrations/tanstack-query
+- Query utils available via `import { orpc } from "@/lib/query"`
+- Use `useQuery(orpc.auth.getCurrentUser.queryOptions({}))` for queries
+- Use `useMutation(orpc.auth.updateUser.mutationOptions())` for mutations
+- **skipToken for conditional queries**: Use `skipToken` instead of `disabled` option
+  - Pattern: `input: condition ? { ...data } : skipToken`
+  - Reference: https://orpc.unnoq.com/docs/integrations/tanstack-query#skiptoken-for-disabling-queries
+  - Example: `useQuery(orpc.user.get.queryOptions({ input: userId ? { userId } : skipToken }))`
+  - For infinite queries: Replace entire input function with skipToken when condition is false
+
+**Logging & Monitoring:**
+- Pino logger with structured logging and request tracking
+- Logger available globally: `import { logger } from "@/server/logger"`
+- Logger in procedures: Access via `context.logger?.info("message")` - no imports needed
+  - Logger is lazy-loaded and cached on first access via middleware
+  - Available in all procedures: `os` and `authorized`
+- Compression plugin reduces response sizes for better performance
+- Development: Use `pino-pretty` for human-readable logs (configured automatically)
+- Production: JSON logs for structured logging and log aggregation
 
 ### API Contract Package (packages/api-contract/)
 
@@ -128,6 +172,37 @@ This is a Turborepo monorepo with two main workspace types:
 - `src/schemas/` - Zod input/output schemas for all procedures
 - Uses `composite: true` in tsconfig.json for proper monorepo type references
 - All relative imports must use `.js` extensions (required by NodeNext module resolution)
+
+### Shared Package (packages/shared/)
+
+**Purpose:** Generic utilities and helpers that can be reused across the entire workspace
+
+**Error Handling:**
+- `getErrorMessage(error, fallbackMessage?)` - Extracts user-friendly error messages from unknown errors
+- Handles string errors and objects with message property (including Error objects)
+- Simple and focused - no over-engineering
+
+**Usage Pattern:**
+```typescript
+import { getErrorMessage } from "@workspace/shared/utils/error"
+
+try {
+  await someOperation()
+} catch (error) {
+  const message = getErrorMessage(error, "Operation failed")
+  console.error(message)
+  toast({ title: message, variant: "destructive" })
+}
+```
+
+**Best Practices:**
+- Always use `getErrorMessage()` when catching errors to avoid `any` types
+- Prefer `catch (error)` over `catch (error: any)` - let the utility handle type narrowing
+- Provide contextual fallback messages for better user experience
+- This package should contain only generic, reusable utilities with no app-specific logic
+
+**Exports:**
+- Error utilities: `@workspace/shared/utils/error`
 
 ### UI Package (packages/ui/)
 
@@ -178,7 +253,8 @@ Use shadcn CLI to add components: `npx shadcn@latest add <component-name>`
 - Configured in `lib/consts.ts` (client) and `server/serverConsts.ts` (server)
 - Feature flags control which env vars are required (e.g., `emailEnabled` in `lib/consts.ts`)
 - All env vars must be declared in `turbo.json` under `globalEnv`
-- Skip validation with `SKIP_ENV_VALIDATION=1` (useful for Docker builds)
+- Skip validation with `SKIP_ENV_VALIDATION=1` - **ONLY** use for runtime commands in environments without env vars (Docker builds, CI pipelines)
+- **NEVER use `SKIP_ENV_VALIDATION=1` with type checking or linting** - these commands don't execute code and don't need env vars
 
 ## Code Quality Standards
 
@@ -186,8 +262,13 @@ Use shadcn CLI to add components: `npx shadcn@latest add <component-name>`
 - Do NOT attempt to run development servers - they're already running and not accessible to Claude Code
 - Do NOT try to call API endpoints - you don't have authentication access
 - NEVER use `sleep` commands - they are unnecessary and wasteful
-- Use `bun ts` for type checking, not `bun build` (unless you specifically need to build)
-- Use `bun ok` instead of direct `tsc` commands - it leverages Turbo cache and is much faster
+- **ALWAYS use `bun ok`** for type checking and linting - never use `bun ts`, `bun lint`, or `tsc` directly
+- **NEVER run `tsc` directly** - not even for single files - always use `bun ok`
+- **CRITICAL: `bun ok` MUST ALWAYS be run from the project root directory**
+  - NEVER run it from subdirectories like `apps/web` or `packages/*`
+  - Always navigate to the root first: `cd <project-root> && bun ok`
+  - This is a Turborepo monorepo - the command must run from root to check all packages
+- `bun ok` runs both type checking and linting, leverages Turbo cache, and is always preferred
 - NEVER commit or push code - all git operations must be explicitly requested by the user
 - NEVER run `git stash` or `git stash pop` - do not hide or restore changes without explicit instruction
 
@@ -206,14 +287,46 @@ Use shadcn CLI to add components: `npx shadcn@latest add <component-name>`
 - Add comments to object type properties only when not self-explanatory (skip obvious ones like `className`)
 - Prefer optional chaining for callbacks: `onComplete?.(data)` instead of `if (onComplete) onComplete(data)`
 
+**Import Conventions:**
+- **NEVER use barrel files** - Barrel files (index.ts files that re-export everything) are forbidden
+- **NEVER re-export from external libraries** - Always import directly from the library where it's needed
+  - Example: Import `getLogger` from `@orpc/experimental-pino` directly in the file that uses it
+  - Do NOT create wrapper functions that just re-export library functions - this adds unnecessary indirection
+  - Re-exporting makes it unclear where the actual implementation lives and breaks IDE navigation
+- **Always import directly from source files** - Import from the actual file where the code is defined
+- Example: Use `import { getErrorMessage } from "@workspace/shared/utils/error"` instead of `import { getErrorMessage } from "@workspace/shared"`
+- Package exports should point directly to source files, not to barrel files
+- This improves tree-shaking, makes dependencies explicit, and reduces circular dependency issues
+
 **Function Parameters:**
 - Prefer object parameters over multiple direct parameters
 - Example: `function foo({ name, age }: { name: string; age: number })` instead of `function foo(name: string, age: number)`
+
+**Error Handling:**
+- Always use `getErrorMessage()` from `@workspace/shared/utils/error` for error handling
+- NEVER use `catch (error: any)` - use `catch (error)` and let the utility handle type narrowing
+- Provide contextual fallback messages: `getErrorMessage(error, "Failed to update user")`
+- Example:
+```typescript
+import { getErrorMessage } from "@workspace/shared/utils/error"
+
+try {
+  await someOperation()
+} catch (error) {
+  const message = getErrorMessage(error, "Operation failed")
+  console.error(message)
+  toast({ title: message, variant: "destructive" })
+}
+```
 
 **Comments:**
 - Do NOT add comments explaining what changes you just made
 - Only add comments for complex logic that isn't self-evident
 - Use JSDoc-style comments for public APIs
+- **Always add reference links** when implementing code from documentation or external sources (unless it's common/trivial code)
+  - Format: `// Reference: https://example.com/docs/feature`
+  - Helps understand implementation decisions and find updated documentation later
+  - Example: `// Reference: https://www.better-auth.com/docs/concepts/typescript#inferring-additional-fields`
 
 **Console Logging:**
 - Always stringify objects: `console.log('DEBUG:', JSON.stringify(data, null, 2))`
@@ -225,6 +338,10 @@ Use shadcn CLI to add components: `npx shadcn@latest add <component-name>`
   - Only call hooks at the top level - never inside loops, conditions, or nested functions
   - Do not return early if there's a hook later in the component
   - Hooks must be called in the same order every render
+- **React 19.2 Usage**:
+  - `<Activity mode="hidden">` - Keeps UI mounted but hidden while preserving state (useful for pre-rendering tabs, loading background data)
+  - `useEffectEvent()` - Separates event-like logic from reactive Effects when you need fresh props/state without re-triggering the effect (solves stale closure problems)
+  - Avoid manual `useMemo`/`useCallback` - React Compiler handles memoization automatically unless profiling shows specific need
 
 **Testing:**
 - NEVER use `timeout` parameters when running tests - run tests normally without artificial timeouts
@@ -245,6 +362,3 @@ Use shadcn CLI to add components: `npx shadcn@latest add <component-name>`
 - **Import Paths:** Use workspace aliases (`@workspace/ui`, `@workspace/eslint-config`, etc.)
 - **Authentication:** Configured for Google OAuth (client ID and secret in server env)
 - **API Routes with JSX:** Use `.tsx` extension for API routes that contain JSX (required for Biome formatting)
-
-
-

@@ -1,7 +1,7 @@
-import "server-only";
-import { createRouterClient } from "@orpc/server";
-import { headers } from "next/headers";
-import { router } from "@/server/orpc/router";
+import "server-only"
+import { createRouterClient } from "@orpc/server"
+import { headers } from "next/headers"
+import { router } from "@/server/orpc/router"
 
 /**
  * Server-side oRPC client
@@ -12,4 +12,4 @@ export const serverClient = createRouterClient(router, {
 	context: async () => ({
 		headers: await headers(),
 	}),
-});
+})

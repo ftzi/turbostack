@@ -1,10 +1,10 @@
-import type { MetadataRoute } from "next";
+import type { MetadataRoute } from "next"
 
-export type Href = `/${string}`;
+export type Href = `/${string}`
 
-export interface Nav {
-	label: string;
-	href: Href;
+export type Nav = {
+	label: string
+	href: Href
 }
 
 type PublicRoute = Nav &
@@ -12,9 +12,9 @@ type PublicRoute = Nav &
 		| (Omit<MetadataRoute.Sitemap[number], "url"> & { noSitemap?: false })
 		| {
 				/** If true, this public route won't be added to the sitemaps.xml. */
-				noSitemap: true;
+				noSitemap: true
 		  }
-	);
+	)
 
 /**
  * This servers some purposes:
@@ -75,11 +75,9 @@ export const publicRoutes = {
 		href: "/auth",
 		noSitemap: true,
 	},
-} satisfies Record<string, PublicRoute>;
+} satisfies Record<string, PublicRoute>
 
-export type PublicPath = (typeof publicRoutes)[keyof typeof publicRoutes]["href"];
+export type PublicPath = (typeof publicRoutes)[keyof typeof publicRoutes]["href"]
 
 /** Doesn't include URL fragments (e.g.: `/#faq`). */
-export const publicPaths = Object.values(publicRoutes as Record<string, PublicRoute>).filter(
-	(route) => !route.href.includes("#"),
-);
+export const publicPaths = Object.values(publicRoutes as Record<string, PublicRoute>).filter((route) => !route.href.includes("#"))

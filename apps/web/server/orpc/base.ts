@@ -1,16 +1,43 @@
-import "server-only";
-import { os } from "@orpc/server";
+import "server-only"
+import { getLogger } from "@orpc/experimental-pino"
+import { implement } from "@orpc/server"
+import { contract } from "@workspace/api-contract/contract"
+import type { Logger } from "pino"
 
 /**
- * Base context type that includes request headers
- * Headers are required for Better Auth session validation
+ * Base context type with headers and lazy-loaded logger
+ * Reference: https://orpc.unnoq.com/docs/middleware
  */
-export interface BaseContext {
-	headers: Headers;
+export type BaseContext = {
+	headers: Headers
+	logger?: Logger
 }
 
 /**
- * Base oRPC setup with context
- * All procedures and middleware should extend from this base
+ * Base implementer with initial headers context
  */
-export const base = os.$context<BaseContext>();
+const baseImplementer = implement(contract).$context<{ headers: Headers }>()
+
+/**
+ * Logger middleware - adds lazy-loaded logger to context
+ * Logger is injected at runtime by LoggingHandlerPlugin
+ */
+const loggerMiddleware = baseImplementer.middleware(({ context, next }) => {
+	let cachedLogger: Logger | undefined
+
+	return next({
+		context: {
+			...context,
+			get logger() {
+				cachedLogger ??= getLogger(context as never)
+				return cachedLogger
+			},
+		},
+	})
+})
+
+/**
+ * Implementer with logger middleware applied
+ * All procedures have access to context.logger
+ */
+export const os = baseImplementer.use(loggerMiddleware)

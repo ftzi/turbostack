@@ -1,14 +1,10 @@
 {
-  "name": "@workspace/api-contract",
+  "name": "@workspace/shared",
   "version": "0.0.0",
   "type": "module",
   "private": true,
   "scripts": {
     "lint": "eslint . --max-warnings 0"
-  },
-  "dependencies": {
-    "@orpc/contract": "catalog:",
-    "zod": "catalog:"
   },
   "devDependencies": {
     "@workspace/eslint-config": "workspace:*",
@@ -16,8 +12,6 @@
     "typescript": "catalog:"
   },
   "exports": {
-    "./schemas/auth": "./src/schemas/auth.ts",
-    "./schemas/user": "./src/schemas/user.ts",
-    "./contract": "./src/contract.ts"
+    "./utils/error": "./src/utils/error.ts"
   }
 }

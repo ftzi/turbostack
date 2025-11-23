@@ -1,11 +1,11 @@
-import { Metadata } from "next";
-import { buildOGImageDescriptor } from "./og-params";
+import { Metadata } from "next"
+import { buildOGImageDescriptor } from "./og-params"
 /**
  * Default metadata values
  */
 export const DEFAULT_METADATA = {
 	description: "My Project Description",
-};
+}
 
 /**
  * Default OpenGraph metadata shared across all pages
@@ -23,4 +23,4 @@ export const DEFAULT_OPENGRAPH: Metadata["openGraph"] = {
 			data: { type: "default" },
 		}),
 	],
-};
+}

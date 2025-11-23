@@ -1,18 +1,20 @@
-import "server-only";
-import { authPing, ping } from "./procedures/auth";
-import { getCurrentUser, updateUser } from "./procedures/user";
+import "server-only"
+import { os } from "./base"
+import { authPing, ping } from "./procedures/auth"
+import { getCurrentUser, updateUser } from "./procedures/user"
 
 /**
  * Main oRPC router
- * Organizes all procedures in a nested structure matching the contract
+ * Uses .router() method to enforce the contract at runtime
+ * This ensures type-checking and runtime validation of the entire API
  */
-export const router = {
+export const router = os.router({
 	ping,
 	auth: {
 		ping: authPing,
 		getCurrentUser,
 		updateUser,
 	},
-};
+})
 
-export type Router = typeof router;
+export type Router = typeof router

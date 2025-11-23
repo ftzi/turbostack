@@ -1,39 +1,29 @@
-import "server-only";
-import {
-	authPingInputSchema,
-	authPingOutputSchema,
-	pingInputSchema,
-	pingOutputSchema,
-} from "@workspace/api-contract";
-import { base } from "../base";
-import { authorized } from "../middleware/auth";
+import "server-only"
+import { os } from "../base"
+import { authorized } from "../middleware/auth"
 
 /**
  * Public ping procedure
  * Returns a simple message with timestamp
  */
-export const ping = base
-	.input(pingInputSchema)
-	.output(pingOutputSchema)
-	.handler(async () => {
-		return {
-			message: "pong",
-			timestamp: Date.now(),
-		};
-	});
+export const ping = os.ping.handler(({ context }) => {
+	context.logger?.info("Ping request received")
+
+	return {
+		message: "pong",
+		timestamp: Date.now(),
+	}
+})
 
 /**
  * Authenticated ping procedure
  * Returns message with timestamp and user ID
  * Requires authentication
  */
-export const authPing = authorized
-	.input(authPingInputSchema)
-	.output(authPingOutputSchema)
-	.handler(async ({ context }) => {
-		return {
-			message: "pong",
-			timestamp: Date.now(),
-			userId: context.user.id,
-		};
-	});
+export const authPing = authorized.auth.ping.handler(({ context }) => {
+	return {
+		message: "pong",
+		timestamp: Date.now(),
+		userId: context.user.id,
+	}
+})

@@ -1,11 +1,11 @@
-import { createEnv } from "@t3-oss/env-nextjs";
-import { z } from "zod";
+import { createEnv } from "@t3-oss/env-nextjs"
+import { z } from "zod"
 
 /** Whether email functionality is enabled in the app. */
-const emailEnabled = false;
+const emailEnabled = false
 
 /** To be used in the place of a disabled/undefined env var if it's required where used. */
-const disabledEnv = "DISABLED";
+const disabledEnv = "DISABLED"
 
 /** Consts used by the client and server. */
 export const consts = {
@@ -21,7 +21,7 @@ export const consts = {
 	 * I don't recommend spending time and effort supporting both if you are not already making some good money with the app,
 	 * as you would need to check every addition to the app to make sure it works on both themes.
 	 */
-	// defaultColorScheme: "dark" satisfies MantineColorScheme,
+	// defaultColorScheme: "dark",
 
 	// socialMediaLinks: {
 	//   youtube: "https://www.youtube.com/@",
@@ -31,12 +31,13 @@ export const consts = {
 	// } satisfies Partial<Record<SocialMedia, string>>,
 
 	email: {
-		contact: emailEnabled ? `contact@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}` : undefined,
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition, @typescript-eslint/no-non-null-assertion
+		contact: emailEnabled ? `contact@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN!}` : undefined,
 	},
 
 	/** Where to redirect to after a successful authentication. */
 	pathWhenLoggedIn: "/app",
-} as const;
+} as const
 
 /**
  * Public env vars. This is separated from the `serverEnv` so the `serverEnv` can use `serverConsts` to make some vars required or not.
@@ -59,7 +60,8 @@ export const env = createEnv({
 		 * For development, it's `http://localhost:3000`
 		 */
 		NEXT_PUBLIC_URL: z.url(),
-		NEXT_PUBLIC_EMAIL_DOMAIN: emailEnabled ? z.string().min(1) : z.string().optional(),
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		NEXT_PUBLIC_EMAIL_DOMAIN: (emailEnabled ? z.string().min(1) : z.string().optional()) as z.ZodString,
 	},
 	/**
 	 * Due to how Next.js bundles environment variables on Edge and Client,
@@ -72,11 +74,12 @@ export const env = createEnv({
 			(process.env.NEXT_PUBLIC_VERCEL_URL
 				? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}` // Preview URL automatically set by Vercel
 				: "http://localhost:3000"), // Local Development URL
-		NEXT_PUBLIC_EMAIL_DOMAIN: emailEnabled ? process.env.NEXT_PUBLIC_EMAIL_DOMAIN : disabledEnv,
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition, @typescript-eslint/no-non-null-assertion
+		NEXT_PUBLIC_EMAIL_DOMAIN: (emailEnabled ? process.env.NEXT_PUBLIC_EMAIL_DOMAIN : disabledEnv)!,
 	},
 	/** Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. Useful for Docker builds.  */
 	skipValidation: Boolean(process.env.SKIP_ENV_VALIDATION),
-});
+})
 
 /** This is `true` when running locally (= `bun dev`) and `false` when deployed (= `bun run build && bun start`) */
-export const isDevelopment = env.NODE_ENV === "development";
+export const isDevelopment = env.NODE_ENV === "development"

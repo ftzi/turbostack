@@ -1,0 +1,9 @@
+{
+	"servers": {
+		"intlayer": {
+			"type": "stdio",
+			"command": "bunx",
+			"args": ["@intlayer/mcp"]
+		}
+	}
+}

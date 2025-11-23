@@ -1,5 +1,5 @@
-import type { MetadataRoute } from "next";
-import { env } from "@/lib/consts";
+import type { MetadataRoute } from "next"
+import { env } from "@/lib/consts"
 
 /**
  * This is a special Next.js file which tells search engine crawlers whether they can access a file or not.
@@ -17,5 +17,5 @@ export default function robots(): MetadataRoute.Robots {
 		},
 		sitemap: new URL("sitemap.xml", env.NEXT_PUBLIC_URL).href,
 		host: env.NEXT_PUBLIC_URL,
-	};
+	}
 }
