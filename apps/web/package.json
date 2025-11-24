@@ -6,8 +6,6 @@
 		"dev": "next dev --turbopack",
 		"build": "next build",
 		"start": "next start",
-		"lint": "biome check --fix . && eslint --fix --max-warnings 0",
-		"lint:dry": "biome check . && eslint --max-warnings 0",
 		"ts": "tsc --noEmit",
 		"tsw": "tsc --noEmit --watch --preserveWatchOutput"
 	},
@@ -23,10 +21,10 @@
 		"@tanstack/react-query": "5.90.10",
 		"@workspace/api": "workspace:*",
 		"@workspace/email": "workspace:*",
+		"@workspace/shared": "workspace:*",
 		"@workspace/ui": "workspace:*",
 		"better-auth": "1.4.0",
 		"drizzle-orm": "0.44.7",
-		"eslint": "9.39.1",
 		"lucide-react": "catalog:",
 		"next": "catalog:",
 		"next-themes": "0.4.6",
@@ -44,7 +42,6 @@
 		"@types/node": "20.19.9",
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
-		"@workspace/eslint-config": "workspace:^",
 		"@workspace/typescript-config": "workspace:*",
 		"pino-pretty": "13.1.2",
 		"typescript": "catalog:"

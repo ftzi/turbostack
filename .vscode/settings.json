@@ -1,12 +1,8 @@
 {
-  "tailwindCSS.experimental.configFile": "packages/ui/src/styles/globals.css",
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit",
-    "source.organizeImports.biome": "explicit",
-    "quickfix.biome": "explicit"
-  },
-  "editor.defaultFormatter": "biomejs.biome",
-  "eslint.format.enable": true,
-  "editor.formatOnSave": true
+	"tailwindCSS.experimental.configFile": "packages/ui/src/styles/globals.css",
+	"typescript.tsdk": "node_modules/typescript/lib",
+	"editor.codeActionsOnSave": {
+		"source.fixAll.biome": "explicit",
+		"source.organizeImports.biome": "explicit"
+	}
 }

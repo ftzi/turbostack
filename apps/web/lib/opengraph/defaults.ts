@@ -1,5 +1,5 @@
-import { Metadata } from "next"
-import { buildOGImageDescriptor } from "./og-params"
+import type { Metadata } from "next"
+import { buildOgImageDescriptor } from "./og-params"
 /**
  * Default metadata values
  */
@@ -19,7 +19,7 @@ export const DEFAULT_OPENGRAPH: Metadata["openGraph"] = {
 	type: "website" as const,
 	locale: "en_US",
 	images: [
-		buildOGImageDescriptor({
+		buildOgImageDescriptor({
 			data: { type: "default" },
 		}),
 	],

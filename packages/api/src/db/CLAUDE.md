@@ -44,9 +44,15 @@ export const user = pgTable(
 ### Schema Workflow
 
 1. **Modify Schema:** Edit `schema.ts` directly
-2. **Generate Migration:** Run `bun db:generate` (from project root, or `bun run db:generate` from `packages/api`)
-3. **Apply Migration:** Run `bun db:migrate` (from project root, or `bun run db:migrate` from `packages/api`)
+2. **Generate Migration:** **USER MUST RUN** `bun db:generate` manually - NEVER run this via Claude Code (requires interactive input for renames/drops)
+3. **Apply Migration:** **USER MUST RUN** `bun db:migrate` manually - NEVER run via Claude Code
 4. **NEVER:** Run `@better-auth/cli generate` - it will remove your indexes
+
+**CRITICAL for Claude Code:**
+- **NEVER execute `bun db:generate`, `drizzle-kit generate`, or any Drizzle Kit commands**
+- These commands require interactive user input (confirm table renames, drops, etc.)
+- After schema changes, ALWAYS prompt the user: "Schema changes complete. Please run: `bun db:generate`"
+- Let the user handle migration generation and application manually
 
 **Note:** Root commands delegate to `packages/api` where Drizzle config and migrations are located.
 

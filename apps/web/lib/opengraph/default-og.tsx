@@ -1,9 +1,9 @@
-import { Logo } from "@workspace/ui/components/Logo"
+import { Logo } from "@workspace/ui/components/logo"
 
-import { OGWrapper } from "./og-wrapper"
+import { OgWrapper } from "./og-wrapper"
 
-export const DefaultOG = () => (
-	<OGWrapper>
+export const DefaultOg = () => (
+	<OgWrapper>
 		<Logo height={120} />
-	</OGWrapper>
+	</OgWrapper>
 )

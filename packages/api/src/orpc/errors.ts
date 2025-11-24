@@ -16,7 +16,7 @@ export const commonErrors = {
 	 * Authentication required error
 	 * Use this when a user tries to access a protected resource without authentication
 	 */
-	UNAUTHORIZED: {
+	unauthorized: {
 		data: z.object({
 			message: z.string(),
 		}),
@@ -25,7 +25,7 @@ export const commonErrors = {
 	 * Generic operation failure error
 	 * Use this for database failures, external API errors, etc.
 	 */
-	OPERATION_FAILED: {
+	operationFailed: {
 		data: z.object({
 			message: z.string(),
 		}),

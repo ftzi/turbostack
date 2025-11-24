@@ -10,7 +10,7 @@ export const OG_DEFAULTS = {
 	revalidate: 3600,
 } as const
 
-type OGWrapperProps = {
+type OgWrapperProps = {
 	children: ReactNode
 	style?: CSSProperties
 }
@@ -20,7 +20,7 @@ type OGWrapperProps = {
  * White background, centered flex layout with Inter font
  * Use this for consistent OG image styling across the app
  */
-export const OGWrapper = ({ children, style }: OGWrapperProps) => (
+export const OgWrapper = ({ children, style }: OgWrapperProps) => (
 	<div
 		style={{
 			backgroundColor: "#FFF",

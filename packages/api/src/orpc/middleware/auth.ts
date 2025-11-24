@@ -20,9 +20,9 @@ const authMiddleware = implement(contract)
 		})
 
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		if (!sessionData?.session || !sessionData.user) {
-			// Throws UNAUTHORIZED error (defined in commonErrors)
-			throw new ORPCError("UNAUTHORIZED", {
+		if (!(sessionData?.session && sessionData.user)) {
+			// Throws unauthorized error (defined in commonErrors)
+			throw new ORPCError("unauthorized", {
 				message: "You must be logged in to access this resource",
 			})
 		}

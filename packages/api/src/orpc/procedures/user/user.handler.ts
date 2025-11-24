@@ -1,7 +1,7 @@
 import "server-only"
 import { eq } from "drizzle-orm"
 import { db } from "../../../db/index"
-import { user } from "../../../db/schema"
+import { users } from "../../../db/schema"
 import { authorized } from "../../middleware/auth"
 
 /**
@@ -9,8 +9,8 @@ import { authorized } from "../../middleware/auth"
  * Returns the authenticated user's data from the database
  */
 export const getCurrentUser = authorized.auth.getCurrentUser.handler(async ({ context }) => {
-	const userData = await db.query.user.findFirst({
-		where: eq(user.id, context.user.id),
+	const userData = await db.query.users.findFirst({
+		where: eq(users.id, context.user.id),
 	})
 
 	if (!userData) {
@@ -51,10 +51,10 @@ export const updateUser = authorized.auth.updateUser.handler(async ({ context, i
 		updateData.image = input.image
 	}
 
-	const [updatedUser] = await db.update(user).set(updateData).where(eq(user.id, context.user.id)).returning()
+	const [updatedUser] = await db.update(users).set(updateData).where(eq(users.id, context.user.id)).returning()
 
 	if (!updatedUser) {
-		throw errors.OPERATION_FAILED({
+		throw errors.operationFailed({
 			data: { message: "Failed to update user profile" },
 		})
 	}

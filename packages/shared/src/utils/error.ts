@@ -22,22 +22,14 @@
  * }
  * ```
  */
-export const getErrorMessage = (
-	error: unknown,
-	fallbackMessage = "An error happened",
-): string => {
+export const getErrorMessage = (error: unknown, fallbackMessage = "An error happened"): string => {
 	if (typeof error === "string") {
-		return error;
+		return error
 	}
 
-	if (
-		error &&
-		typeof error === "object" &&
-		"message" in error &&
-		typeof error.message === "string"
-	) {
-		return error.message;
+	if (error && typeof error === "object" && "message" in error && typeof error.message === "string") {
+		return error.message
 	}
 
-	return fallbackMessage;
-};
+	return fallbackMessage
+}

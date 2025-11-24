@@ -1,16 +1,16 @@
 import { z } from "zod"
 import { OG_DEFAULTS, OG_SIZES } from "./og-wrapper"
 
-const defaultOGParamsSchema = z.object({
+const defaultOgParamsSchema = z.object({
 	type: z.literal("default"),
 })
 
-export const ogParamsSchema = z.discriminatedUnion("type", [defaultOGParamsSchema])
+export const ogParamsSchema = z.discriminatedUnion("type", [defaultOgParamsSchema])
 
-export type OGParams = z.infer<typeof ogParamsSchema>
-export type DefaultOGParams = z.infer<typeof defaultOGParamsSchema>
+export type OgParams = z.infer<typeof ogParamsSchema>
+export type DefaultOgParams = z.infer<typeof defaultOgParamsSchema>
 
-export const buildOGImageDescriptor = ({ data, alt }: { data: OGParams; alt?: string }) => {
+export const buildOgImageDescriptor = ({ data, alt }: { data: OgParams; alt?: string }) => {
 	const baseUrl = process.env.NEXT_PUBLIC_URL ?? ""
 	const searchParams = new URLSearchParams()
 

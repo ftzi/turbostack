@@ -14,6 +14,41 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **context7** - Library documentation and code generation
 - Team members will be prompted to trust these servers on first use
 
+## AI Assistant Workflow
+
+**Sub-Agent Usage (Proactive):**
+Use specialized sub-agents automatically for these scenarios - do NOT run direct searches:
+
+- **Explore Agent** - For codebase exploration and understanding:
+  - "Where is X handled?" / "How does Y work?" / "What's the structure of Z?"
+  - "Show me the authentication flow" / "Explain the API architecture"
+  - Questions about multiple files or complex patterns
+  - Use `thoroughness: "medium"` by default, `"very thorough"` for complex investigations
+
+- **Plan Agent** - Before implementing multi-step changes:
+  - Adding new features that touch multiple files
+  - Refactoring that affects multiple domains
+  - Complex migrations or architectural changes
+  - Use this BEFORE starting implementation to break down work
+
+- **General-Purpose Agent** - For complex searches requiring iteration:
+  - Finding patterns across the codebase that may require multiple search attempts
+  - When the first search attempt doesn't yield clear results
+  - Open-ended investigations that need refinement
+
+**Implementation Pattern:**
+1. For exploratory questions → Spawn Explore agent first
+2. For complex implementations → Use Plan agent to break down work
+3. Track all work with TodoWrite tool
+4. Implement step-by-step
+5. ALWAYS run `bun ok` after completion
+
+**Task Tracking:**
+- Use TodoWrite for all multi-step tasks (3+ steps)
+- Mark tasks `in_progress` before starting work
+- Mark `completed` immediately after finishing each task
+- Keep descriptions clear and actionable
+
 ## Maintaining This File
 
 Update CLAUDE.md when you make changes that affect:
@@ -21,7 +56,7 @@ Update CLAUDE.md when you make changes that affect:
 - **Development Workflow**: New commands, build process changes, testing setup
 - **Key Patterns & Conventions**: Environment variables, authentication, API patterns, file organization
 - **Tool & Library Migrations**: Package manager changes, major dependency updates, framework migrations
-- **Configuration Changes**: TypeScript, ESLint, or build tool configurations that affect how developers work
+- **Configuration Changes**: TypeScript, Biome, or build tool configurations that affect how developers work
 
 Do NOT update for:
 - Individual bug fixes or routine component additions
@@ -44,7 +79,7 @@ Turbostack is a monorepo based on shadcn and NextStack templates. It uses Turbor
 
 ### Type Checking & Linting
 - `bun ts` - Type check all workspaces with TypeScript
-- `bun lint` - Format with Biome + lint with ESLint across all workspaces
+- `bun lint` - Format and lint with Biome across all workspaces
 - `bun ok` - Run both ts and lint (quick verification)
 - `bun knip` - Find unused files, dependencies, and exports (Reference: https://knip.dev)
   - Note: Knip may report infrastructure files (auth-client.ts, orpc/client.ts, etc.) as unused until features are built
@@ -68,7 +103,7 @@ Turbostack is a monorepo based on shadcn and NextStack templates. It uses Turbor
 - `bun build` - Build the Next.js app
 - `bun ts` - Type check web app
 - `bun tsw` - TypeScript watch mode for web app
-- `bun lint` - Format with Biome + lint with ESLint (auto-fix enabled)
+- `bun lint` - Format and lint with Biome (auto-fix enabled)
 - `bun lint:dry` - Check formatting and linting without auto-fix
 
 ## Architecture
@@ -85,7 +120,6 @@ This is a Turborepo monorepo with two main workspace types:
   - **email/** - Email templates using react-email
   - **shared/** - Generic utilities and helpers (error handling, etc.)
   - **ui/** - Shared UI component library (shadcn-based)
-  - **eslint-config/** - Shared ESLint configurations
   - **typescript-config/** - Shared TypeScript configurations
 
 ### Package Management
@@ -293,9 +327,11 @@ try {
 
 ### Linting & Code Quality
 
-- **Biome** - Code formatting only (linting disabled)
-- **ESLint** - TypeScript and React linting, all errors converted to warnings via `eslint-plugin-only-warn`
-- Shared ESLint configs in `packages/eslint-config/` (base, Next.js, React)
+- **Biome** - Code formatting and linting (TypeScript, React, accessibility)
+  - Comprehensive rules for correctness, complexity, and suspicious patterns
+  - React-specific rules: hooks at top level, exhaustive dependencies
+  - Accessibility (a11y) rules enabled
+  - All unsafe fixes require explicit `--unsafe` flag
 
 ### TypeScript Configuration
 
@@ -306,7 +342,7 @@ try {
 
 ### Turborepo Configuration
 
-- All environment variables must be declared in `turbo.json` under `globalEnv` (enforced by ESLint)
+- All environment variables must be declared in `turbo.json` under `globalEnv`
 - Tasks configured in `turbo.json` with dependency chains for build, lint, and type checking
 
 ## Adding New UI Components
@@ -334,8 +370,13 @@ Use shadcn CLI to add components: `npx shadcn@latest add <component-name>`
   - Always navigate to the root first: `cd <project-root> && bun ok`
   - This is a Turborepo monorepo - the command must run from root to check all packages
 - `bun ok` runs both type checking and linting, leverages Turbo cache, and is always preferred
+- **NEVER run Drizzle Kit commands directly** - `bun db:generate`, `drizzle-kit generate`, `drizzle-kit migrate`, etc. require interactive input
+  - After making schema changes, ALWAYS prompt the user to run `bun db:generate` manually
+  - Format: "Schema changes complete. Please run: `bun db:generate`"
+  - Never attempt to run these commands - they need user interaction for table renames/drops
 - NEVER commit or push code - all git operations must be explicitly requested by the user
 - NEVER run `git stash` or `git stash pop` - do not hide or restore changes without explicit instruction
+- **Use sub-agents proactively** - Spawn Explore agents for codebase questions, Plan agents for complex implementations (see AI Assistant Workflow section)
 
 **Code Principles:** Follow Clean Code + SOLID + KISS + YAGNI
 - **Clean Code**: Self-documenting, readable code with meaningful names and single responsibility
@@ -416,6 +457,10 @@ try {
 - When asked to implement something, implement it FULLY and completely
 - NEVER add placeholder comments like "to be implemented later" or "this will be done when API supports it"
 - If something cannot be completed, explain why explicitly rather than leaving incomplete code
+- **NEVER create documentation files** - No `.md` files, no READMEs, no CHANGELOG files, no migration guides, NOTHING unless explicitly requested
+  - This includes: CHANGELOG.md, MIGRATION.md, NOTES.md, GUIDE.md, or any other documentation
+  - The only exception: updating existing CLAUDE.md when architecture changes
+  - If you want to communicate what changed, tell the user directly - don't create files
 
 ## Important Notes
 
@@ -424,6 +469,6 @@ try {
 - **React Version:** Uses React 19.2.0 (latest)
 - **Route Groups:** Next.js routes use parentheses for grouping (e.g., `(home)/page.tsx`)
 - **Server Components:** Default to Server Components; use `"use client"` directive only when needed
-- **Import Paths:** Use workspace aliases (`@workspace/ui`, `@workspace/eslint-config`, etc.)
+- **Import Paths:** Use workspace aliases (`@workspace/ui`, `@workspace/typescript-config`, etc.)
 - **Authentication:** Configured for Google OAuth (client ID and secret in server env)
 - **API Routes with JSX:** Use `.tsx` extension for API routes that contain JSX (required for Biome formatting)

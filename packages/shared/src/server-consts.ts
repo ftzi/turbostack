@@ -4,7 +4,6 @@ import { z } from "zod"
 import { consts, env } from "./consts"
 
 /** You can add another payment processor here you might want to use. Removing the ones you don't use is not required. */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const paymentProcessors = ["polar", "stripe"] as const
 
 export type PaymentProcessor = (typeof paymentProcessors)[number]

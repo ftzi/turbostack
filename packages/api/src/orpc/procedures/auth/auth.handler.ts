@@ -6,10 +6,8 @@ import { authorized } from "../../middleware/auth"
  * Returns message with timestamp and user ID
  * Requires authentication
  */
-export const authPing = authorized.auth.ping.handler(({ context }) => {
-	return {
-		message: "pong",
-		timestamp: Date.now(),
-		userId: context.user.id,
-	}
-})
+export const authPing = authorized.auth.ping.handler(({ context }) => ({
+	message: "pong",
+	timestamp: Date.now(),
+	userId: context.user.id,
+}))

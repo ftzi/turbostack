@@ -1,24 +1,21 @@
 {
-  "name": "@workspace/shared",
-  "version": "0.0.0",
-  "type": "module",
-  "private": true,
-  "scripts": {
-    "lint": "eslint . --max-warnings 0"
-  },
-  "dependencies": {
-    "@t3-oss/env-nextjs": "0.13.8",
-    "server-only": "catalog:",
-    "zod": "catalog:"
-  },
-  "devDependencies": {
-    "@workspace/eslint-config": "workspace:*",
-    "@workspace/typescript-config": "workspace:*",
-    "typescript": "catalog:"
-  },
-  "exports": {
-    "./consts": "./src/consts.ts",
-    "./server-consts": "./src/serverConsts.ts",
-    "./utils/error": "./src/utils/error.ts"
-  }
+	"name": "@workspace/shared",
+	"version": "0.0.0",
+	"type": "module",
+	"private": true,
+	"scripts": {},
+	"dependencies": {
+		"@t3-oss/env-nextjs": "0.13.8",
+		"server-only": "catalog:",
+		"zod": "catalog:"
+	},
+	"devDependencies": {
+		"@workspace/typescript-config": "workspace:*",
+		"typescript": "catalog:"
+	},
+	"exports": {
+		"./consts": "./src/consts.ts",
+		"./server-consts": "./src/server-consts.ts",
+		"./utils/error": "./src/utils/error.ts"
+	}
 }

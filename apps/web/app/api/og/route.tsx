@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og"
 import type { NextRequest } from "next/server"
 
-import { DefaultOG } from "@/lib/opengraph/default-og"
+import { DefaultOg } from "@/lib/opengraph/default-og"
 import { ogParamsSchema } from "@/lib/opengraph/og-params"
 import { OG_SIZES } from "@/lib/opengraph/og-wrapper"
 
@@ -62,7 +62,7 @@ export const revalidate = 3600
  *    ```
  */
 
-const createDefaultOGResponse = () => new ImageResponse(<DefaultOG />, OG_SIZES.opengraph)
+const createDefaultOgResponse = () => new ImageResponse(<DefaultOg />, OG_SIZES.opengraph)
 
 export const GET = (request: NextRequest) => {
 	try {
@@ -73,12 +73,12 @@ export const GET = (request: NextRequest) => {
 
 		if (!validationResult.success) {
 			console.error("Invalid OG params:", validationResult.error)
-			return createDefaultOGResponse()
+			return createDefaultOgResponse()
 		}
 
-		return createDefaultOGResponse()
+		return createDefaultOgResponse()
 	} catch (error) {
 		console.error("Error generating OG image:", error)
-		return createDefaultOGResponse()
+		return createDefaultOgResponse()
 	}
 }

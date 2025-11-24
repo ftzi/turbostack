@@ -1,5 +1,5 @@
 import { consts } from "@workspace/shared/consts"
-import { Logo } from "@workspace/ui/components/Logo"
+import { Logo } from "@workspace/ui/components/logo"
 import { ImageResponse } from "next/og"
 
 // https://nextjs.org/docs/app/api-reference/file-conventions/metadata/opengraph-image#generate-images-using-code-js-ts-tsx
@@ -26,7 +26,7 @@ const fontFamily = "Poppins"
 const text = undefined as string | undefined
 
 /** Used both in this file and in the `twitter-image.tsx`, as in it, just the size changes. */
-export const getOpengraphImage = async (size: { width: number; height: number }): Promise<ImageResponse> =>
+export const getOpengraphImage = async (imageSize: { width: number; height: number }): Promise<ImageResponse> =>
 	new ImageResponse(
 		<div
 			style={{
@@ -54,7 +54,7 @@ export const getOpengraphImage = async (size: { width: number; height: number })
 			)}
 		</div>,
 		{
-			...size,
+			...imageSize,
 			fonts: text
 				? [
 						{
@@ -71,10 +71,12 @@ export default async function Image() {
 }
 
 // https://vercel.com/guides/using-custom-font
-const loadGoogleFont = async (font: string, text: string) => {
-	const url = `https://fonts.googleapis.com/css2?family=${font}&text=${encodeURIComponent(text)}`
+const FONT_RESOURCE_REGEX = /src: url\((.+)\) format\('(opentype|truetype)'\)/
+
+const loadGoogleFont = async (font: string, fontText: string) => {
+	const url = `https://fonts.googleapis.com/css2?family=${font}&text=${encodeURIComponent(fontText)}`
 	const css = await (await fetch(url)).text()
-	const resource = /src: url\((.+)\) format\('(opentype|truetype)'\)/.exec(css)
+	const resource = FONT_RESOURCE_REGEX.exec(css)
 
 	if (resource?.[1]) {
 		const response = await fetch(resource[1])

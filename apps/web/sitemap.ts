@@ -1,6 +1,6 @@
 import { env } from "@workspace/shared/consts"
 import type { MetadataRoute } from "next"
-import { publicPaths } from "@/lib/publicRoutes"
+import { publicPaths } from "@/lib/public-routes"
 
 /**
  * This is a special Next.js file which helps Search Engine to index your website.

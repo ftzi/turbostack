@@ -7,15 +7,13 @@
 		"./auth": "./src/auth.ts",
 		"./logger": "./src/logger.ts",
 		"./db": "./src/db/index.ts",
-		"./orpc/errors": "./src/orpc/errors.ts",
+		"./orpc/router": "./src/orpc/router.ts",
+		"./orpc/server-client": "./src/orpc/server-client.ts",
 		"./orpc/contract": "./src/orpc/contract/index.ts",
-		"./orpc/procedures/ping/ping.contract": "./src/orpc/procedures/ping/ping.contract.ts",
-		"./orpc/procedures/auth/auth.contract": "./src/orpc/procedures/auth/auth.contract.ts",
-		"./orpc/procedures/user/user.contract": "./src/orpc/procedures/user/user.contract.ts",
-		"./orpc/router": "./src/orpc/router.ts"
+		"./orpc/errors": "./src/orpc/errors.ts",
+		"./orpc/*": "./src/orpc/*"
 	},
 	"scripts": {
-		"lint": "eslint . --max-warnings 0",
 		"ts": "tsc --noEmit",
 		"db:studio": "drizzle-kit studio",
 		"db:generate": "drizzle-kit generate",
@@ -36,7 +34,6 @@
 		"zod": "catalog:"
 	},
 	"devDependencies": {
-		"@workspace/eslint-config": "workspace:*",
 		"@workspace/typescript-config": "workspace:*",
 		"drizzle-kit": "0.31.7",
 		"typescript": "catalog:"

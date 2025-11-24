@@ -31,8 +31,6 @@ const updateUserOutputSchema = userSchema
  * User management contracts
  */
 export const userContract = {
-	getCurrentUser: baseContract
-		.input(getCurrentUserInputSchema)
-		.output(getCurrentUserOutputSchema),
+	getCurrentUser: baseContract.input(getCurrentUserInputSchema).output(getCurrentUserOutputSchema),
 	updateUser: baseContract.input(updateUserInputSchema).output(updateUserOutputSchema),
 }

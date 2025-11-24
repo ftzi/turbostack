@@ -25,7 +25,7 @@ export function createQueryClient() {
  * Reference: https://orpc.unnoq.com/docs/client/rpc-link
  */
 export const client = new RPCLink<Router>({
-	url: typeof window !== "undefined" ? `${window.location.origin}/api/rpc` : `http://localhost:3000/api/rpc`,
+	url: typeof window !== "undefined" ? `${window.location.origin}/api/rpc` : "http://localhost:3000/api/rpc",
 	headers: async () => {
 		if (typeof window !== "undefined") {
 			return {}

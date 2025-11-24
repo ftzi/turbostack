@@ -80,4 +80,6 @@ export const publicRoutes = {
 export type PublicPath = (typeof publicRoutes)[keyof typeof publicRoutes]["href"]
 
 /** Doesn't include URL fragments (e.g.: `/#faq`). */
-export const publicPaths = Object.values(publicRoutes as Record<string, PublicRoute>).filter((route) => !route.href.includes("#"))
+export const publicPaths = Object.values(publicRoutes as Record<string, PublicRoute>).filter(
+	(route) => !route.href.includes("#"),
+)

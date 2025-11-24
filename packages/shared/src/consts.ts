@@ -31,7 +31,7 @@ export const consts = {
 	// } satisfies Partial<Record<SocialMedia, string>>,
 
 	email: {
-		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+		// biome-ignore lint/style/noNonNullAssertion: validated by createEnv
 		contact: emailEnabled ? `contact@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN!}` : undefined,
 	},
 
@@ -74,8 +74,7 @@ export const env = createEnv({
 			(process.env.NEXT_PUBLIC_VERCEL_URL
 				? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}` // Preview URL automatically set by Vercel
 				: "http://localhost:3000"), // Local Development URL
-		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		NEXT_PUBLIC_EMAIL_DOMAIN: (emailEnabled ? process.env.NEXT_PUBLIC_EMAIL_DOMAIN : disabledEnv)!,
+		NEXT_PUBLIC_EMAIL_DOMAIN: emailEnabled ? (process.env.NEXT_PUBLIC_EMAIL_DOMAIN ?? disabledEnv) : disabledEnv,
 	},
 	/** Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. Useful for Docker builds.  */
 	skipValidation: Boolean(process.env.SKIP_ENV_VALIDATION),

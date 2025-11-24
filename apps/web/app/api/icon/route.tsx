@@ -1,4 +1,4 @@
-import { LogoIcon } from "@workspace/ui/components/LogoIcon"
+import { LogoIcon } from "@workspace/ui/components/logo-icon"
 import { ImageResponse } from "next/og"
 import type { NextRequest } from "next/server"
 

@@ -1,5 +1,6 @@
 import "server-only"
-import { createEmailSender, MagicLinkEmail } from "@workspace/email"
+import { MagicLinkEmail } from "@workspace/email/emails/magic-link"
+import { createEmailSender } from "@workspace/email/send"
 import { consts, env } from "@workspace/shared/consts"
 import { serverConsts, serverEnv } from "@workspace/shared/server-consts"
 import { betterAuth } from "better-auth"

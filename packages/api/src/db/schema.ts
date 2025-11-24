@@ -1,8 +1,8 @@
 import { boolean, index, pgTable, text, timestamp } from "drizzle-orm/pg-core"
 
 // Reference: https://www.better-auth.com/docs/guides/optimizing-for-performance#database-optimizations
-export const user = pgTable(
-	"user",
+export const users = pgTable(
+	"users",
 	{
 		id: text("id").primaryKey(),
 		name: text("name").notNull(),
@@ -16,8 +16,8 @@ export const user = pgTable(
 	(table) => [index("user_email_idx").on(table.email)],
 )
 
-export const session = pgTable(
-	"session",
+export const sessions = pgTable(
+	"sessions",
 	{
 		id: text("id").primaryKey(),
 		expiresAt: timestamp("expiresAt").notNull(),
@@ -28,20 +28,20 @@ export const session = pgTable(
 		userAgent: text("userAgent"),
 		userId: text("userId")
 			.notNull()
-			.references(() => user.id),
+			.references(() => users.id),
 	},
 	(table) => [index("session_user_id_idx").on(table.userId), index("session_token_idx").on(table.token)],
 )
 
-export const account = pgTable(
-	"account",
+export const accounts = pgTable(
+	"accounts",
 	{
 		id: text("id").primaryKey(),
 		accountId: text("accountId").notNull(),
 		providerId: text("providerId").notNull(),
 		userId: text("userId")
 			.notNull()
-			.references(() => user.id),
+			.references(() => users.id),
 		accessToken: text("accessToken"),
 		refreshToken: text("refreshToken"),
 		idToken: text("idToken"),
@@ -55,8 +55,8 @@ export const account = pgTable(
 	(table) => [index("account_user_id_idx").on(table.userId)],
 )
 
-export const verification = pgTable(
-	"verification",
+export const verifications = pgTable(
+	"verifications",
 	{
 		id: text("id").primaryKey(),
 		identifier: text("identifier").notNull(),

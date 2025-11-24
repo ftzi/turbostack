@@ -1,5 +1,5 @@
 import { consts } from "@workspace/shared/consts"
-import { Logo } from "@workspace/ui/components/Logo.js"
+import { Logo } from "@workspace/ui/components/logo.js"
 import Link from "next/link"
 import type { SVGProps } from "react"
 
