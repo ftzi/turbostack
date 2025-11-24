@@ -8,6 +8,11 @@
 		"./logger": "./src/logger.ts",
 		"./consts": "./src/consts.ts",
 		"./db": "./src/db/index.ts",
+		"./orpc/errors": "./src/orpc/errors.ts",
+		"./orpc/contract": "./src/orpc/contract/index.ts",
+		"./orpc/procedures/ping/ping.contract": "./src/orpc/procedures/ping/ping.contract.ts",
+		"./orpc/procedures/auth/auth.contract": "./src/orpc/procedures/auth/auth.contract.ts",
+		"./orpc/procedures/user/user.contract": "./src/orpc/procedures/user/user.contract.ts",
 		"./orpc/router": "./src/orpc/router.ts"
 	},
 	"scripts": {
@@ -16,10 +21,10 @@
 	},
 	"dependencies": {
 		"@neondatabase/serverless": "1.0.2",
+		"@orpc/contract": "catalog:",
 		"@orpc/experimental-pino": "1.11.3",
 		"@orpc/server": "catalog:",
 		"@t3-oss/env-nextjs": "0.13.8",
-		"@workspace/api-contract": "workspace:*",
 		"@workspace/email": "workspace:*",
 		"better-auth": "1.4.0",
 		"drizzle-orm": "0.44.7",

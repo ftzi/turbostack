@@ -4,9 +4,7 @@
 		"paths": {
 			"*": ["./*"],
 			"@/*": ["./*"],
-			"@workspace/ui/*": ["../../packages/ui/src/*"],
-			"@workspace/api-contract": ["../../packages/api-contract/src"],
-			"@workspace/api-contract/*": ["../../packages/api-contract/src/*"]
+			"@workspace/ui/*": ["../../packages/ui/src/*"]
 		},
 		"plugins": [
 			{

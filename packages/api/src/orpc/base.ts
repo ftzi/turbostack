@@ -1,8 +1,8 @@
 import "server-only"
 import { getLogger } from "@orpc/experimental-pino"
 import { implement } from "@orpc/server"
-import { contract } from "@workspace/api-contract/contract"
 import type { Logger } from "pino"
+import { contract } from "./contract/index.js"
 
 /**
  * Base context type with headers and lazy-loaded logger

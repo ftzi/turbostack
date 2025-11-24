@@ -1,7 +1,8 @@
-import "server-only";
-import { os } from "./base.js";
-import { authPing, ping } from "./procedures/auth.js";
-import { getCurrentUser, updateUser } from "./procedures/user.js";
+import "server-only"
+import { os } from "./base.js"
+import { authPing } from "./procedures/auth/auth.handler.js"
+import { ping } from "./procedures/ping/ping.handler.js"
+import { getCurrentUser, updateUser } from "./procedures/user/user.handler.js"
 
 /**
  * Main oRPC router
@@ -15,6 +16,6 @@ export const router = os.router({
 		getCurrentUser,
 		updateUser,
 	},
-});
+})
 
-export type Router = typeof router;
+export type Router = typeof router

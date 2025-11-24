@@ -21,7 +21,7 @@
 		"@t3-oss/env-nextjs": "0.13.8",
 		"@tailwindcss/postcss": "4.1.17",
 		"@tanstack/react-query": "5.90.10",
-		"@workspace/api-contract": "workspace:*",
+		"@workspace/api": "workspace:*",
 		"@workspace/email": "workspace:*",
 		"@workspace/ui": "workspace:*",
 		"better-auth": "1.4.0",

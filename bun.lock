@@ -27,7 +27,7 @@
         "@t3-oss/env-nextjs": "0.13.8",
         "@tailwindcss/postcss": "4.1.17",
         "@tanstack/react-query": "5.90.10",
-        "@workspace/api-contract": "workspace:*",
+        "@workspace/api": "workspace:*",
         "@workspace/email": "workspace:*",
         "@workspace/ui": "workspace:*",
         "better-auth": "1.4.0",
@@ -61,29 +61,16 @@
       "version": "0.0.0",
       "dependencies": {
         "@neondatabase/serverless": "1.0.2",
+        "@orpc/contract": "catalog:",
         "@orpc/experimental-pino": "1.11.3",
         "@orpc/server": "catalog:",
         "@t3-oss/env-nextjs": "0.13.8",
-        "@workspace/api-contract": "workspace:*",
         "@workspace/email": "workspace:*",
         "better-auth": "1.4.0",
         "drizzle-orm": "0.44.7",
         "next": "16.0.1",
         "pino": "10.1.0",
         "server-only": "0.0.1",
-        "zod": "catalog:",
-      },
-      "devDependencies": {
-        "@workspace/eslint-config": "workspace:*",
-        "@workspace/typescript-config": "workspace:*",
-        "typescript": "catalog:",
-      },
-    },
-    "packages/api-contract": {
-      "name": "@workspace/api-contract",
-      "version": "0.0.0",
-      "dependencies": {
-        "@orpc/contract": "catalog:",
         "zod": "catalog:",
       },
       "devDependencies": {
@@ -988,8 +975,6 @@
     "@typescript-eslint/visitor-keys": ["@typescript-eslint/visitor-keys@8.46.3", "", { "dependencies": { "@typescript-eslint/types": "8.46.3", "eslint-visitor-keys": "^4.2.1" } }, "sha512-uk574k8IU0rOF/AjniX8qbLSGURJVUCeM5e4MIMKBFFi8weeiLrG1fyQejyLXQpRZbU/1BuQasleV/RfHC3hHg=="],
 
     "@workspace/api": ["@workspace/api@workspace:packages/api"],
-
-    "@workspace/api-contract": ["@workspace/api-contract@workspace:packages/api-contract"],
 
     "@workspace/email": ["@workspace/email@workspace:packages/email"],
 

@@ -1,13 +1,16 @@
 import "server-only"
 import { implement, ORPCError } from "@orpc/server"
-import { contract } from "@workspace/api-contract/contract"
 import { auth, type Session, type User } from "../../auth.js"
 import { os } from "../base.js"
+import { contract } from "../contract/index.js"
 
 /**
  * Better Auth middleware for oRPC
  * Reference: https://www.better-auth.com/docs/guides/optimizing-for-performance#ssr-optimizations
  * Reference: https://orpc.unnoq.com/docs/middleware
+ *
+ * Note: Middleware uses ORPCError to throw errors defined in commonErrors (errors.ts)
+ * The UNAUTHORIZED error is defined in commonErrors and thrown here using ORPCError API
  */
 const authMiddleware = implement(contract)
 	.$context<{ headers: Headers }>()
@@ -18,6 +21,7 @@ const authMiddleware = implement(contract)
 
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		if (!sessionData?.session || !sessionData.user) {
+			// Throws UNAUTHORIZED error (defined in commonErrors)
 			throw new ORPCError("UNAUTHORIZED", {
 				message: "You must be logged in to access this resource",
 			})

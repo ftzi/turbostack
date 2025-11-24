@@ -71,8 +71,7 @@ This is a Turborepo monorepo with two main workspace types:
   - **web/** - Next.js 16 app (frontend: pages, components, UI)
 
 - **packages/** - Shared packages
-  - **api/** - Backend logic (Better Auth, oRPC, database, server config)
-  - **api-contract/** - oRPC contract definitions and Zod schemas
+  - **api/** - Backend logic (Better Auth, oRPC, database, server config, contracts)
   - **email/** - Email templates using react-email
   - **shared/** - Generic utilities and helpers (error handling, etc.)
   - **ui/** - Shared UI component library (shadcn-based)
@@ -119,10 +118,12 @@ This is a Turborepo monorepo with two main workspace types:
 - Note: Use `.tsx` extension for API routes containing JSX (required for Biome formatting)
 
 **oRPC API (Type-Safe RPC):**
-- Uses contract-first pattern with shared Zod schemas in `packages/api-contract`
-- Contract definitions in `packages/api-contract/src/contract.ts` using `oc` from `@orpc/contract`
-- Schemas organized in `packages/api-contract/src/schemas/` (auth.ts, user.ts, errors.ts)
-- Generic `OPERATION_FAILED` error defined at contract level for consistent error handling
+- Uses contract-first pattern with contracts collocated directly with their handlers
+- Each procedure domain has its own directory: `procedures/{domain}/{domain}.contract.ts` + `{domain}.handler.ts`
+- Main contract in `packages/api/src/orpc/contract/index.ts` composes domain-specific contracts
+- Common errors defined in `packages/api/src/orpc/errors.ts` (`UNAUTHORIZED`, `OPERATION_FAILED`)
+- All domain contracts import and use `commonErrors` from `errors.ts`
+- Middleware throws errors using `ORPCError` API that match contract-defined errors
 - Server implementation in `packages/api/src/orpc/` using `implement(contract)`
 - Base implementer in `packages/api/src/orpc/base.ts` with logger middleware applied
 - Middleware composition: Logger middleware → Auth middleware (Reference: https://orpc.unnoq.com/docs/middleware)
@@ -180,11 +181,22 @@ This is a Turborepo monorepo with two main workspace types:
   - `index.ts` - Database client using Neon serverless
   - `CLAUDE.md` - Critical documentation about manual index management
 - `src/orpc/` - oRPC server implementation
+  - `errors.ts` - Common error definitions (UNAUTHORIZED, OPERATION_FAILED) shared across all procedures
+  - `contract/index.ts` - Main contract that composes domain contracts
+  - `procedures/` - Domain-organized procedures (contracts + handlers side-by-side)
+    - `ping/` - Public ping endpoint
+      - `ping.contract.ts` - Ping contract definition
+      - `ping.handler.ts` - Ping handler implementation
+    - `auth/` - Authentication endpoints
+      - `auth.contract.ts` - Auth contract definition
+      - `auth.handler.ts` - Auth handler implementations
+    - `user/` - User management endpoints
+      - `user.contract.ts` - User contract definition
+      - `user.handler.ts` - User handler implementations
   - `base.ts` - Base implementer with logger middleware
   - `router.ts` - Main router exported to API routes
   - `server-client.ts` - Direct server-side client (no HTTP overhead)
-  - `middleware/auth.ts` - Better Auth session validation middleware
-  - `procedures/` - Procedure implementations (auth.ts, user.ts)
+  - `middleware/auth.ts` - Better Auth session validation middleware (throws UNAUTHORIZED error)
 
 **Exports:**
 - `@workspace/api/auth` - Better Auth instance
@@ -192,6 +204,9 @@ This is a Turborepo monorepo with two main workspace types:
 - `@workspace/api/server-consts` - Server-only constants
 - `@workspace/api/logger` - Pino logger instance
 - `@workspace/api/db` - Database client
+- `@workspace/api/orpc/errors` - Common error definitions (UNAUTHORIZED, OPERATION_FAILED)
+- `@workspace/api/orpc/contract` - Main oRPC contract definition (composed)
+- `@workspace/api/orpc/procedures/{domain}/{domain}.contract` - Domain-specific contracts
 - `@workspace/api/orpc/router` - Main oRPC router (type-only)
 - `@workspace/api/orpc/server-client` - Server-side oRPC client
 
@@ -200,13 +215,12 @@ This is a Turborepo monorepo with two main workspace types:
 - Client components import types only (e.g., `import type { auth } from "@workspace/api/auth"`)
 - All server code stays in this package - apps/web has no server/ directory
 
-### API Contract Package (packages/api-contract/)
-
-**Structure:** Contract-first oRPC setup with TypeScript Project References
-- `src/contract.ts` - Main contract definition using `@orpc/contract`
-- `src/schemas/` - Zod input/output schemas for all procedures
-- Uses `composite: true` in tsconfig.json for proper monorepo type references
+**Contract Organization:**
+- Each domain has its own directory with contract and handler side-by-side
+- Pattern: `procedures/{domain}/{domain}.contract.ts` + `{domain}.handler.ts`
+- Main contract composes domain contracts: `contract/index.ts` imports from procedure directories
 - All relative imports must use `.js` extensions (required by NodeNext module resolution)
+- Frontend imports: Use `@workspace/api/orpc/contract` for composed contract, or `@workspace/api/orpc/procedures/{domain}/{domain}.contract` for domain-specific contracts
 
 ### Shared Package (packages/shared/)
 

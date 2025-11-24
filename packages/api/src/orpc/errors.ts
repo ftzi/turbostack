@@ -1,7 +1,8 @@
+import { oc } from "@orpc/contract"
 import { z } from "zod"
 
 /**
- * Generic error schemas for oRPC procedures
+ * Common errors for all oRPC procedures
  * Reference: https://orpc.unnoq.com/docs/error-handling
  *
  * These errors can be reused across all procedures instead of defining
@@ -12,6 +13,15 @@ import { z } from "zod"
  */
 export const commonErrors = {
 	/**
+	 * Authentication required error
+	 * Use this when a user tries to access a protected resource without authentication
+	 */
+	UNAUTHORIZED: {
+		data: z.object({
+			message: z.string(),
+		}),
+	},
+	/**
 	 * Generic operation failure error
 	 * Use this for database failures, external API errors, etc.
 	 */
@@ -21,3 +31,9 @@ export const commonErrors = {
 		}),
 	},
 }
+
+/**
+ * Base contract with common errors applied
+ * Import this in your contract files instead of creating it repeatedly
+ */
+export const baseContract = oc.errors(commonErrors)
