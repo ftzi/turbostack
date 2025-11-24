@@ -1,8 +1,8 @@
 import "server-only"
 import { implement, ORPCError } from "@orpc/server"
 import { contract } from "@workspace/api-contract/contract"
-import { auth, type Session, type User } from "@/server/auth"
-import { os } from "../base"
+import { auth, type Session, type User } from "../../auth.js"
+import { os } from "../base.js"
 
 /**
  * Better Auth middleware for oRPC

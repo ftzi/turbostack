@@ -1,5 +1,5 @@
+import { env } from "@workspace/api/consts"
 import type { MetadataRoute } from "next"
-import { env } from "@/lib/consts"
 
 /**
  * This is a special Next.js file which tells search engine crawlers whether they can access a file or not.

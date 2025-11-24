@@ -1,8 +1,8 @@
 import "server-only"
 import { eq } from "drizzle-orm"
-import { db } from "@/server/db"
-import { user } from "@/server/db/schema"
-import { authorized } from "../middleware/auth"
+import { db } from "../../db/index.js"
+import { user } from "../../db/schema.js"
+import { authorized } from "../middleware/auth.js"
 
 /**
  * Get current user information

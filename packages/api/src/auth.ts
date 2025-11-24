@@ -4,9 +4,9 @@ import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { nextCookies } from "better-auth/next-js"
 import { magicLink } from "better-auth/plugins"
-import { consts, env } from "@/lib/consts"
-import { db } from "@/server/db"
-import { serverConsts, serverEnv } from "@/server/serverConsts"
+import { consts, env } from "./consts.js"
+import { db } from "./db/index.js"
+import { serverConsts, serverEnv } from "./serverConsts.js"
 
 if (!serverConsts.email.sender) {
 	throw new Error("Email sender not configured")

@@ -1,7 +1,7 @@
+import { consts } from "@workspace/api/consts"
 import { Logo } from "@workspace/ui/components/Logo.js"
 import Link from "next/link"
 import type { SVGProps } from "react"
-import { consts } from "@/lib/consts"
 
 /**
  * Quick usage component that uses the @/lib/resources/logo.svg and links to home.

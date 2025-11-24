@@ -68,11 +68,12 @@ Turbostack is a monorepo based on shadcn and NextStack templates. It uses Turbor
 This is a Turborepo monorepo with two main workspace types:
 
 - **apps/** - Application projects
-  - **web/** - Next.js 16 app (main web application)
-  - **email/** - Email templates using react-email
+  - **web/** - Next.js 16 app (frontend: pages, components, UI)
 
 - **packages/** - Shared packages
+  - **api/** - Backend logic (Better Auth, oRPC, database, server config)
   - **api-contract/** - oRPC contract definitions and Zod schemas
+  - **email/** - Email templates using react-email
   - **shared/** - Generic utilities and helpers (error handling, etc.)
   - **ui/** - Shared UI component library (shadcn-based)
   - **eslint-config/** - Shared ESLint configurations
@@ -100,15 +101,15 @@ This is a Turborepo monorepo with two main workspace types:
 - Two env files: `lib/consts.ts` (client + server) and `server/serverConsts.ts` (server-only)
 
 **Configuration:**
-- `lib/consts.ts` - App constants and client-side env vars (`NEXT_PUBLIC_*`)
-- `server/serverConsts.ts` - Server-only constants and env vars (database, API keys, payment processor config)
+- `packages/api/src/consts.ts` - App constants and client-side env vars (`NEXT_PUBLIC_*`)
+- `packages/api/src/serverConsts.ts` - Server-only constants and env vars (database, API keys, payment processor config)
 - Both use `createEnv()` from `@t3-oss/env-nextjs` for type-safe env validation
 - Pattern: Feature flags (e.g., `emailEnabled`) control which env vars are required via conditional Zod schemas
 
 **Email Integration:**
-- Email sending via Resend (configured in `server/serverConsts.ts`)
-- Email templates in `apps/email/templates/`
-- Main email logic in `apps/email/email.tsx`
+- Email sending via Resend (configured in `packages/api/src/serverConsts.ts`)
+- Email templates in `packages/email/emails/`
+- Main email logic in `packages/email/email.tsx`
 
 **Metadata & OpenGraph:**
 - OpenGraph utilities in `apps/web/lib/opengraph/` with Zod schema validation
@@ -122,15 +123,15 @@ This is a Turborepo monorepo with two main workspace types:
 - Contract definitions in `packages/api-contract/src/contract.ts` using `oc` from `@orpc/contract`
 - Schemas organized in `packages/api-contract/src/schemas/` (auth.ts, user.ts, errors.ts)
 - Generic `OPERATION_FAILED` error defined at contract level for consistent error handling
-- Server implementation uses `implement(contract)` to bind contract to procedures
-- Base implementer in `server/orpc/base.ts` with logger middleware applied
+- Server implementation in `packages/api/src/orpc/` using `implement(contract)`
+- Base implementer in `packages/api/src/orpc/base.ts` with logger middleware applied
 - Middleware composition: Logger middleware → Auth middleware (Reference: https://orpc.unnoq.com/docs/middleware)
 - Procedures access contract paths: `os.ping.handler()` or `authorized.auth.ping.handler()`
-- Router uses `.router()` method to enforce contract at runtime in `server/orpc/router.ts`
-- API route handler: `app/api/rpc/[[...rest]]/route.ts` with compression and logging plugins
-- Client setup: `lib/query.ts` exports `client` (HTTP client) and `orpc` (TanStack Query utils)
-- Server-optimized client: `server/orpc/server-client.ts` (direct calls without HTTP overhead, server-only)
-- Better Auth integration via middleware in `server/orpc/middleware/auth.ts`
+- Router uses `.router()` method to enforce contract at runtime in `packages/api/src/orpc/router.ts`
+- API route handler: `apps/web/app/api/rpc/[[...rest]]/route.ts` with compression and logging plugins
+- Client setup: `apps/web/lib/query.ts` exports `client` (HTTP client) and `orpc` (TanStack Query utils)
+- Server-optimized client: `packages/api/src/orpc/server-client.ts` exports `createServerClient()` function
+- Better Auth integration via middleware in `packages/api/src/orpc/middleware/auth.ts`
 - Pattern: Use `os` for public procedures, `authorized` for authenticated procedures
 - **Critical**: Never re-define `.input()` and `.output()` in procedures - contract already defines these
 - **Critical**: Always use `.router()` method at root level to enforce contract at runtime
@@ -157,13 +158,47 @@ This is a Turborepo monorepo with two main workspace types:
 
 **Logging & Monitoring:**
 - Pino logger with structured logging and request tracking
-- Logger available globally: `import { logger } from "@/server/logger"`
+- Logger available globally: `import { logger } from "@workspace/api/logger"`
 - Logger in procedures: Access via `context.logger?.info("message")` - no imports needed
   - Logger is lazy-loaded and cached on first access via middleware
   - Available in all procedures: `os` and `authorized`
 - Compression plugin reduces response sizes for better performance
 - Development: Use `pino-pretty` for human-readable logs (configured automatically)
 - Production: JSON logs for structured logging and log aggregation
+
+### API Package (packages/api/)
+
+**Purpose:** Backend logic package containing all server-side code
+
+**Structure:**
+- `src/auth.ts` - Better Auth configuration with Drizzle adapter
+- `src/consts.ts` - App constants and client-side env vars (shared with frontend)
+- `src/serverConsts.ts` - Server-only env vars and configuration
+- `src/logger.ts` - Pino logger configuration
+- `src/db/` - Database schema and Drizzle client
+  - `schema.ts` - Drizzle schema with Better Auth tables and performance indexes
+  - `index.ts` - Database client using Neon serverless
+  - `CLAUDE.md` - Critical documentation about manual index management
+- `src/orpc/` - oRPC server implementation
+  - `base.ts` - Base implementer with logger middleware
+  - `router.ts` - Main router exported to API routes
+  - `server-client.ts` - Direct server-side client (no HTTP overhead)
+  - `middleware/auth.ts` - Better Auth session validation middleware
+  - `procedures/` - Procedure implementations (auth.ts, user.ts)
+
+**Exports:**
+- `@workspace/api/auth` - Better Auth instance
+- `@workspace/api/consts` - App constants and public env vars
+- `@workspace/api/server-consts` - Server-only constants
+- `@workspace/api/logger` - Pino logger instance
+- `@workspace/api/db` - Database client
+- `@workspace/api/orpc/router` - Main oRPC router (type-only)
+- `@workspace/api/orpc/server-client` - Server-side oRPC client
+
+**Usage in apps/web:**
+- API routes import from `@workspace/api` to access backend logic
+- Client components import types only (e.g., `import type { auth } from "@workspace/api/auth"`)
+- All server code stays in this package - apps/web has no server/ directory
 
 ### API Contract Package (packages/api-contract/)
 

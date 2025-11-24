@@ -1,5 +1,5 @@
+import { env } from "@workspace/api/consts"
 import type { MetadataRoute } from "next"
-import { env } from "@/lib/consts"
 import { publicPaths } from "@/lib/publicRoutes"
 
 /**

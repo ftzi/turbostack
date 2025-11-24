@@ -1,6 +1,6 @@
+import { consts } from "@workspace/api/consts"
 import { Logo } from "@workspace/ui/components/Logo"
 import { ImageResponse } from "next/og"
-import { consts } from "@/lib/consts"
 
 // https://nextjs.org/docs/app/api-reference/file-conventions/metadata/opengraph-image#generate-images-using-code-js-ts-tsx
 //

@@ -1,6 +1,6 @@
+import type { auth } from "@workspace/api/auth"
 import { inferAdditionalFields, magicLinkClient } from "better-auth/client/plugins"
 import { createAuthClient } from "better-auth/react"
-import type { auth } from "@/server/auth"
 
 export const authClient = createAuthClient({
 	plugins: [
@@ -10,4 +10,4 @@ export const authClient = createAuthClient({
 	],
 })
 
-export type { Session, User } from "@/server/auth"
+export type { Session, User } from "@workspace/api/auth"

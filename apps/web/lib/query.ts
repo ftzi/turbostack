@@ -3,7 +3,7 @@
 import { RPCLink } from "@orpc/client/fetch"
 import { createTanstackQueryUtils } from "@orpc/tanstack-query"
 import { QueryClient } from "@tanstack/react-query"
-import type { Router } from "@/server/orpc/router"
+import type { Router } from "@workspace/api/orpc/router"
 
 /**
  * Query Client configuration for TanStack Query

@@ -1,7 +1,7 @@
 import "server-only"
 import { createEnv } from "@t3-oss/env-nextjs"
 import { z } from "zod"
-import { consts, env } from "@/lib/consts"
+import { consts, env } from "./consts.js"
 
 /** You can add another payment processor here you might want to use. Removing the ones you don't use is not required. */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

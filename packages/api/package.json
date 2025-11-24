@@ -1,0 +1,36 @@
+{
+	"name": "@workspace/api",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		"./auth": "./src/auth.ts",
+		"./logger": "./src/logger.ts",
+		"./consts": "./src/consts.ts",
+		"./db": "./src/db/index.ts",
+		"./orpc/router": "./src/orpc/router.ts"
+	},
+	"scripts": {
+		"lint": "eslint . --max-warnings 0",
+		"ts": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@neondatabase/serverless": "1.0.2",
+		"@orpc/experimental-pino": "1.11.3",
+		"@orpc/server": "catalog:",
+		"@t3-oss/env-nextjs": "0.13.8",
+		"@workspace/api-contract": "workspace:*",
+		"@workspace/email": "workspace:*",
+		"better-auth": "1.4.0",
+		"drizzle-orm": "0.44.7",
+		"next": "16.0.1",
+		"pino": "10.1.0",
+		"server-only": "0.0.1",
+		"zod": "catalog:"
+	},
+	"devDependencies": {
+		"@workspace/eslint-config": "workspace:*",
+		"@workspace/typescript-config": "workspace:*",
+		"typescript": "catalog:"
+	}
+}

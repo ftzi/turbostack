@@ -1,8 +1,8 @@
 import { LoggingHandlerPlugin } from "@orpc/experimental-pino"
 import { CompressionPlugin, RPCHandler } from "@orpc/server/fetch"
+import { logger } from "@workspace/api/logger"
+import { router } from "@workspace/api/orpc/router"
 import { headers } from "next/headers"
-import { logger } from "@/server/logger"
-import { router } from "@/server/orpc/router"
 
 /**
  * oRPC handler for Next.js App Router
