@@ -1,13 +1,13 @@
 <div align="center">
 
 <br/>
-<img src="logo.png" alt="Turbostack Logo" width="250"/>
+<img src="logo.png" alt="Turbostack Logo" width="350"/>
 
-<!-- # Turbostack -->
+# Turbostack
 
 <h4>
 
-A modern, full-stack TypeScript monorepo starter with [Next.js 16](https://nextjs.org/), [React 19](https://react.dev/), [Better Auth](https://www.better-auth.com/), [oRPC](https://orpc.unnoq.com/), and [Drizzle ORM](https://orm.drizzle.team/).
+An immersive, full-stack TypeScript Turborepo monorepo. Built with [Next.js 16](https://nextjs.org/), [React 19](https://react.dev/), [Better Auth](https://www.better-auth.com/), [oRPC](https://orpc.unnoq.com/), and [Drizzle ORM](https://orm.drizzle.team/). Just run `bun dev` and keep building.
 
 </h4>
 
@@ -24,38 +24,35 @@ A modern, full-stack TypeScript monorepo starter with [Next.js 16](https://nextj
 - **Database** - Drizzle ORM with Neon serverless PostgreSQL
 - **UI Components** - shadcn/ui with Radix UI primitives
 - **Modern Tooling** - Biome for linting, TypeScript 5.9, Tailwind CSS 4.1
+- **AI-Ready** - Powered by [Claude Code](https://claude.ai/code) with comprehensive CLAUDE.md, custom skills, hooks, and specialized agents for optimal AI-assisted development
+- **Spec-Driven Ready** - Compatible with [OpenSpec](https://github.com/Fission-AI/OpenSpec), [Spec-Kit](https://github.com/github/spec-kit), and [spec-workflow-mcp](https://github.com/Pimzino/spec-workflow-mcp) for structured development workflows
 
 ## 🚀 Quick Start
 
-### Prerequisites
+**Just run one command:**
 
-- Bun
+```bash
+bun dev
+```
 
-### Setup
+That's it. `bun dev` automatically handles everything:
 
-1. **Install dependencies**
+**First time:**
+1. **Links/creates your Vercel project** (interactive - `bunx vercel link`)
+2. **Guides you to install Neon** (PostgreSQL database via Vercel marketplace)
+3. **Guides you to set up Resend** (email service via Vercel integration)
+4. **Generates and configures Better Auth secrets** (automatic)
+5. **Pulls environment variables from Vercel** (automatic)
+6. **Runs first database migration** to set up the database schema (automatic)
 
-   ```bash
-   bun install
-   ```
+**Every time:**
+- Skips completed setup steps
+- Runs `bun i` (installs/updates dependencies)
+- Starts dev server with TypeScript watch mode (`tsw`) in parallel
 
-2. **Configure environment variables**
+Your development environment is always in sync. Just keep running `bun dev`.
 
-   ```bash
-   bun env
-   ```
-
-3. **Set up the database**
-
-   ```bash
-   bun db:migrate    # Run migrations
-   ```
-
-4. **Start development**
-
-   ```bash
-   bun dev
-   ```
+**Note:** After making database schema changes, run `bun db:generate` to create migrations, then restart `bun dev` to apply them.
 
 ## 📦 Monorepo Structure
 
@@ -73,17 +70,18 @@ packages/
 ## 🛠️ Common Commands
 
 ```bash
-bun dev           # Start dev server with TypeScript watch mode
+bun dev           # Your main command - runs setup (first time) + dev server + TypeScript watch
 bun ok            # Type check + lint (run this before commits!)
 bun build         # Build all apps and packages
-bun ts            # Type check all workspaces
-bun lint          # Format and lint with Biome
-bun knip          # Find unused files and dependencies
 
 # Database commands
 bun db:studio     # Open Drizzle Studio
 bun db:generate   # Generate migrations (after schema changes)
-bun db:migrate    # Run migrations
+
+# Additional commands
+bun ts            # Type check all workspaces
+bun lint          # Format and lint with Biome
+bun knip          # Find unused files and dependencies
 ```
 
 ## 📚 Tech Stack
@@ -100,3 +98,16 @@ bun db:migrate    # Run migrations
 ## 📖 Documentation
 
 For detailed information about the project architecture, conventions, and workflows, see [CLAUDE.md](CLAUDE.md).
+
+## 🤖 AI-Assisted Development
+
+This project is optimized for [Claude Code](https://claude.ai/code), providing an exceptional AI-assisted development experience:
+
+- **Comprehensive CLAUDE.md** - Extensive documentation covering architecture, patterns, conventions, and workflows
+- **Custom Hooks** - Automated checks for code quality, type safety, and best practices
+- **Specialized Agents** - Pre-configured agents for codebase exploration, planning, and implementation
+- **MCP Servers** - Integrated Better Auth, Next.js DevTools, and Context7 for enhanced AI capabilities
+- **Immersive Integration** - Everything from setup to development happens seamlessly within the workflow
+- **Spec-Driven Ready** - Compatible with spec-driven development tools like [OpenSpec](https://github.com/Fission-AI/OpenSpec), [Spec-Kit](https://github.com/github/spec-kit), and [spec-workflow-mcp](https://github.com/Pimzino/spec-workflow-mcp)
+
+The CLAUDE.md file ensures Claude Code has deep understanding of the codebase structure, coding standards, and development workflows, making AI pair programming seamless and productive.
