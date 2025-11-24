@@ -1,5 +1,5 @@
 import "server-only"
-import { os } from "../../base.js"
+import { os } from "../../base"
 
 /**
  * Public ping procedure

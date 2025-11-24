@@ -6,7 +6,6 @@
 	"exports": {
 		"./auth": "./src/auth.ts",
 		"./logger": "./src/logger.ts",
-		"./consts": "./src/consts.ts",
 		"./db": "./src/db/index.ts",
 		"./orpc/errors": "./src/orpc/errors.ts",
 		"./orpc/contract": "./src/orpc/contract/index.ts",
@@ -17,25 +16,29 @@
 	},
 	"scripts": {
 		"lint": "eslint . --max-warnings 0",
-		"ts": "tsc --noEmit"
+		"ts": "tsc --noEmit",
+		"db:studio": "drizzle-kit studio",
+		"db:generate": "drizzle-kit generate",
+		"db:migrate": "drizzle-kit migrate"
 	},
 	"dependencies": {
 		"@neondatabase/serverless": "1.0.2",
 		"@orpc/contract": "catalog:",
 		"@orpc/experimental-pino": "1.11.3",
 		"@orpc/server": "catalog:",
-		"@t3-oss/env-nextjs": "0.13.8",
 		"@workspace/email": "workspace:*",
+		"@workspace/shared": "workspace:*",
 		"better-auth": "1.4.0",
 		"drizzle-orm": "0.44.7",
-		"next": "16.0.1",
+		"next": "catalog:",
 		"pino": "10.1.0",
-		"server-only": "0.0.1",
+		"server-only": "catalog:",
 		"zod": "catalog:"
 	},
 	"devDependencies": {
 		"@workspace/eslint-config": "workspace:*",
 		"@workspace/typescript-config": "workspace:*",
+		"drizzle-kit": "0.31.7",
 		"typescript": "catalog:"
 	}
 }

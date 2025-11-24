@@ -1,5 +1,5 @@
 import "server-only"
-import { authorized } from "../../middleware/auth.js"
+import { authorized } from "../../middleware/auth"
 
 /**
  * Authenticated ping procedure

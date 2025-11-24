@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { baseContract } from "../../errors.js"
+import { baseContract } from "../../errors"
 
 /**
  * Schema for getting current user information

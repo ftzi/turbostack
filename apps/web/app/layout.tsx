@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 
 import "@workspace/ui/globals.css"
-import { consts, env } from "@workspace/api/consts"
+import { consts, env } from "@workspace/shared/consts"
 import { Providers } from "@/components/providers"
 import { DEFAULT_METADATA, DEFAULT_OPENGRAPH } from "@/lib/opengraph/defaults"
 

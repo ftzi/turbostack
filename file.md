@@ -46,11 +46,6 @@
 3. Add `min-w-0 flex-1` to the text element itself
 4. `truncate` only works on direct text-containing elements, not flex containers
 
-## MCP
-
-We are using `context7` MCP. Use it to know about libraries we use in our project, their APIs etc. Anything related to libraries, use it.
-
-
 ### Debugging Mindset for Runtime Errors
 
 When encountering unexplained runtime errors:

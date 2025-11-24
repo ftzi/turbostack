@@ -1,7 +1,7 @@
 import "server-only"
 import { createEnv } from "@t3-oss/env-nextjs"
 import { z } from "zod"
-import { consts, env } from "./consts.js"
+import { consts, env } from "./consts"
 
 /** You can add another payment processor here you might want to use. Removing the ones you don't use is not required. */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -56,12 +56,7 @@ export const serverConsts = {
 		 * It's recommended to use a subdomain like `updates.myDomain.com` for reputation:
 		 * https://resend.com/docs/knowledge-base/is-it-better-to-send-emails-from-a-subdomain-or-the-root-domain
 		 * The first part is the name that appear as the sender, the second part is the actual email.
-	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		 */
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		sender: consts.emailEnabled ? `${consts.appName} <notifications@${env.NEXT_PUBLIC_EMAIL_DOMAIN}>` : undefined,
 	},
 } as const
@@ -81,7 +76,6 @@ export const serverEnv = createEnv({
 	server: {
 		DATABASE_URL: z.url(),
 
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		RESEND_API_KEY: serverConsts.integrations.resend ? z.string().min(1) : z.string().optional(),
 
 		BETTER_AUTH_SECRET: z.string().min(32),
@@ -96,8 +90,7 @@ export const serverEnv = createEnv({
 	 */
 	runtimeEnv: {
 		DATABASE_URL: process.env.DATABASE_URL,
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition, @typescript-eslint/no-non-null-assertion
-		RESEND_API_KEY: serverConsts.integrations.resend ? process.env.RESEND_API_KEY! : disabledEnv,
+		RESEND_API_KEY: serverConsts.integrations.resend ? process.env.RESEND_API_KEY : disabledEnv,
 
 		BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
 		BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,

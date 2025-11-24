@@ -1,8 +1,8 @@
 import "server-only"
-import { os } from "./base.js"
-import { authPing } from "./procedures/auth/auth.handler.js"
-import { ping } from "./procedures/ping/ping.handler.js"
-import { getCurrentUser, updateUser } from "./procedures/user/user.handler.js"
+import { os } from "./base"
+import { authPing } from "./procedures/auth/auth.handler"
+import { ping } from "./procedures/ping/ping.handler"
+import { getCurrentUser, updateUser } from "./procedures/user/user.handler"
 
 /**
  * Main oRPC router

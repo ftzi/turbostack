@@ -1,6 +1,6 @@
 import "server-only"
 import { createRouterClient } from "@orpc/server"
-import { router } from "./router.js"
+import { router } from "./router"
 
 /**
  * Server-side oRPC client

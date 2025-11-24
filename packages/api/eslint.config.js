@@ -11,6 +11,6 @@ export default [
 		},
 	},
 	{
-		ignores: ["eslint.config.js", "dist"],
+		ignores: ["eslint.config.js", "dist", "drizzle.config.ts", "drizzle/**"],
 	},
 ];

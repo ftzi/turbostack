@@ -5,7 +5,6 @@
     "@types/node": "24.10.1",
     "@workspace/eslint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
-    "drizzle-kit": "0.31.7",
     "knip": "5.70.1",
     "turbo": "2.6.1",
     "typescript": "5.9.3"
@@ -24,9 +23,9 @@
     "knip": "knip",
     "tsw": "turbo tsw",
     "format:dry:TODO": "biome check --unsafe && next lint",
-    "db:studio": "drizzle-kit studio",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "bun run --cwd packages/api db:studio",
+    "db:generate": "bun run --cwd packages/api db:generate",
+    "db:migrate": "bun run --cwd packages/api db:migrate",
     "env": "bunx vercel env pull .env"
   },
   "workspaces": {
@@ -45,7 +44,9 @@
       "zod": "4.1.12",
       "@orpc/client": "1.11.3",
       "@orpc/contract": "1.11.3",
-      "@orpc/server": "1.11.3"
+      "@orpc/server": "1.11.3",
+      "next": "16.0.1",
+      "server-only": "0.0.1"
     }
   }
 }

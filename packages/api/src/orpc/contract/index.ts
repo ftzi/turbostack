@@ -1,6 +1,6 @@
-import { authContract } from "../procedures/auth/auth.contract.js"
-import { pingContract } from "../procedures/ping/ping.contract.js"
-import { userContract } from "../procedures/user/user.contract.js"
+import { authContract } from "../procedures/auth/auth.contract"
+import { pingContract } from "../procedures/ping/ping.contract"
+import { userContract } from "../procedures/user/user.contract"
 
 /**
  * oRPC Contract Definition - composed from domain-specific contracts

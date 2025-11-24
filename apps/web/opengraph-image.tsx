@@ -1,4 +1,4 @@
-import { consts } from "@workspace/api/consts"
+import { consts } from "@workspace/shared/consts"
 import { Logo } from "@workspace/ui/components/Logo"
 import { ImageResponse } from "next/og"
 

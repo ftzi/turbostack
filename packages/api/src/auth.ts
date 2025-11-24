@@ -1,12 +1,12 @@
 import "server-only"
 import { createEmailSender, MagicLinkEmail } from "@workspace/email"
+import { consts, env } from "@workspace/shared/consts"
+import { serverConsts, serverEnv } from "@workspace/shared/server-consts"
 import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { nextCookies } from "better-auth/next-js"
 import { magicLink } from "better-auth/plugins"
-import { consts, env } from "./consts.js"
-import { db } from "./db/index.js"
-import { serverConsts, serverEnv } from "./serverConsts.js"
+import { db } from "./db/index"
 
 if (!serverConsts.email.sender) {
 	throw new Error("Email sender not configured")

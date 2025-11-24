@@ -6,12 +6,19 @@
   "scripts": {
     "lint": "eslint . --max-warnings 0"
   },
+  "dependencies": {
+    "@t3-oss/env-nextjs": "0.13.8",
+    "server-only": "catalog:",
+    "zod": "catalog:"
+  },
   "devDependencies": {
     "@workspace/eslint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
     "typescript": "catalog:"
   },
   "exports": {
+    "./consts": "./src/consts.ts",
+    "./server-consts": "./src/serverConsts.ts",
     "./utils/error": "./src/utils/error.ts"
   }
 }

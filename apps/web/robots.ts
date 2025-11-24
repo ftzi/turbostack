@@ -1,4 +1,4 @@
-import { env } from "@workspace/api/consts"
+import { env } from "@workspace/shared/consts"
 import type { MetadataRoute } from "next"
 
 /**

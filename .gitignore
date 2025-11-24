@@ -27,10 +27,6 @@ out/
 build
 dist
 
-# Drizzle
-drizzle
-
-
 # Debug
 npm-debug.log*
 

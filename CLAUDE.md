@@ -6,6 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Workflow Rule:** Always run `bun ok` after finishing a task or when facing issues. This command runs type checking and linting across the entire codebase and must fully pass before considering a task complete.
 
+**Context7 Integration:** Always use context7 when I need code generation, setup or configuration steps, or library/API documentation. This means you should automatically use the Context7 MCP tools to resolve library id and get library docs without me having to explicitly ask.
+
+**MCP Servers:** This repository uses `.mcp.json` for team-wide MCP server configuration:
+- **better-auth** - Better Auth documentation and assistance
+- **next-devtools** - Next.js 16 debugging and diagnostics
+- **context7** - Library documentation and code generation
+- Team members will be prompted to trust these servers on first use
+
 ## Maintaining This File
 
 Update CLAUDE.md when you make changes that affect:
@@ -46,9 +54,11 @@ Turbostack is a monorepo based on shadcn and NextStack templates. It uses Turbor
 - `bun build` - Build all apps and packages
 
 ### Database (Drizzle ORM)
-- `bun db:studio` - Open Drizzle Studio
-- `bun db:generate` - Generate database migrations
-- `bun db:migrate` - Run database migrations
+- `bun db:studio` - Open Drizzle Studio (delegates to packages/api)
+- `bun db:generate` - Generate database migrations (delegates to packages/api)
+- `bun db:migrate` - Run database migrations (delegates to packages/api)
+- Configuration and migrations now live in `packages/api/` where the database code is
+- Can also run directly from api package: `bun run --cwd packages/api db:studio`
 
 ### Environment Variables
 - `bun env` - Pull environment variables from Vercel
@@ -100,13 +110,13 @@ This is a Turborepo monorepo with two main workspace types:
 - Two env files: `lib/consts.ts` (client + server) and `server/serverConsts.ts` (server-only)
 
 **Configuration:**
-- `packages/api/src/consts.ts` - App constants and client-side env vars (`NEXT_PUBLIC_*`)
-- `packages/api/src/serverConsts.ts` - Server-only constants and env vars (database, API keys, payment processor config)
+- `packages/shared/src/consts.ts` - App constants and client-side env vars (`NEXT_PUBLIC_*`)
+- `packages/shared/src/serverConsts.ts` - Server-only constants and env vars (database, API keys, payment processor config)
 - Both use `createEnv()` from `@t3-oss/env-nextjs` for type-safe env validation
 - Pattern: Feature flags (e.g., `emailEnabled`) control which env vars are required via conditional Zod schemas
 
 **Email Integration:**
-- Email sending via Resend (configured in `packages/api/src/serverConsts.ts`)
+- Email sending via Resend (configured in `packages/shared/src/serverConsts.ts`)
 - Email templates in `packages/email/emails/`
 - Main email logic in `packages/email/email.tsx`
 
@@ -172,9 +182,9 @@ This is a Turborepo monorepo with two main workspace types:
 **Purpose:** Backend logic package containing all server-side code
 
 **Structure:**
+- `drizzle.config.ts` - Drizzle Kit configuration
+- `drizzle/` - Database migrations (committed to git for schema history)
 - `src/auth.ts` - Better Auth configuration with Drizzle adapter
-- `src/consts.ts` - App constants and client-side env vars (shared with frontend)
-- `src/serverConsts.ts` - Server-only env vars and configuration
 - `src/logger.ts` - Pino logger configuration
 - `src/db/` - Database schema and Drizzle client
   - `schema.ts` - Drizzle schema with Better Auth tables and performance indexes
@@ -200,8 +210,6 @@ This is a Turborepo monorepo with two main workspace types:
 
 **Exports:**
 - `@workspace/api/auth` - Better Auth instance
-- `@workspace/api/consts` - App constants and public env vars
-- `@workspace/api/server-consts` - Server-only constants
 - `@workspace/api/logger` - Pino logger instance
 - `@workspace/api/db` - Database client
 - `@workspace/api/orpc/errors` - Common error definitions (UNAUTHORIZED, OPERATION_FAILED)
@@ -219,12 +227,17 @@ This is a Turborepo monorepo with two main workspace types:
 - Each domain has its own directory with contract and handler side-by-side
 - Pattern: `procedures/{domain}/{domain}.contract.ts` + `{domain}.handler.ts`
 - Main contract composes domain contracts: `contract/index.ts` imports from procedure directories
-- All relative imports must use `.js` extensions (required by NodeNext module resolution)
 - Frontend imports: Use `@workspace/api/orpc/contract` for composed contract, or `@workspace/api/orpc/procedures/{domain}/{domain}.contract` for domain-specific contracts
 
 ### Shared Package (packages/shared/)
 
-**Purpose:** Generic utilities and helpers that can be reused across the entire workspace
+**Purpose:** Shared code that can be reused across the entire workspace, including generic utilities and application configuration
+
+**Configuration:**
+- `src/consts.ts` - App constants and client-side env vars (`NEXT_PUBLIC_*`)
+- `src/serverConsts.ts` - Server-only constants and env vars (database, API keys, etc.)
+- Both use `@t3-oss/env-nextjs` for type-safe environment variable validation
+- Located here so both `api` and `email` packages can access them without circular dependencies
 
 **Error Handling:**
 - `getErrorMessage(error, fallbackMessage?)` - Extracts user-friendly error messages from unknown errors
@@ -248,10 +261,11 @@ try {
 - Always use `getErrorMessage()` when catching errors to avoid `any` types
 - Prefer `catch (error)` over `catch (error: any)` - let the utility handle type narrowing
 - Provide contextual fallback messages for better user experience
-- This package should contain only generic, reusable utilities with no app-specific logic
 
 **Exports:**
-- Error utilities: `@workspace/shared/utils/error`
+- `@workspace/shared/consts` - App constants and client-side env vars
+- `@workspace/shared/server-consts` - Server-only constants and env vars
+- `@workspace/shared/utils/error` - Error handling utilities
 
 ### UI Package (packages/ui/)
 
@@ -286,6 +300,8 @@ try {
 ### TypeScript Configuration
 
 - Shared configs in `packages/typescript-config/` with strict mode
+- Uses `"moduleResolution": "bundler"` - Optimized for Next.js and Bun (no `.js` extensions needed in imports)
+- Module format: `"module": "ESNext"` for modern JavaScript features
 - Incremental compilation enabled for faster builds
 
 ### Turborepo Configuration

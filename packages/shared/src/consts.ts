@@ -2,7 +2,7 @@ import { createEnv } from "@t3-oss/env-nextjs"
 import { z } from "zod"
 
 /** Whether email functionality is enabled in the app. */
-const emailEnabled = false
+const emailEnabled = false as boolean
 
 /** To be used in the place of a disabled/undefined env var if it's required where used. */
 const disabledEnv = "DISABLED"
@@ -31,7 +31,7 @@ export const consts = {
 	// } satisfies Partial<Record<SocialMedia, string>>,
 
 	email: {
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition, @typescript-eslint/no-non-null-assertion
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		contact: emailEnabled ? `contact@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN!}` : undefined,
 	},
 
@@ -60,7 +60,7 @@ export const env = createEnv({
 		 * For development, it's `http://localhost:3000`
 		 */
 		NEXT_PUBLIC_URL: z.url(),
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+
 		NEXT_PUBLIC_EMAIL_DOMAIN: (emailEnabled ? z.string().min(1) : z.string().optional()) as z.ZodString,
 	},
 	/**
@@ -74,7 +74,7 @@ export const env = createEnv({
 			(process.env.NEXT_PUBLIC_VERCEL_URL
 				? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}` // Preview URL automatically set by Vercel
 				: "http://localhost:3000"), // Local Development URL
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition, @typescript-eslint/no-non-null-assertion
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		NEXT_PUBLIC_EMAIL_DOMAIN: (emailEnabled ? process.env.NEXT_PUBLIC_EMAIL_DOMAIN : disabledEnv)!,
 	},
 	/** Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. Useful for Docker builds.  */

@@ -44,9 +44,11 @@ export const user = pgTable(
 ### Schema Workflow
 
 1. **Modify Schema:** Edit `schema.ts` directly
-2. **Generate Migration:** Run `bun run db:generate` (from project root)
-3. **Apply Migration:** Run `bun run db:migrate` (from project root)
+2. **Generate Migration:** Run `bun db:generate` (from project root, or `bun run db:generate` from `packages/api`)
+3. **Apply Migration:** Run `bun db:migrate` (from project root, or `bun run db:migrate` from `packages/api`)
 4. **NEVER:** Run `@better-auth/cli generate` - it will remove your indexes
+
+**Note:** Root commands delegate to `packages/api` where Drizzle config and migrations are located.
 
 ### Current Schema
 
