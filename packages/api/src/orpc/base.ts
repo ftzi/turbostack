@@ -37,7 +37,7 @@ const loggerMiddleware = baseImplementer.middleware(({ context, next }) => {
 })
 
 /**
- * Implementer with logger middleware applied
+ * Public procedure implementer with logger middleware applied
  * All procedures have access to context.logger
  */
-export const os = baseImplementer.use(loggerMiddleware)
+export const publicProcedure = baseImplementer.use(loggerMiddleware)

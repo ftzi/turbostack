@@ -15,6 +15,7 @@
 	},
 	"scripts": {
 		"ts": "tsc --noEmit",
+		"test": "SKIP_ENV_VALIDATION=1 bun test",
 		"db:studio": "drizzle-kit studio",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate"

@@ -2,13 +2,13 @@ import "server-only"
 import { eq } from "drizzle-orm"
 import { db } from "../../../db/index"
 import { users } from "../../../db/schema"
-import { authorized } from "../../middleware/auth"
+import { protectedProcedure } from "../../middleware/auth"
 
 /**
  * Get current user information
  * Returns the authenticated user's data from the database
  */
-export const getCurrentUser = authorized.auth.getCurrentUser.handler(async ({ context }) => {
+export const getCurrentUser = protectedProcedure.auth.getCurrentUser.handler(async ({ context }) => {
 	const userData = await db.query.users.findFirst({
 		where: eq(users.id, context.user.id),
 	})
@@ -34,7 +34,7 @@ export const getCurrentUser = authorized.auth.getCurrentUser.handler(async ({ co
  * Reference: https://orpc.unnoq.com/docs/error-handling
  * Uses generic OPERATION_FAILED error for consistent error handling
  */
-export const updateUser = authorized.auth.updateUser.handler(async ({ context, input, errors }) => {
+export const updateUser = protectedProcedure.auth.updateUser.handler(async ({ context, input, errors }) => {
 	const updateData: {
 		name?: string
 		image?: string | null

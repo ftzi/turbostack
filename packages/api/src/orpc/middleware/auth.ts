@@ -1,7 +1,7 @@
 import "server-only"
-import { implement, ORPCError } from "@orpc/server"
+import { implement } from "@orpc/server"
 import { auth, type Session, type User } from "../../auth"
-import { os } from "../base"
+import { publicProcedure } from "../base"
 import { contract } from "../contract/index"
 
 /**
@@ -14,7 +14,7 @@ import { contract } from "../contract/index"
  */
 const authMiddleware = implement(contract)
 	.$context<{ headers: Headers }>()
-	.middleware(async ({ context, next }) => {
+	.middleware(async ({ context, next, errors }) => {
 		const sessionData = await auth.api.getSession({
 			headers: context.headers,
 		})
@@ -22,8 +22,10 @@ const authMiddleware = implement(contract)
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		if (!(sessionData?.session && sessionData.user)) {
 			// Throws unauthorized error (defined in commonErrors)
-			throw new ORPCError("unauthorized", {
-				message: "You must be logged in to access this resource",
+			throw errors.unauthorized({
+				data: {
+					message: "You must be logged in to access this resource",
+				},
 			})
 		}
 
@@ -36,10 +38,10 @@ const authMiddleware = implement(contract)
 	})
 
 /**
- * Implementer with logger + auth middlewares chained
+ * Protected procedure implementer with logger + auth middlewares chained
  * Guarantees that context.logger, context.session, and context.user are defined
  */
-export const authorized = os.use(authMiddleware)
+export const protectedProcedure = publicProcedure.use(authMiddleware)
 
 /**
  * Type helpers for authenticated context

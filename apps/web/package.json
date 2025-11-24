@@ -37,7 +37,6 @@
 		"zod": "catalog:"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "catalog:",
 		"@svgr/webpack": "8.1.0",
 		"@types/node": "20.19.9",
 		"@types/react": "catalog:",

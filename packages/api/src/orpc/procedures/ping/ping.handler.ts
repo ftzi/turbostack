@@ -1,11 +1,11 @@
 import "server-only"
-import { os } from "../../base"
+import { publicProcedure } from "../../base"
 
 /**
  * Public ping procedure
  * Returns a simple message with timestamp
  */
-export const ping = os.ping.handler(({ context }) => {
+export const ping = publicProcedure.ping.handler(({ context }) => {
 	context.logger?.info("Ping request received")
 
 	return {
