@@ -30,7 +30,7 @@ function generateRandomString(length = 32): string {
 	return result
 }
 
-async function checkVercelLinked(): Promise<boolean> {
+function checkVercelLinked(): boolean {
 	const vercelDir = join(process.cwd(), ".vercel")
 	const projectJson = join(vercelDir, "project.json")
 
@@ -46,7 +46,7 @@ async function checkEnvVar(varName: string): Promise<boolean> {
 	}
 }
 
-async function checkEnvPulled(): Promise<boolean> {
+function checkEnvPulled(): boolean {
 	const envFile = join(process.cwd(), ".env")
 	return existsSync(envFile)
 }
@@ -59,7 +59,6 @@ const tasks = new Listr<SetupContext>(
 				ctx.vercelLinked = await checkVercelLinked()
 
 				if (ctx.vercelLinked) {
-					task.title = "Step 1: Link Vercel Project ✓"
 					task.skip("Vercel project already linked")
 					return
 				}
@@ -81,7 +80,6 @@ const tasks = new Listr<SetupContext>(
 					await execute
 
 					ctx.vercelLinked = true
-					task.title = "Step 1: Link Vercel Project ✓"
 				} catch (_error) {
 					throw new Error("Failed to link Vercel project. Please run manually: bunx vercel link")
 				}
@@ -94,12 +92,10 @@ const tasks = new Listr<SetupContext>(
 				ctx.neonInstalled = hasDatabase
 
 				if (ctx.neonInstalled) {
-					task.title = "Step 2: Install Neon Integration ✓"
 					task.skip("Neon integration already configured")
 					return
 				}
 
-				task.title = "Step 2: Install Neon Integration"
 				task.output =
 					"Please install the Neon integration:\n" +
 					"1. Visit: https://vercel.com/marketplace/neon\n" +
@@ -121,7 +117,6 @@ const tasks = new Listr<SetupContext>(
 				}
 
 				ctx.neonInstalled = true
-				task.title = "Step 2: Install Neon Integration ✓"
 			},
 		},
 		{
@@ -132,12 +127,9 @@ const tasks = new Listr<SetupContext>(
 				ctx.resendConfigured = hasResendKey && hasEmailDomain
 
 				if (ctx.resendConfigured) {
-					task.title = "Step 3: Configure Resend Integration ✓"
 					task.skip("Resend integration already configured")
 					return
 				}
-
-				task.title = "Step 3: Configure Resend Integration"
 
 				// Check if Resend API key exists
 				if (!hasResendKey) {
@@ -176,7 +168,6 @@ const tasks = new Listr<SetupContext>(
 				}
 
 				ctx.resendConfigured = true
-				task.title = "Step 3: Configure Resend Integration ✓"
 			},
 		},
 		{
@@ -186,12 +177,10 @@ const tasks = new Listr<SetupContext>(
 				ctx.betterAuthSecretsSet = hasSecret
 
 				if (ctx.betterAuthSecretsSet) {
-					task.title = "Step 4: Configure Better Auth Secrets ✓"
 					task.skip("Better Auth secrets already configured")
 					return
 				}
 
-				task.title = "Step 4: Configure Better Auth Secrets"
 				task.output = "Generating and adding Better Auth secrets..."
 
 				try {
@@ -201,7 +190,6 @@ const tasks = new Listr<SetupContext>(
 					await $`printf ${generateRandomString()} | bunx vercel env add BETTER_AUTH_SECRET production`.quiet()
 
 					ctx.betterAuthSecretsSet = true
-					task.title = "Step 4: Configure Better Auth Secrets ✓"
 				} catch (_error) {
 					throw new Error(
 						"Failed to add Better Auth secrets. Please add BETTER_AUTH_SECRET manually via: bunx vercel env add BETTER_AUTH_SECRET",
@@ -217,7 +205,7 @@ const tasks = new Listr<SetupContext>(
 						{
 							title: "Pull environment variables from Vercel",
 							task: async (ctx, subtask) => {
-								ctx.envPulled = await checkEnvPulled()
+								ctx.envPulled = checkEnvPulled()
 
 								if (ctx.envPulled) {
 									subtask.skip(".env file already exists")
@@ -252,7 +240,6 @@ const tasks = new Listr<SetupContext>(
 		{
 			title: "Step 6: Vercel Configuration Instructions",
 			task: (_ctx, task) => {
-				task.title = "Step 6: Vercel Configuration Instructions"
 				task.output =
 					"\nFinal steps (manual configuration):\n\n" +
 					"1. Enable Vercel's Fluid Compute:\n" +

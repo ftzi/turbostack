@@ -1,3 +1,22 @@
+<!-- OPENSPEC:START -->
+# OpenSpec Instructions
+
+These instructions are for AI assistants working in this project.
+
+Always open `@/openspec/AGENTS.md` when the request:
+- Mentions planning or proposals (words like proposal, spec, change, plan)
+- Introduces new capabilities, breaking changes, architecture shifts, or big performance/security work
+- Sounds ambiguous and you need the authoritative spec before coding
+
+Use `@/openspec/AGENTS.md` to learn:
+- How to create and apply change proposals
+- Spec format and conventions
+- Project structure and guidelines
+
+Keep this managed block so 'openspec update' can refresh the instructions.
+
+<!-- OPENSPEC:END -->
+
 # CLAUDE.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
@@ -369,7 +388,21 @@ try {
 
 **Radix UI Migration:** This project uses the `@radix-ui/*` monorepo packages (migrated via `npx shadcn@latest migrate radix`). All Radix components are installed as individual packages rather than the legacy `@radix-ui/react-*` format.
 
-**Key Components:** Alert, Button, Checkbox, Field, Input, InputGroup, Label, Popover, RadioGroup, ScrollArea, Select, Separator, Skeleton, Sonner (toasts), Spinner, Switch, Textarea, Tooltip, AlertDialog
+**Key Components:** Alert, Button, Checkbox, Field, Input, InputGroup, Label, Popover, RadioGroup, ScrollArea, Select, Separator, Skeleton, Sonner (toasts), Spinner, Switch, Textarea, Tooltip, AlertDialog, Header, Footer, MobileNav, Container, Section
+
+**Layout Components:**
+
+- `Header` - Site header with logo, nav links, theme toggle, mobile menu
+- `Footer` - Site footer with logo, nav columns, social links, copyright
+- `MobileNav` - Hamburger menu with slide-out drawer (Radix Dialog)
+- `Container` - Max-width wrapper with consistent padding
+- `Section` - Landing page section with consistent vertical spacing
+
+**UI Requirements (MUST follow):**
+
+- **Responsive-first**: All components MUST work on mobile (375px+), tablet (768px+), and desktop (1280px+)
+- **Theme-friendly**: All components MUST support light and dark themes via CSS variables
+- **Accessibility**: Use semantic HTML, proper ARIA attributes, keyboard navigation
 
 **Styling:**
 
@@ -538,6 +571,29 @@ try {
   - This includes: CHANGELOG.md, MIGRATION.md, NOTES.md, GUIDE.md, or any other documentation
   - The only exception: updating existing CLAUDE.md when architecture changes
   - If you want to communicate what changed, tell the user directly - don't create files
+
+## Development Container (Safe YOLO Mode)
+
+For autonomous AI coding with `--dangerously-skip-permissions`, use the devcontainer:
+
+1. Open project in VS Code
+2. Click "Reopen in Container" when prompted
+3. Run `claude --dangerously-skip-permissions`
+
+**Security layers:**
+- Filesystem isolation: Only project directory is mounted
+- Network isolation: Default-deny firewall, only essential domains allowed
+- Credential isolation: `~/.claude` mounted read-only
+
+**Whitelisted domains:**
+- `api.anthropic.com` - Claude API
+- `github.com`, `*.githubusercontent.com` - Git operations
+- `registry.npmjs.org` - npm packages
+- `bun.sh` - Bun downloads
+
+**To add domains:** Edit `.devcontainer/init-firewall.sh`
+
+Reference: https://code.claude.com/docs/en/devcontainer
 
 ## Important Notes
 

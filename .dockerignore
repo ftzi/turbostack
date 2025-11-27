@@ -1,0 +1,26 @@
+# Dev container (prevent nesting)
+.devcontainer/
+
+# Dependencies
+node_modules/
+.bun/
+
+# Build outputs
+.next/
+.turbo/
+dist/
+
+# Environment files
+.env
+.env.local
+.env*.local
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+
+# Logs
+*.log

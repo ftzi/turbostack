@@ -1,12 +1,19 @@
-import { Button } from "@workspace/ui/components/button"
+import { CTA } from "@/components/landing/cta"
+import { Features } from "@/components/landing/features"
+import { Hero } from "@/components/landing/hero"
+import { Testimonials } from "@/components/landing/testimonials"
 
 export default function Page(): React.ReactElement {
 	return (
-		<div className="flex min-h-svh items-center justify-center">
-			<div className="flex flex-col items-center justify-center gap-4">
-				<h1 className="font-bold text-2xl">Hello World</h1>
-				<Button />
+		<>
+			<Hero />
+			<div id="features">
+				<Features />
 			</div>
-		</div>
+			<div id="testimonials">
+				<Testimonials />
+			</div>
+			<CTA />
+		</>
 	)
 }

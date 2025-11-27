@@ -15,6 +15,9 @@ export const consts = {
 	/** Whether email functionality is enabled. */
 	emailEnabled,
 
+	/** Whether the header should stick to the top of the viewport on scroll. */
+	stickyHeader: true,
+
 	/**
 	 * Either 'light' or 'dark'. It depends on your app's design and your users' preferences.
 	 *

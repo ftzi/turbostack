@@ -111,3 +111,17 @@ This project is optimized for [Claude Code](https://claude.ai/code), providing a
 - **Spec-Driven Ready** - Compatible with spec-driven development tools like [OpenSpec](https://github.com/Fission-AI/OpenSpec), [Spec-Kit](https://github.com/github/spec-kit), and [spec-workflow-mcp](https://github.com/Pimzino/spec-workflow-mcp)
 
 The CLAUDE.md file ensures Claude Code has deep understanding of the codebase structure, coding standards, and development workflows, making AI pair programming seamless and productive.
+
+## 🐳 Safe YOLO Mode (Devcontainer)
+
+Use Claude Code's `--dangerously-skip-permissions` flag safely inside an isolated container:
+
+1. Install the [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension in VS Code
+2. Open project in VS Code → Click "Reopen in Container" when prompted
+3. Run `claude --dangerously-skip-permissions`
+
+The container provides network isolation (only essential domains allowed) and filesystem isolation (only the project directory is mounted). Your host system is protected.
+
+**Customize network whitelist:** Edit `.devcontainer/init-firewall.sh`
+
+[Learn more about devcontainers →](https://code.claude.com/docs/en/devcontainer)

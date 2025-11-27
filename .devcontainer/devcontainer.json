@@ -1,0 +1,23 @@
+{
+	"name": "Turbostack Dev Container",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+	"features": {
+		"ghcr.io/devcontainers/features/node:1": {
+			"version": "20"
+		},
+		"ghcr.io/anthropics/devcontainer-features/claude-code:1": {}
+	},
+	"mounts": ["source=${localEnv:HOME}/.claude,target=/home/vscode/.claude,type=bind,readonly"],
+	"postCreateCommand": "bash .devcontainer/init-firewall.sh && bun install",
+	"customizations": {
+		"vscode": {
+			"extensions": ["anthropic.claude-code"],
+			"settings": {
+				"terminal.integrated.defaultProfile.linux": "zsh"
+			}
+		}
+	},
+	"remoteUser": "vscode"
+}

@@ -10,7 +10,72 @@ export default function Page(): React.ReactElement {
 	return <Content />
 }
 
-const Content = (): React.ReactElement => <h2>TBD</h2>
+function Content(): React.ReactElement {
+	return (
+		<article className="prose prose-neutral dark:prose-invert mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
+			<p className="lead">
+				Your privacy is important to us. This Privacy Policy explains how we collect, use, disclose, and safeguard your
+				information when you visit our website.
+			</p>
+
+			<h2>Information We Collect</h2>
+			<p>
+				We may collect information about you in a variety of ways. The information we may collect via the website
+				includes:
+			</p>
+			<ul>
+				<li>
+					<strong>Personal Data:</strong> Personally identifiable information, such as your name and email address, that
+					you voluntarily give to us when you register or when you choose to participate in various activities.
+				</li>
+				<li>
+					<strong>Derivative Data:</strong> Information our servers automatically collect when you access the website,
+					such as your IP address, browser type, and operating system.
+				</li>
+			</ul>
+
+			<h2>Use of Your Information</h2>
+			<p>
+				Having accurate information about you permits us to provide you with a smooth, efficient, and customized
+				experience. Specifically, we may use information collected about you to:
+			</p>
+			<ul>
+				<li>Create and manage your account</li>
+				<li>Process transactions and send related information</li>
+				<li>Send you administrative information</li>
+				<li>Respond to your comments and questions</li>
+			</ul>
+
+			<h2>Disclosure of Your Information</h2>
+			<p>
+				We may share information we have collected about you in certain situations. Your information may be disclosed as
+				follows:
+			</p>
+			<ul>
+				<li>
+					<strong>By Law or to Protect Rights:</strong> If we believe the release of information about you is necessary
+					to respond to legal process or to protect our rights.
+				</li>
+				<li>
+					<strong>Third-Party Service Providers:</strong> We may share your information with third parties that perform
+					services for us.
+				</li>
+			</ul>
+
+			<h2>Security of Your Information</h2>
+			<p>
+				We use administrative, technical, and physical security measures to help protect your personal information.
+				While we have taken reasonable steps to secure the personal information you provide to us, please be aware that
+				no security measures are perfect.
+			</p>
+
+			<h2>Contact Us</h2>
+			<p>If you have questions or comments about this Privacy Policy, please contact us.</p>
+
+			<p className="text-muted-foreground text-sm">Last updated: January 2025</p>
+		</article>
+	)
+}
 
 /*
  * Below is an AI prompt you can use to generate the Privacy Policy.

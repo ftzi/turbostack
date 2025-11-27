@@ -10,7 +10,79 @@ export default function Page(): React.ReactElement {
 	return <Content />
 }
 
-const Content = (): React.ReactElement => <h2>TBD</h2>
+function Content(): React.ReactElement {
+	return (
+		<article className="prose prose-neutral dark:prose-invert mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
+			<p className="lead">
+				Please read these Terms of Service carefully before using our website. By accessing or using our service, you
+				agree to be bound by these terms.
+			</p>
+
+			<h2>Acceptance of Terms</h2>
+			<p>
+				By accessing and using this website, you accept and agree to be bound by the terms and provision of this
+				agreement. If you do not agree to abide by these terms, please do not use this service.
+			</p>
+
+			<h2>Use License</h2>
+			<p>
+				Permission is granted to temporarily access the materials on our website for personal, non-commercial transitory
+				viewing only. This is the grant of a license, not a transfer of title, and under this license you may not:
+			</p>
+			<ul>
+				<li>Modify or copy the materials</li>
+				<li>Use the materials for any commercial purpose</li>
+				<li>Attempt to decompile or reverse engineer any software contained on the website</li>
+				<li>Remove any copyright or other proprietary notations from the materials</li>
+			</ul>
+
+			<h2>User Accounts</h2>
+			<p>
+				When you create an account with us, you must provide information that is accurate, complete, and current at all
+				times. You are responsible for safeguarding the password and for all activities that occur under your account.
+			</p>
+
+			<h2>Prohibited Activities</h2>
+			<p>You agree not to engage in any of the following prohibited activities:</p>
+			<ul>
+				<li>Copying, distributing, or disclosing any part of the service</li>
+				<li>Using any automated system to access the service</li>
+				<li>Transmitting spam, chain letters, or other unsolicited communications</li>
+				<li>Attempting to interfere with the proper working of the service</li>
+			</ul>
+
+			<h2>Disclaimer</h2>
+			<p>
+				The materials on our website are provided on an &quot;as is&quot; basis. We make no warranties, expressed or
+				implied, and hereby disclaim and negate all other warranties including, without limitation, implied warranties
+				or conditions of merchantability, fitness for a particular purpose, or non-infringement.
+			</p>
+
+			<h2>Limitations</h2>
+			<p>
+				In no event shall we or our suppliers be liable for any damages arising out of the use or inability to use the
+				materials on our website, even if we have been notified orally or in writing of the possibility of such damage.
+			</p>
+
+			<h2>Governing Law</h2>
+			<p>
+				These terms and conditions are governed by and construed in accordance with the laws and you irrevocably submit
+				to the exclusive jurisdiction of the courts in that location.
+			</p>
+
+			<h2>Changes to Terms</h2>
+			<p>
+				We reserve the right, at our sole discretion, to modify or replace these Terms at any time. By continuing to
+				access or use our service after those revisions become effective, you agree to be bound by the revised terms.
+			</p>
+
+			<h2>Contact Us</h2>
+			<p>If you have any questions about these Terms, please contact us.</p>
+
+			<p className="text-muted-foreground text-sm">Last updated: January 2025</p>
+		</article>
+	)
+}
 
 /*
  * Below is an AI prompt you can use to generate the Terms of Service.
