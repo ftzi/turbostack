@@ -2,6 +2,7 @@
 
 <br/>
 <img src="logo.png" alt="Turbostack Logo" width="350"/>
+<img src="nextbook_logo.svg" alt="Turbostack Logo" width="350"/>
 
 # Turbostack
 
