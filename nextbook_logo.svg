@@ -1,0 +1,68 @@
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="mainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00D9FF;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#7B61FF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF006B;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FFD600;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF6B00;stop-opacity:1" />
+    </linearGradient>
+    
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="200" cy="200" r="180" fill="#0A0A0F" opacity="0.95"/>
+  
+  <!-- Book pages effect (left side) -->
+  <path d="M 120 120 L 120 280 L 180 260 L 180 100 Z" fill="url(#mainGradient)" opacity="0.3"/>
+  <path d="M 130 125 L 130 275 L 185 257 L 185 107 Z" fill="url(#mainGradient)" opacity="0.5"/>
+  
+  <!-- Main book/N shape -->
+  <path d="M 150 110 L 150 290 L 175 280 L 175 110 Z" fill="url(#mainGradient)" filter="url(#glow)"/>
+  <path d="M 175 110 L 175 280 L 250 180 L 250 290 L 275 290 L 275 110 L 250 110 L 250 220 L 175 110 Z" fill="url(#mainGradient)" filter="url(#glow)"/>
+  
+  <!-- Next.js triangle accent -->
+  <path d="M 260 140 L 290 140 L 275 165 Z" fill="url(#accentGradient)" opacity="0.9">
+    <animateTransform
+      attributeName="transform"
+      type="rotate"
+      from="0 275 152"
+      to="360 275 152"
+      dur="20s"
+      repeatCount="indefinite"/>
+  </path>
+  
+  <!-- Floating particles for "modern" feel -->
+  <circle cx="140" cy="90" r="3" fill="#00D9FF" opacity="0.6">
+    <animate attributeName="cy" values="90;85;90" dur="3s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.6;1;0.6" dur="3s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="285" cy="270" r="2.5" fill="#FF006B" opacity="0.7">
+    <animate attributeName="cy" values="270;275;270" dur="2.5s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.7;1;0.7" dur="2.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="160" cy="310" r="2" fill="#7B61FF" opacity="0.5">
+    <animate attributeName="cy" values="310;305;310" dur="4s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.5;0.9;0.5" dur="4s" repeatCount="indefinite"/>
+  </circle>
+  
+  <!-- Text -->
+  <text x="200" y="355" font-family="'Inter', 'SF Pro Display', system-ui, sans-serif" font-size="36" font-weight="700" fill="url(#mainGradient)" text-anchor="middle" letter-spacing="1">
+    nextbook
+  </text>
+  
+  <!-- Tagline -->
+  <text x="200" y="375" font-family="'Inter', system-ui, sans-serif" font-size="11" font-weight="500" fill="#888" text-anchor="middle" letter-spacing="2">
+    NEXT-GEN STORYBOOK
+  </text>
+</svg>
