@@ -6,7 +6,6 @@
 	"scripts": {},
 	"dependencies": {
 		"@t3-oss/env-nextjs": "0.13.8",
-		"server-only": "catalog:",
 		"zod": "catalog:"
 	},
 	"devDependencies": {
@@ -15,7 +14,7 @@
 	},
 	"exports": {
 		"./consts": "./src/consts.ts",
-		"./server-consts": "./src/server-consts.ts",
+		"./env": "./src/env.ts",
 		"./utils/error": "./src/utils/error.ts"
 	}
 }

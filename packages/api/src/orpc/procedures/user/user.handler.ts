@@ -1,7 +1,7 @@
 import "server-only"
+import { db } from "@workspace/server/db"
+import { users } from "@workspace/server/db/schema"
 import { eq } from "drizzle-orm"
-import { db } from "../../../db/index"
-import { users } from "../../../db/schema"
 import { protectedProcedure } from "../../middleware/auth"
 
 /**

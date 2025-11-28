@@ -1,7 +1,7 @@
 import "server-only"
 import { neon } from "@neondatabase/serverless"
-import { serverEnv } from "@workspace/shared/server-consts"
 import { drizzle } from "drizzle-orm/neon-http"
+import { serverEnv } from "../env"
 import * as schema from "./schema"
 
 const sql = neon(serverEnv.DATABASE_URL)

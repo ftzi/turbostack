@@ -4,7 +4,7 @@ import { mock } from "bun:test"
 mock.module("server-only", () => ({}))
 
 // Mock server environment variables to prevent validation errors
-mock.module("@workspace/shared/server-consts", () => ({
+mock.module("@workspace/server/env", () => ({
 	serverEnv: {
 		DATABASE_URL: "postgresql://test:test@localhost:5432/test",
 		BETTER_AUTH_SECRET: "test-secret",
@@ -31,17 +31,19 @@ mock.module("./auth", () => ({
 
 // Create reusable mocks for database
 const mockFindFirst = mock(() => Promise.resolve(null))
+const mockFindMany = mock(() => Promise.resolve([]))
 const mockReturning = mock(() => Promise.resolve([]))
 const mockWhere = mock(() => ({ returning: mockReturning }))
 const mockSet = mock(() => ({ where: mockWhere }))
 const mockUpdate = mock(() => ({ set: mockSet }))
 
 // Mock database module to prevent initialization during import
-mock.module("./db/index", () => ({
+mock.module("@workspace/server/db", () => ({
 	db: {
 		query: {
 			users: {
 				findFirst: mockFindFirst,
+				findMany: mockFindMany,
 			},
 		},
 		update: mockUpdate,

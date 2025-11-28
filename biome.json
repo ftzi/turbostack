@@ -55,7 +55,8 @@
 				"useExhaustiveSwitchCases": "on",
 				"useMaxParams": { "level": "on", "options": { "max": 2 } },
 				"noFloatingPromises": "on",
-				"noContinue": "on"
+				"noContinue": "on",
+				"noNextAsyncClientComponent": "on"
 			},
 			"correctness": {
 				"noUndeclaredDependencies": "on",
@@ -81,7 +82,8 @@
 				"noEmptyBlockStatements": "on",
 				"noUnassignedVariables": "on",
 				"noBitwiseOperators": "on",
-				"noAlert": "on"
+				"noAlert": "on",
+				"useAwait": "on"
 			},
 			"performance": {
 				"noAwaitInLoops": "on",
@@ -123,5 +125,17 @@
 			"semicolons": "asNeeded",
 			"quoteStyle": "double"
 		}
-	}
+	},
+	"overrides": [
+		{
+			"includes": ["packages/nextbook/src/index.ts"],
+			"linter": {
+				"rules": {
+					"performance": {
+						"noBarrelFile": "off"
+					}
+				}
+			}
+		}
+	]
 }

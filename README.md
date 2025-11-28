@@ -86,14 +86,14 @@ bun knip          # Find unused files and dependencies
 
 ## 📚 Tech Stack
 
-- **Framework**: Next.js 16, React 19.2
-- **Language**: TypeScript 5.9
-- **API**: oRPC with TanStack Query
-- **Database**: Drizzle ORM + Neon
-- **Auth**: Better Auth
-- **UI**: shadcn/ui + Tailwind CSS 4.1
-- **Tooling**: Turborepo, Bun, Biome
-- **Email**: React Email + Resend
+- **Framework**: [Next.js 16](https://nextjs.org/), [React 19.2](https://react.dev/)
+- **Language**: [TypeScript 5.9](https://www.typescriptlang.org/)
+- **API**: [oRPC](https://orpc.unnoq.com/) with [TanStack Query](https://tanstack.com/query)
+- **Database**: [Drizzle ORM](https://orm.drizzle.team/) + [Neon](https://neon.tech/)
+- **Auth**: [Better Auth](https://www.better-auth.com/)
+- **UI**: [shadcn/ui](https://ui.shadcn.com/) + [Tailwind CSS 4.1](https://tailwindcss.com/)
+- **Tooling**: [Turborepo](https://turbo.build/), [Bun](https://bun.sh/), [Biome](https://biomejs.dev/)
+- **Email**: [React Email](https://react.email/) + [Resend](https://resend.com/)
 
 ## 📖 Documentation
 
@@ -104,6 +104,7 @@ For detailed information about the project architecture, conventions, and workfl
 This project is optimized for [Claude Code](https://claude.ai/code), providing an exceptional AI-assisted development experience:
 
 - **Comprehensive CLAUDE.md** - Extensive documentation covering architecture, patterns, conventions, and workflows
+- **Custom Slash Commands** - `/ok` for quick type checking and linting verification
 - **Custom Hooks** - Automated checks for code quality, type safety, and best practices
 - **Specialized Agents** - Pre-configured agents for codebase exploration, planning, and implementation
 - **MCP Servers** - Integrated Better Auth, Next.js DevTools, and Context7 for enhanced AI capabilities

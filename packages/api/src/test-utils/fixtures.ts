@@ -9,6 +9,7 @@ type MockUser = {
 	name: string
 	image: string | null
 	emailVerified: boolean
+	role: string
 	createdAt: Date
 	updatedAt: Date
 }
@@ -34,6 +35,7 @@ export function createMockUser(overrides?: Partial<MockUser>): MockUser {
 		name: "Test User",
 		image: "https://example.com/avatar.jpg",
 		emailVerified: false,
+		role: "user",
 		createdAt: new Date("2024-01-01T00:00:00.000Z"),
 		updatedAt: new Date("2024-01-02T00:00:00.000Z"),
 		...overrides,

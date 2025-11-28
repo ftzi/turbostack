@@ -54,7 +54,7 @@ export const user = pgTable(
 - After schema changes, ALWAYS prompt the user: "Schema changes complete. Please run: `bun db:generate`"
 - Let the user handle migration generation and application manually
 
-**Note:** Root commands delegate to `packages/api` where Drizzle config and migrations are located.
+**Note:** Root commands delegate to `packages/server` where Drizzle config and migrations are located.
 
 ### Current Schema
 

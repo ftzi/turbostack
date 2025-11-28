@@ -67,7 +67,7 @@ export const getOpengraphImage = async (imageSize: { width: number; height: numb
 	)
 
 export default async function Image() {
-	return getOpengraphImage(size)
+	return await getOpengraphImage(size)
 }
 
 // https://vercel.com/guides/using-custom-font

@@ -44,6 +44,30 @@ const authMiddleware = implement(contract)
 export const protectedProcedure = publicProcedure.use(authMiddleware)
 
 /**
+ * Admin middleware for oRPC
+ * Checks that the authenticated user has the "admin" role
+ */
+const adminMiddleware = implement(contract)
+	.$context<{ user: User }>()
+	.middleware(({ context, next, errors }) => {
+		if (context.user.role !== "admin") {
+			throw errors.unauthorized({
+				data: {
+					message: "Admin access required",
+				},
+			})
+		}
+
+		return next({ context })
+	})
+
+/**
+ * Admin procedure implementer with auth + admin middlewares chained
+ * Guarantees that context.user has role "admin"
+ */
+export const adminProcedure = protectedProcedure.use(adminMiddleware)
+
+/**
  * Type helpers for authenticated context
  */
 export type AuthenticatedContext = {

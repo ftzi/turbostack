@@ -6,7 +6,6 @@
 	"exports": {
 		"./auth": "./src/auth.ts",
 		"./logger": "./src/logger.ts",
-		"./db": "./src/db/index.ts",
 		"./orpc/router": "./src/orpc/router.ts",
 		"./orpc/server-client": "./src/orpc/server-client.ts",
 		"./orpc/contract": "./src/orpc/contract/index.ts",
@@ -15,17 +14,14 @@
 	},
 	"scripts": {
 		"ts": "tsc --noEmit",
-		"test": "SKIP_ENV_VALIDATION=1 bun test",
-		"db:studio": "drizzle-kit studio",
-		"db:generate": "drizzle-kit generate",
-		"db:migrate": "drizzle-kit migrate"
+		"test": "SKIP_ENV_VALIDATION=1 bun test"
 	},
 	"dependencies": {
-		"@neondatabase/serverless": "1.0.2",
 		"@orpc/contract": "catalog:",
 		"@orpc/experimental-pino": "1.11.3",
 		"@orpc/server": "catalog:",
 		"@workspace/email": "workspace:*",
+		"@workspace/server": "workspace:*",
 		"@workspace/shared": "workspace:*",
 		"better-auth": "1.4.0",
 		"drizzle-orm": "0.44.7",
@@ -36,7 +32,6 @@
 	},
 	"devDependencies": {
 		"@workspace/typescript-config": "workspace:*",
-		"drizzle-kit": "0.31.7",
 		"typescript": "catalog:"
 	}
 }

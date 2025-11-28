@@ -1,5 +1,6 @@
 import "server-only"
 import { publicProcedure } from "./base"
+import { listUsers, updateUserRole } from "./procedures/admin/admin.handler"
 import { authPing } from "./procedures/auth/auth.handler"
 import { ping } from "./procedures/ping/ping.handler"
 import { getCurrentUser, updateUser } from "./procedures/user/user.handler"
@@ -15,6 +16,10 @@ export const router = publicProcedure.router({
 		ping: authPing,
 		getCurrentUser,
 		updateUser,
+	},
+	admin: {
+		listUsers,
+		updateUserRole,
 	},
 })
 

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test } from "bun:test"
 import { call } from "@orpc/server"
+import { db } from "@workspace/server/db"
 import { auth } from "../../../auth"
-import { db } from "../../../db/index"
 import { createMockUser } from "../../../test-utils/fixtures"
 import { callAuthenticated, expectORPCError, type MockAuth } from "../../../test-utils/helpers"
 import { getCurrentUser, updateUser } from "./user.handler"

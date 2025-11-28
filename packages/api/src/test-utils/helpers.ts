@@ -27,20 +27,45 @@ export async function callAuthenticated<T extends AnyProcedure>(
 	options?: {
 		userId?: string
 		userEmail?: string
+		role?: string
 	},
 ) {
 	const sessionData = createMockSessionData(
-		options?.userId || options?.userEmail
+		options?.userId || options?.userEmail || options?.role
 			? {
 					id: options.userId,
 					email: options.userEmail,
+					role: options.role,
 				}
 			: undefined,
 	)
 
 	mockAuth.api.getSession.mockResolvedValueOnce(sessionData)
 
-	return call(procedure, input, { context: { headers: new Headers() } })
+	return await call(procedure, input, { context: { headers: new Headers() } })
+}
+
+/**
+ * Helper to call an admin procedure with a mocked admin session
+ * Automatically sets up the auth mock with role="admin"
+ *
+ * @example
+ * const result = await callAsAdmin(listUsers, {}, mockAuth)
+ */
+// biome-ignore lint/nursery/useMaxParams: Test utility - matches callAuthenticated signature
+export function callAsAdmin<T extends AnyProcedure>(
+	procedure: T,
+	input: unknown,
+	mockAuth: MockAuth,
+	options?: {
+		userId?: string
+		userEmail?: string
+	},
+) {
+	return callAuthenticated(procedure, input, mockAuth, {
+		...options,
+		role: "admin",
+	})
 }
 
 /**

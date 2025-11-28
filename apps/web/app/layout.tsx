@@ -2,8 +2,9 @@ import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 
 import "@workspace/ui/globals.css"
-import { consts, env } from "@workspace/shared/consts"
-import { Providers } from "@/components/providers"
+import { consts } from "@workspace/shared/consts"
+import { env } from "@workspace/shared/env"
+import { RootLayoutWrapper } from "@/components/root-layout-wrapper"
 import { DEFAULT_METADATA, DEFAULT_OPENGRAPH } from "@/lib/opengraph/defaults"
 
 /**
@@ -57,11 +58,5 @@ export const metadata: Metadata = {
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }): React.ReactElement {
-	return (
-		<html lang="en" suppressHydrationWarning>
-			<body className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased`}>
-				<Providers>{children}</Providers>
-			</body>
-		</html>
-	)
+	return <RootLayoutWrapper fontClasses={`${fontSans.variable} ${fontMono.variable}`}>{children}</RootLayoutWrapper>
 }

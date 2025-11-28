@@ -1,6 +1,8 @@
 "use client"
 
+import { createORPCClient } from "@orpc/client"
 import { RPCLink } from "@orpc/client/fetch"
+import type { RouterClient } from "@orpc/server"
 import { createTanstackQueryUtils } from "@orpc/tanstack-query"
 import { QueryClient } from "@tanstack/react-query"
 import type { Router } from "@workspace/api/orpc/router"
@@ -21,10 +23,10 @@ export function createQueryClient() {
 }
 
 /**
- * Type-safe oRPC client
+ * Type-safe oRPC link
  * Reference: https://orpc.unnoq.com/docs/client/rpc-link
  */
-export const client = new RPCLink<Router>({
+const link = new RPCLink({
 	url: typeof window !== "undefined" ? `${window.location.origin}/api/rpc` : "http://localhost:3000/api/rpc",
 	headers: async () => {
 		if (typeof window !== "undefined") {
@@ -37,8 +39,13 @@ export const client = new RPCLink<Router>({
 })
 
 /**
+ * Type-safe oRPC client
+ * Reference: https://orpc.unnoq.com/docs/client/rpc-link
+ */
+export const client: RouterClient<Router> = createORPCClient(link)
+
+/**
  * oRPC TanStack Query Integration
  * Reference: https://orpc.unnoq.com/docs/integrations/tanstack-query
  */
-// @ts-expect-error - RPCLink<Router> works at runtime but doesn't satisfy NestedClient constraint
 export const orpc = createTanstackQueryUtils(client)

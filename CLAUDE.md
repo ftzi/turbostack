@@ -117,11 +117,11 @@ Turbostack is a monorepo based on shadcn and NextStack templates. It uses Turbor
 
 ### Database (Drizzle ORM)
 
-- `bun db:studio` - Open Drizzle Studio (delegates to packages/api)
-- `bun db:generate` - Generate database migrations (delegates to packages/api)
-- `bun db:migrate` - Run database migrations (delegates to packages/api)
-- Configuration and migrations now live in `packages/api/` where the database code is
-- Can also run directly from api package: `bun run --cwd packages/api db:studio`
+- `bun db:studio` - Open Drizzle Studio (delegates to packages/server)
+- `bun db:generate` - Generate database migrations (delegates to packages/server)
+- `bun db:migrate` - Run database migrations (delegates to packages/server)
+- Configuration and migrations live in `packages/server/` where the database code is
+- Can also run directly from server package: `bun run --cwd packages/server db:studio`
 
 ### Environment Variables
 
@@ -146,9 +146,10 @@ This is a Turborepo monorepo with two main workspace types:
   - **web/** - Next.js 16 app (frontend: pages, components, UI)
 
 - **packages/** - Shared packages
-  - **api/** - Backend logic (Better Auth, oRPC, database, server config, contracts)
+  - **api/** - Backend logic (Better Auth, oRPC, contracts)
+  - **server/** - Server-only code (database, server consts/env)
   - **email/** - Email templates using react-email
-  - **shared/** - Generic utilities and helpers (error handling, etc.)
+  - **shared/** - Client + server utilities (consts, env validation, error handling)
   - **ui/** - Shared UI component library (shadcn-based)
   - **typescript-config/** - Shared TypeScript configurations
 
@@ -173,18 +174,19 @@ This is a Turborepo monorepo with two main workspace types:
 - Uses App Router with route groups: `app/(home)/` for public pages
 - Client/server separation enforced via `"server-only"` imports
 - Environment variables validated with `@t3-oss/env-nextjs` and Zod
-- Two env files: `lib/consts.ts` (client + server) and `server/serverConsts.ts` (server-only)
+- Consts and env vars are split: `consts.ts` (static) + `env.ts` (validated env vars)
 
 **Configuration:**
 
-- `packages/shared/src/consts.ts` - App constants and client-side env vars (`NEXT_PUBLIC_*`)
-- `packages/shared/src/serverConsts.ts` - Server-only constants and env vars (database, API keys, payment processor config)
-- Both use `createEnv()` from `@t3-oss/env-nextjs` for type-safe env validation
-- Pattern: Feature flags (e.g., `emailEnabled`) control which env vars are required via conditional Zod schemas
+- `packages/shared/src/consts.ts` - Static app constants (no env validation triggered on import)
+- `packages/shared/src/env.ts` - Client-side env vars (`NEXT_PUBLIC_*`) with Zod validation
+- `packages/server/src/consts.ts` - Server-only static constants
+- `packages/server/src/env.ts` - Server-only env vars (database, API keys) with Zod validation
+- Pattern: Feature flags (e.g., `emailEnabled` in `consts.ts`) control which env vars are required via conditional Zod schemas
 
 **Email Integration:**
 
-- Email sending via Resend (configured in `packages/shared/src/serverConsts.ts`)
+- Email sending via Resend (configured in `packages/server/src/consts.ts`)
 - Email templates in `packages/email/emails/`
 - Main email logic in `packages/email/email.tsx`
 
@@ -283,20 +285,36 @@ test("should update user successfully", async () => {
 - Run tests: `bun test` (from project root or `packages/api`)
 - Tests run automatically with `SKIP_ENV_VALIDATION=1` to bypass env validation
 
-### API Package (packages/api/)
+### Server Package (packages/server/)
 
-**Purpose:** Backend logic package containing all server-side code
+**Purpose:** Server-only code including database, server constants, and environment variables
 
 **Structure:**
 
 - `drizzle.config.ts` - Drizzle Kit configuration
 - `drizzle/` - Database migrations (committed to git for schema history)
-- `src/auth.ts` - Better Auth configuration with Drizzle adapter
-- `src/logger.ts` - Pino logger configuration
+- `src/consts.ts` - Server-only static constants (payment config, integrations, email settings)
+- `src/env.ts` - Server-only env vars with Zod validation (DATABASE_URL, API keys, etc.)
 - `src/db/` - Database schema and Drizzle client
   - `schema.ts` - Drizzle schema with Better Auth tables and performance indexes
   - `index.ts` - Database client using Neon serverless
   - `CLAUDE.md` - Critical documentation about manual index management
+
+**Exports:**
+
+- `@workspace/server/consts` - Server-only static constants
+- `@workspace/server/env` - Server-only env vars
+- `@workspace/server/db` - Database client
+- `@workspace/server/db/schema` - Database schema
+
+### API Package (packages/api/)
+
+**Purpose:** Backend logic package containing authentication and oRPC procedures
+
+**Structure:**
+
+- `src/auth.ts` - Better Auth configuration with Drizzle adapter
+- `src/logger.ts` - Pino logger configuration
 - `src/orpc/` - oRPC server implementation
   - `errors.ts` - Common error definitions (UNAUTHORIZED, OPERATION_FAILED) shared across all procedures
   - `contract/index.ts` - Main contract that composes domain contracts
@@ -319,7 +337,6 @@ test("should update user successfully", async () => {
 
 - `@workspace/api/auth` - Better Auth instance
 - `@workspace/api/logger` - Pino logger instance
-- `@workspace/api/db` - Database client
 - `@workspace/api/orpc/errors` - Common error definitions (UNAUTHORIZED, OPERATION_FAILED)
 - `@workspace/api/orpc/contract` - Main oRPC contract definition (composed)
 - `@workspace/api/orpc/procedures/{domain}/{domain}.contract` - Domain-specific contracts
@@ -341,14 +358,13 @@ test("should update user successfully", async () => {
 
 ### Shared Package (packages/shared/)
 
-**Purpose:** Shared code that can be reused across the entire workspace, including generic utilities and application configuration
+**Purpose:** Client + server shared code including constants, env validation, and error handling utilities
 
 **Configuration:**
 
-- `src/consts.ts` - App constants and client-side env vars (`NEXT_PUBLIC_*`)
-- `src/serverConsts.ts` - Server-only constants and env vars (database, API keys, etc.)
+- `src/consts.ts` - Static app constants (no env validation triggered on import)
+- `src/env.ts` - Client-side env vars (`NEXT_PUBLIC_*`) with Zod validation
 - Both use `@t3-oss/env-nextjs` for type-safe environment variable validation
-- Located here so both `api` and `email` packages can access them without circular dependencies
 
 **Error Handling:**
 
@@ -378,8 +394,8 @@ try {
 
 **Exports:**
 
-- `@workspace/shared/consts` - App constants and client-side env vars
-- `@workspace/shared/server-consts` - Server-only constants and env vars
+- `@workspace/shared/consts` - Static app constants
+- `@workspace/shared/env` - Client-side env vars
 - `@workspace/shared/utils/error` - Error handling utilities
 
 ### UI Package (packages/ui/)
