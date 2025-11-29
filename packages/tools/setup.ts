@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 
-import { existsSync, readFileSync } from "node:fs"
+import { existsSync, readFileSync, writeFileSync } from "node:fs"
 import { join } from "node:path"
 import * as readline from "node:readline"
 import { emailEnabled } from "@workspace/shared/consts"
@@ -36,7 +36,14 @@ function checkLocalEnvVar(varName: string): boolean {
 	}
 }
 
+let SKIP_VERCEL = process.env.SKIP_VERCEL === "true" || process.argv.includes("--skip-vercel")
+const NONINTERACTIVE = !process.stdin.isTTY || !process.stdout.isTTY
+
 async function pullEnvFromVercel(): Promise<void> {
+	if (SKIP_VERCEL) {
+		// running in skip mode — do not call Vercel
+		return
+	}
 	await $`bunx vercel env pull`.quiet()
 }
 
@@ -45,8 +52,39 @@ async function hasEnvVar(varName: string): Promise<boolean> {
 	if (checkLocalEnvVar(varName)) {
 		return true
 	}
+	if (SKIP_VERCEL) {
+		// if we're skipping vercel, don't attempt to pull
+		return false
+	}
 	await pullEnvFromVercel()
 	return checkLocalEnvVar(varName)
+}
+
+function escapeRegExp(str: string) {
+	return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+}
+
+function addOrUpdateLocalEnvVar(varName: string, value: string) {
+	const envLocalPath = join(process.cwd(), ".env.local")
+	let content = ""
+	if (existsSync(envLocalPath)) {
+		try {
+			content = readFileSync(envLocalPath, "utf-8")
+		} catch {
+			content = ""
+		}
+	}
+	const line = `${varName}=${value}`
+	const regex = new RegExp(`^${escapeRegExp(varName)}=.*$`, "m")
+	if (regex.test(content)) {
+		content = content.replace(regex, line)
+	} else {
+		if (content.length && !content.endsWith("\n")) {
+			content += "\n"
+		}
+		content += line + "\n"
+	}
+	writeFileSync(envLocalPath, content, "utf-8")
 }
 
 // Reference: https://bun.sh/docs/api/spawn
@@ -68,6 +106,13 @@ function waitForEnter(message: string): Promise<void> {
 		output: process.stdout,
 	})
 
+	if (NONINTERACTIVE) {
+		// No terminal available — resolve immediately so this won't block, caller should
+		// handle non-interactive cases differently if needed.
+		console.log(`[skip] ${message}`)
+		rl.close()
+		return Promise.resolve()
+	}
 	return new Promise((resolve) => {
 		rl.question(message, () => {
 			rl.close()
@@ -82,6 +127,13 @@ function prompt(message: string): Promise<string> {
 		output: process.stdout,
 	})
 
+	if (NONINTERACTIVE) {
+		// In a non-interactive environment, we cannot prompt. Prefer explicit env or flags.
+		rl.close()
+		throw new Error(
+			`${message} (non-interactive environment detected). Use SKIP_VERCEL=true or run interactively.`,
+		)
+	}
 	return new Promise((resolve) => {
 		rl.question(message, (answer) => {
 			rl.close()
@@ -104,9 +156,44 @@ async function linkVercel(): Promise<void> {
 		return
 	}
 
+	// If user actively skipped via env or flags, do not prompt
+	if (SKIP_VERCEL) {
+		console.log("Skipping Vercel linking (SKIP_VERCEL=true or --skip-vercel)")
+		return
+	}
+
+	if (NONINTERACTIVE) {
+		console.log("Non-interactive environment detected — skipping Vercel link. Use SKIP_VERCEL to set explicitly.")
+		return
+	}
+
 	step("Link Vercel Project")
+	const answer = (await prompt("Do you want to link this project to Vercel? (Y/n): ")).toLowerCase()
+	if (answer === "n" || answer === "no") {
+		console.log("Skipping Vercel linking as requested")
+		SKIP_VERCEL = true
+		return
+	}
+
 	await spawn(["bunx", "vercel", "link"])
 	success("Vercel project linked")
+}
+
+// Configure Local SQLite
+async function configureLocalSqlite(): Promise<void> {
+	if (!SKIP_VERCEL) return
+
+	if (checkLocalEnvVar("DATABASE_URL") && checkLocalEnvVar("DB_CLIENT")) {
+		return
+	}
+
+	step("Configure Local Database")
+
+	console.log("Automatically configuring local SQLite database...")
+	addOrUpdateLocalEnvVar("DB_CLIENT", "sqlite")
+	addOrUpdateLocalEnvVar("DATABASE_URL", "file:./local.db")
+	success("Local SQLite configured (DB_CLIENT=sqlite, DATABASE_URL=file:./local.db)")
+	console.log("  (To use Postgres locally, update .env.local manually)")
 }
 
 // Install Neon Integration
@@ -117,19 +204,37 @@ async function installNeon(): Promise<void> {
 
 	step("Install Neon Integration")
 
-	console.log("Please install the Neon integration:")
-	console.log("1. Visit: https://vercel.com/marketplace/neon")
-	console.log("2. Press Install and follow the given steps\n")
+	if (SKIP_VERCEL) {
+		console.log("Vercel linking skipped. Please add a DATABASE_URL to .env.local for local development.")
+		console.log("You can create a free Neon DB or provide any Postgres URL for local testing.")
+	} else {
+		console.log("Please install the Neon integration:")
+		console.log("1. Visit: https://vercel.com/marketplace/neon")
+		console.log("2. Press Install and follow the given steps\n")
+	}
 
 	// biome-ignore lint/nursery/noUnnecessaryConditions: intentional infinite loop until condition met
+	if (SKIP_VERCEL && NONINTERACTIVE && !checkLocalEnvVar("DATABASE_URL")) {
+		throw new Error(
+			"Non-interactive environment detected and SKIP_VERCEL is set but DATABASE_URL is missing in .env.local. Add it manually or run interactively.",
+		)
+	}
 	while (true) {
 		// biome-ignore lint/performance/noAwaitInLoops: sequential user interaction required
 		await waitForEnter("Press Enter when done...")
-		await pullEnvFromVercel()
+		if (!SKIP_VERCEL) {
+			await pullEnvFromVercel()
+		}
 		if (checkLocalEnvVar("DATABASE_URL")) {
 			break
 		}
 		console.log("DATABASE_URL not found. Please complete the Neon installation.\n")
+	}
+
+	if (SKIP_VERCEL && NONINTERACTIVE && !checkLocalEnvVar("DATABASE_URL")) {
+		throw new Error(
+			"Non-interactive environment detected and SKIP_VERCEL is set but DATABASE_URL is missing in .env.local. Add it manually or run interactively.",
+		)
 	}
 
 	success("Neon integration configured")
@@ -157,22 +262,53 @@ async function configureResend(): Promise<void> {
 		console.log("3. Save the Environment Variable\n")
 
 		// biome-ignore lint/nursery/noUnnecessaryConditions: intentional infinite loop until condition met
-		while (true) {
-			// biome-ignore lint/performance/noAwaitInLoops: sequential user interaction required
-			await waitForEnter("Press Enter when done...")
-			await pullEnvFromVercel()
-			if (checkLocalEnvVar("RESEND_API_KEY")) {
-				break
+		if (SKIP_VERCEL) {
+			console.log("Vercel linking skipped. Please add RESEND_API_KEY to .env.local manually.")
+			if (NONINTERACTIVE && !checkLocalEnvVar("RESEND_API_KEY")) {
+				throw new Error(
+					"Non-interactive environment detected and SKIP_VERCEL is set but RESEND_API_KEY is missing in .env.local. Add it manually or run interactively.",
+				)
 			}
-			console.log("RESEND_API_KEY not found. Please complete the Resend setup.\n")
+			// biome-ignore lint/nursery/noUnnecessaryConditions: intentional
+			while (true) {
+				await waitForEnter("Press Enter when done...")
+				if (checkLocalEnvVar("RESEND_API_KEY")) break
+				console.log("RESEND_API_KEY not found. Please add it to .env.local.\n")
+			}
+		} else {
+			while (true) {
+				// biome-ignore lint/performance/noAwaitInLoops: sequential user interaction required
+				await waitForEnter("Press Enter when done...")
+				await pullEnvFromVercel()
+				if (checkLocalEnvVar("RESEND_API_KEY")) {
+					break
+				}
+				console.log("RESEND_API_KEY not found. Please complete the Resend setup.\n")
+			}
 		}
 	}
 
 	if (!hasEmailDomain) {
-		const domain = await prompt("Enter your email domain (e.g., example.com): ")
-		await $`bunx vercel env add NEXT_PUBLIC_EMAIL_DOMAIN`.env({ VERCEL_ENV_VALUE: domain }).quiet()
-		await pullEnvFromVercel()
-		console.log("Added NEXT_PUBLIC_EMAIL_DOMAIN to all environments")
+		if (NONINTERACTIVE && SKIP_VERCEL) {
+			const envDomain = process.env.NEXT_PUBLIC_EMAIL_DOMAIN
+			if (!envDomain) {
+				throw new Error(
+					"Non-interactive: NEXT_PUBLIC_EMAIL_DOMAIN not provided. Set NEXT_PUBLIC_EMAIL_DOMAIN in environment or .env.local or run interactively.",
+				)
+			}
+			addOrUpdateLocalEnvVar("NEXT_PUBLIC_EMAIL_DOMAIN", envDomain)
+			console.log("Added NEXT_PUBLIC_EMAIL_DOMAIN to .env.local from environment")
+		} else {
+			const domain = await prompt("Enter your email domain (e.g., example.com): ")
+			if (SKIP_VERCEL) {
+				addOrUpdateLocalEnvVar("NEXT_PUBLIC_EMAIL_DOMAIN", domain)
+				console.log("Added NEXT_PUBLIC_EMAIL_DOMAIN to .env.local")
+			} else {
+				await $`bunx vercel env add NEXT_PUBLIC_EMAIL_DOMAIN`.env({ VERCEL_ENV_VALUE: domain }).quiet()
+				await pullEnvFromVercel()
+				console.log("Added NEXT_PUBLIC_EMAIL_DOMAIN to all environments")
+			}
+		}
 	}
 
 	success("Resend integration configured")
@@ -189,14 +325,20 @@ async function configureBetterAuth(): Promise<void> {
 	console.log("Generating and adding Better Auth secrets...")
 
 	try {
-		await $`printf ${generateRandomString()} | bunx vercel env add BETTER_AUTH_SECRET development`.quiet()
-		await $`printf ${generateRandomString()} | bunx vercel env add BETTER_AUTH_SECRET preview`.quiet()
-		await $`printf ${generateRandomString()} | bunx vercel env add BETTER_AUTH_SECRET production`.quiet()
-		await pullEnvFromVercel()
-		success("Better Auth secrets configured")
+		if (SKIP_VERCEL) {
+			const seed = generateRandomString()
+			addOrUpdateLocalEnvVar("BETTER_AUTH_SECRET", seed)
+			success("Better Auth secret added to .env.local")
+		} else {
+			await $`printf ${generateRandomString()} | bunx vercel env add BETTER_AUTH_SECRET development`.quiet()
+			await $`printf ${generateRandomString()} | bunx vercel env add BETTER_AUTH_SECRET preview`.quiet()
+			await $`printf ${generateRandomString()} | bunx vercel env add BETTER_AUTH_SECRET production`.quiet()
+			await pullEnvFromVercel()
+			success("Better Auth secrets configured")
+		}
 	} catch {
 		throw new Error(
-			"Failed to add Better Auth secrets. Please add BETTER_AUTH_SECRET manually via: bunx vercel env add BETTER_AUTH_SECRET",
+			"Failed to add Better Auth secrets. Please add BETTER_AUTH_SECRET manually via: bunx vercel env add BETTER_AUTH_SECRET or add to .env.local",
 		)
 	}
 }
@@ -206,11 +348,29 @@ async function runMigrations(): Promise<void> {
 	step("Run Database Migrations")
 
 	console.log("Running database migrations...")
+	const hasDb = await hasEnvVar("DATABASE_URL")
+	if (!hasDb) {
+		if (NONINTERACTIVE && SKIP_VERCEL) {
+			throw new Error(
+				"DATABASE_URL missing in .env.local and running in non-interactive SKIP_VERCEL mode. Add DATABASE_URL or run setup interactively.",
+			)
+		}
+		if (!NONINTERACTIVE) {
+			const ans = (await prompt("DATABASE_URL not found. Do you want to skip running migrations? (y/N): ")).toLowerCase()
+			if (ans === "y" || ans === "yes") {
+				console.log("Skipping database migrations.")
+				return
+			}
+		}
+		// if interactive and user chose not to skip, we'll attempt migrations and let them fail if DB isn't reachable
+	}
 	try {
 		await $`bun db:migrate`
 		success("Database migrations complete")
-	} catch {
-		throw new Error("Failed to run migrations. Please ensure DATABASE_URL is set and try again.")
+	} catch (err) {
+		throw new Error(
+			`Failed to run migrations. Please ensure DATABASE_URL is set and try again. (${err instanceof Error ? err.message : String(err)})`,
+		)
 	}
 }
 
@@ -223,6 +383,7 @@ async function main(): Promise<void> {
 
 	try {
 		await linkVercel()
+		await configureLocalSqlite()
 		await installNeon()
 		await configureResend()
 		await configureBetterAuth()
