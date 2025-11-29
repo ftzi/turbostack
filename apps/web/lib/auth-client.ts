@@ -2,7 +2,7 @@ import type { auth } from "@workspace/api/auth"
 import { inferAdditionalFields, magicLinkClient } from "better-auth/client/plugins"
 import { createAuthClient } from "better-auth/react"
 
-export const authClient = createAuthClient({
+export const authClient: ReturnType<typeof createAuthClient> = createAuthClient({
 	plugins: [
 		magicLinkClient(),
 		// Reference: https://www.better-auth.com/docs/concepts/typescript#inferring-additional-fields-on-client
