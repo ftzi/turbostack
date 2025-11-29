@@ -28,7 +28,6 @@
         "@tanstack/react-query": "5.90.10",
         "@workspace/api": "workspace:*",
         "@workspace/email": "workspace:*",
-        "@workspace/nextbook": "workspace:*",
         "@workspace/shared": "workspace:*",
         "@workspace/ui": "workspace:*",
         "better-auth": "1.4.0",
@@ -94,34 +93,6 @@
         "@types/react-dom": "catalog:",
         "@workspace/typescript-config": "workspace:*",
         "react-email": "5.0.5",
-      },
-    },
-    "packages/nextbook": {
-      "name": "@workspace/nextbook",
-      "version": "0.0.1",
-      "bin": {
-        "nextbook": "./src/cli/index.ts",
-      },
-      "dependencies": {
-        "citty": "0.1.6",
-        "clsx": "2.1.1",
-        "tailwind-merge": "3.3.1",
-      },
-      "devDependencies": {
-        "@types/react": "catalog:",
-        "@types/react-dom": "catalog:",
-        "@workspace/typescript-config": "workspace:*",
-        "next": "catalog:",
-        "react": "catalog:",
-        "react-dom": "catalog:",
-        "typescript": "catalog:",
-        "zod": "catalog:",
-      },
-      "peerDependencies": {
-        "next": ">=15",
-        "react": ">=18",
-        "react-dom": ">=18",
-        "zod": ">=3",
       },
     },
     "packages/server": {
@@ -959,8 +930,6 @@
     "@workspace/api": ["@workspace/api@workspace:packages/api"],
 
     "@workspace/email": ["@workspace/email@workspace:packages/email"],
-
-    "@workspace/nextbook": ["@workspace/nextbook@workspace:packages/nextbook"],
 
     "@workspace/server": ["@workspace/server@workspace:packages/server"],
 

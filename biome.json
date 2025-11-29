@@ -125,17 +125,5 @@
 			"semicolons": "asNeeded",
 			"quoteStyle": "double"
 		}
-	},
-	"overrides": [
-		{
-			"includes": ["packages/nextbook/src/index.ts"],
-			"linter": {
-				"rules": {
-					"performance": {
-						"noBarrelFile": "off"
-					}
-				}
-			}
-		}
-	]
+	}
 }
