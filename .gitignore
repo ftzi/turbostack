@@ -39,3 +39,5 @@ tsconfig.tsbuildinfo
 # Claude Code
 .claude/activity.log
 .env*.local
+
+.react-email
