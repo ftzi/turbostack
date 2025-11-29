@@ -2,6 +2,7 @@
 const nextConfig = {
 	reactCompiler: true,
 	transpilePackages: ["@workspace/ui"],
+	serverExternalPackages: ["better-sqlite3"],
 	turbopack: {
 		rules: {
 			"*.svg": {

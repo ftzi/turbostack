@@ -4,6 +4,7 @@
 	"private": true,
 	"scripts": {
 		"dev": "bun ./packages/tools/setup.ts && bun i && turbo dev tsw",
+		"dev:local": "SKIP_VERCEL=true DB_CLIENT=sqlite bun ./packages/tools/setup.ts && bun i && turbo dev tsw",
 		"build": "turbo build",
 		"lint": "bunx biome check --write --unsafe . --error-on-warnings",
 		"ts": "turbo ts",
@@ -41,7 +42,8 @@
 			"@orpc/contract": "1.11.3",
 			"@orpc/server": "1.11.3",
 			"next": "16.0.1",
-			"server-only": "0.0.1"
+			"server-only": "0.0.1",
+			"drizzle-orm": "0.44.7"
 		}
 	},
 	"engines": {

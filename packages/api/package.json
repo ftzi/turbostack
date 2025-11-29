@@ -24,7 +24,7 @@
 		"@workspace/server": "workspace:*",
 		"@workspace/shared": "workspace:*",
 		"better-auth": "1.4.0",
-		"drizzle-orm": "0.44.7",
+		"drizzle-orm": "catalog:",
 		"next": "catalog:",
 		"pino": "10.1.0",
 		"server-only": "catalog:",
