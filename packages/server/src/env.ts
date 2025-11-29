@@ -16,7 +16,8 @@ export const serverEnv = createEnv({
 	 * isn't built with invalid env vars.
 	 */
 	server: {
-		DATABASE_URL: z.url(),
+		DATABASE_URL: z.string().min(1),
+		DB_CLIENT: z.enum(["postgres", "sqlite"]).default("postgres"),
 
 		RESEND_API_KEY: serverConsts.integrations.resend ? z.string().min(1) : z.string().optional(),
 
@@ -32,6 +33,7 @@ export const serverEnv = createEnv({
 	 */
 	runtimeEnv: {
 		DATABASE_URL: process.env.DATABASE_URL,
+		DB_CLIENT: process.env.DB_CLIENT,
 		RESEND_API_KEY: serverConsts.integrations.resend ? process.env.RESEND_API_KEY : disabledEnv,
 
 		BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
