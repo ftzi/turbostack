@@ -25,7 +25,7 @@ const emailSender = createEmailSender({
 
 export const auth = betterAuth({
 	database: drizzleAdapter(db, {
-		provider: "pg",
+		provider: serverEnv.DB_CLIENT === "sqlite" ? "sqlite" : "pg",
 		usePlural: true,
 	}),
 	emailAndPassword: {

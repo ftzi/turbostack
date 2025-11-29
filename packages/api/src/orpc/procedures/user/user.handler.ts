@@ -10,7 +10,7 @@ import { protectedProcedure } from "../../middleware/auth"
  */
 export const getCurrentUser = protectedProcedure.auth.getCurrentUser.handler(async ({ context }) => {
 	const userData = await db.query.users.findFirst({
-		where: eq(users.id, context.user.id),
+		where: eq(users.id as any, context.user.id),
 	})
 
 	if (!userData) {
@@ -51,7 +51,7 @@ export const updateUser = protectedProcedure.auth.updateUser.handler(async ({ co
 		updateData.image = input.image
 	}
 
-	const [updatedUser] = await db.update(users).set(updateData).where(eq(users.id, context.user.id)).returning()
+	const [updatedUser] = await (db as any).update(users).set(updateData).where(eq(users.id as any, context.user.id)).returning()
 
 	if (!updatedUser) {
 		throw errors.operationFailed({

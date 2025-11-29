@@ -10,10 +10,10 @@ import { adminProcedure } from "../../middleware/auth"
  */
 export const listUsers = adminProcedure.admin.listUsers.handler(async () => {
 	const allUsers = await db.query.users.findMany({
-		orderBy: (u, { desc }) => [desc(u.createdAt)],
+		orderBy: (u: any, { desc }: any) => [desc(u.createdAt)],
 	})
 
-	return allUsers.map((user) => ({
+	return allUsers.map((user: any) => ({
 		id: user.id,
 		name: user.name,
 		email: user.email,
@@ -34,7 +34,7 @@ export const updateUserRole = adminProcedure.admin.updateUserRole.handler(async 
 			role: input.role,
 			updatedAt: new Date(),
 		})
-		.where(eq(users.id, input.userId))
+		.where(eq(users.id as any, input.userId))
 		.returning()
 
 	if (!updatedUser) {
