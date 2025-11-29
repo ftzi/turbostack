@@ -3,11 +3,16 @@
 	"version": "0.0.1",
 	"type": "module",
 	"private": true,
+	"bin": {
+		"nextbook": "./src/cli/index.ts"
+	},
 	"scripts": {
 		"ts": "tsc --noEmit",
-		"tsw": "tsc --noEmit --watch"
+		"tsw": "tsc --noEmit --watch",
+		"test": "bun test"
 	},
 	"dependencies": {
+		"citty": "0.1.6",
 		"clsx": "2.1.1",
 		"tailwind-merge": "3.3.1"
 	},

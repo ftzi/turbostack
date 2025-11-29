@@ -1,6 +1,10 @@
+"use client"
+
 import { createStoryRegistry } from "@workspace/nextbook"
 
-export const { storyTree, StoryPage } = await createStoryRegistry({
-	"button.story": () => import("./button.story"),
-	"forms/input.story": () => import("./forms/input.story"),
+export const { storyTree, loaders } = createStoryRegistry({
+	button: () => import("./button.story"),
+	forms: {
+		input: () => import("./forms/input.story"),
+	},
 })

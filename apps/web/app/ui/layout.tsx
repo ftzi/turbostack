@@ -1,7 +1,7 @@
 import "@workspace/ui/globals.css"
 import { NextbookShell } from "@workspace/nextbook"
 import type { Metadata } from "next"
-import { storyTree } from "./stories"
+import { loaders, storyTree } from "./stories"
 
 export const metadata: Metadata = {
 	title: "Nextbook | Component Stories",
@@ -9,5 +9,13 @@ export const metadata: Metadata = {
 }
 
 export default function NextbookLayout({ children }: { children: React.ReactNode }) {
-	return <NextbookShell tree={storyTree}>{children}</NextbookShell>
+	return (
+		<html lang="en" suppressHydrationWarning>
+			<body>
+				<NextbookShell tree={storyTree} loaders={loaders}>
+					{children}
+				</NextbookShell>
+			</body>
+		</html>
+	)
 }

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <style>
+    @keyframes ping {
+      0% { transform: scale(1); opacity: 1; }
+      75%, 100% { transform: scale(1.4); opacity: 0; }
+    }
+    .ping {
+      transform-origin: 24px 24px;
+      animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+    }
+  </style>
+
+  <defs>
+    <linearGradient id="g4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#a855f7"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Ping ring -->
+  <circle class="ping" cx="24" cy="24" r="16" fill="none" stroke="#6366f1" stroke-width="2"/>
+
+  <!-- Bold "nb" ligature / abstract mark -->
+  <circle cx="24" cy="24" r="16" fill="url(#g4)"/>
+  <path d="M16 30 L16 18 L24 30 L24 18" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>

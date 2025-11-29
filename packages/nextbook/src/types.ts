@@ -71,8 +71,10 @@ export type StoryTreeNode = {
 	segment: string
 	/** Child nodes (for directories) */
 	children?: StoryTreeNode[]
-	/** Story metadata (for leaf nodes) */
+	/** Story metadata (for leaf nodes with discovered exports) */
 	story?: StoryMeta
+	/** File path for lazy loading (leaf nodes before export discovery) */
+	filePath?: string
 }
 
 /**

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <style>
+    @keyframes glow {
+      0%, 100% { filter: drop-shadow(0 0 2px #6366f1); }
+      50% { filter: drop-shadow(0 0 6px #6366f1); }
+    }
+    .mark { animation: glow 2s ease-in-out infinite; }
+  </style>
+
+  <defs>
+    <linearGradient id="g5" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#a855f7"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Abstract "N" + forward motion - like pages turning into the future -->
+  <g class="mark">
+    <path d="M8 40 L8 8 L24 40 L24 8" fill="none" stroke="url(#g5)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M32 18 L40 24 L32 30" fill="none" stroke="url(#g5)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

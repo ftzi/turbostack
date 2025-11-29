@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./logo.svg" alt="Nextbook Logo" width="120" height="120" />
+</p>
+
 # Nextbook
 
 **Zero-config component stories for Next.js**
@@ -7,9 +11,10 @@ Nextbook is a lightweight alternative to Storybook, designed specifically for Ne
 ## Features
 
 - **Zero Config** - Uses your Next.js app's existing setup
-- **Path-Based Hierarchy** - File path becomes sidebar structure automatically
+- **Path-Based Hierarchy** - Keys become sidebar structure automatically
 - **Zod Controls** - Auto-generate interactive controls from Zod schemas
 - **Type Safe** - Full TypeScript support with IntelliSense
+- **Lazy Loading** - Stories load on-demand for fast startup
 
 ## Quick Start
 
@@ -17,15 +22,20 @@ Nextbook is a lightweight alternative to Storybook, designed specifically for Ne
 
 ```tsx
 // app/ui/stories/index.ts
+"use client"
+
 import { createStoryRegistry } from "@workspace/nextbook"
 
-export const { storyTree, StoryPage } = await createStoryRegistry({
-  "button.story": () => import("./button.story"),
-  "forms/input.story": () => import("./forms/input.story"),
+export const { storyTree, loaders } = createStoryRegistry({
+  button: () => import("./button.story"),
+  forms: {
+    input: () => import("./forms/input.story"),
+    select: () => import("./forms/select.story"),
+  },
 })
 ```
 
-The key becomes the sidebar path: `"forms/input.story"` → `Forms / Input`
+Keys become sidebar paths: `forms.input` → `Forms / Input`
 
 ### 2. Create the layout
 
@@ -33,10 +43,18 @@ The key becomes the sidebar path: `"forms/input.story"` → `Forms / Input`
 // app/ui/layout.tsx
 import "@workspace/ui/globals.css"
 import { NextbookShell } from "@workspace/nextbook"
-import { storyTree } from "./stories"
+import { loaders, storyTree } from "./stories"
 
 export default function NextbookLayout({ children }: { children: React.ReactNode }) {
-  return <NextbookShell tree={storyTree}>{children}</NextbookShell>
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <NextbookShell tree={storyTree} loaders={loaders}>
+          {children}
+        </NextbookShell>
+      </body>
+    </html>
+  )
 }
 ```
 
@@ -44,16 +62,12 @@ export default function NextbookLayout({ children }: { children: React.ReactNode
 
 ```tsx
 // app/ui/[[...path]]/page.tsx
-import { StoryPage, storyTree } from "../stories"
+import { StoryPage } from "@workspace/nextbook"
+import { loaders, storyTree } from "../stories"
 
 export default async function Page({ params }: { params: Promise<{ path?: string[] }> }) {
   const { path = [] } = await params
-
-  if (path.length === 0) {
-    return <div>Welcome to Nextbook. Select a story from the sidebar.</div>
-  }
-
-  return <StoryPage path={path} />
+  return <StoryPage path={path} storyTree={storyTree} loaders={loaders} />
 }
 ```
 
@@ -123,11 +137,15 @@ export const Interactive = story({
 Stories are organized by the keys you provide to `createStoryRegistry`:
 
 ```tsx
-export const { storyTree, StoryPage } = await createStoryRegistry({
-  "button.story": () => import("./button.story"),           // → "Button"
-  "forms/input.story": () => import("./forms/input.story"), // → "Forms / Input"
-  "forms/select.story": () => import("./forms/select.story"), // → "Forms / Select"
-  "layout/card.story": () => import("./layout/card.story"),   // → "Layout / Card"
+export const { storyTree, loaders } = createStoryRegistry({
+  button: () => import("./button.story"),           // → "Button"
+  forms: {
+    input: () => import("./forms/input.story"),     // → "Forms / Input"
+    select: () => import("./forms/select.story"),   // → "Forms / Select"
+  },
+  layout: {
+    card: () => import("./layout/card.story"),      // → "Layout / Card"
+  },
 })
 ```
 
@@ -141,7 +159,7 @@ export const Secondary = story({ ... }) // → "Button / Secondary"
 
 ## Layout Isolation
 
-Nextbook needs its own `<html>` and `<body>` to avoid inheriting your app's providers. `NextbookShell` handles this automatically.
+Nextbook provides its own layout via `NextbookShell` but needs `<html>` and `<body>` from your layout file (required by Next.js for Server Components).
 
 If your root layout has providers that conflict, use `useSelectedLayoutSegment` to skip them:
 
@@ -173,7 +191,7 @@ Reference: [useSelectedLayoutSegment](https://nextjs.org/docs/app/api-reference/
 
 ## URL Structure
 
-- `/ui` - Index page
+- `/ui` - Welcome page
 - `/ui/button/primary` - Button / Primary story
 - `/ui/forms/input/interactive` - Forms / Input / Interactive story
 
@@ -189,7 +207,15 @@ export default function NextbookLayout({ children }) {
   if (process.env.NODE_ENV === "production") {
     notFound()
   }
-  return <NextbookShell tree={storyTree}>{children}</NextbookShell>
+  return (
+    <html lang="en">
+      <body>
+        <NextbookShell tree={storyTree} loaders={loaders}>
+          {children}
+        </NextbookShell>
+      </body>
+    </html>
+  )
 }
 ```
 

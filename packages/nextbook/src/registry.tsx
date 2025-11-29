@@ -1,112 +1,92 @@
-"use client"
+import type { StoryTreeNode } from "./types"
 
-import type { ReactNode } from "react"
-import { StoryViewer } from "./components/story-viewer"
-import { isStory } from "./story"
-import type { StoryMeta, StoryTreeNode } from "./types"
-import { buildStoryTree } from "./utils/path"
+type StoryLoader = () => Promise<Record<string, unknown>>
 
-type StoryModule = Record<string, unknown>
-type StoryLoader = () => Promise<StoryModule>
-type StoryLoaders = Record<string, StoryLoader>
+/** Flat loader map (internal) - key is the path like "button" or "forms/input" */
+type FlatLoaders = Record<string, StoryLoader>
+
+/** Nested input structure for createStoryRegistry */
+type NestedLoaders = {
+	[key: string]: StoryLoader | NestedLoaders
+}
 
 type StoryRegistry = {
 	storyTree: StoryTreeNode[]
-	StoryPage: (props: { path: string[] }) => ReactNode
+	loaders: FlatLoaders
 }
 
-// Regex for removing .story extension
-const STORY_EXT_REGEX = /\.story$/
+/**
+ * Flatten nested loaders into a flat map with path keys.
+ * { forms: { input: loader } } → { "forms/input": loader }
+ */
+function flattenLoaders(nested: NestedLoaders, prefix = ""): FlatLoaders {
+	const flat: FlatLoaders = {}
+
+	for (const [key, value] of Object.entries(nested)) {
+		const path = prefix ? `${prefix}/${key}` : key
+
+		if (typeof value === "function") {
+			// It's a loader function
+			flat[path] = value as StoryLoader
+		} else {
+			// It's a nested object - recurse
+			Object.assign(flat, flattenLoaders(value as NestedLoaders, path))
+		}
+	}
+
+	return flat
+}
 
 /**
  * Create a story registry from lazy loaders.
  *
+ * This function is server-safe - it only builds the tree structure from keys.
+ * Actual module loading happens on-demand when viewing a story.
+ *
  * @example
- * export const { storyTree, StoryPage } = await createStoryRegistry({
- *   "button.story": () => import("./button.story"),
- *   "forms/input.story": () => import("./forms/input.story"),
+ * export const { storyTree, loaders } = createStoryRegistry({
+ *   button: () => import("./button.story"),
+ *   forms: {
+ *     input: () => import("./forms/input.story"),
+ *     select: () => import("./forms/select.story"),
+ *   },
  * })
  */
-export async function createStoryRegistry(loaders: StoryLoaders): Promise<StoryRegistry> {
-	// Load all modules in parallel to discover exports
-	const entries = Object.entries(loaders)
-	const modules = await Promise.all(
-		entries.map(async ([path, loader]) => {
-			const mod = await loader()
-			return { path, mod }
-		}),
-	)
+export function createStoryRegistry(nestedLoaders: NestedLoaders): StoryRegistry {
+	// Flatten nested structure to path-based keys
+	const loaders = flattenLoaders(nestedLoaders)
 
-	// Build metadata from loaded modules
-	const stories: StoryMeta[] = []
+	// Build tree from paths - NO module loading here!
+	const tree: StoryTreeNode[] = []
 
-	for (const { path, mod } of modules) {
-		for (const [exportName, value] of Object.entries(mod)) {
-			if (isStory(value)) {
-				const pathWithoutExt = path.replace(STORY_EXT_REGEX, "")
-				const segments = pathWithoutExt.split("/")
-				const capitalizedSegments = segments.map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+	for (const [filePath] of Object.entries(loaders)) {
+		const segments = filePath.split("/")
 
-				stories.push({
-					path: [...capitalizedSegments, exportName],
-					name: exportName,
-					filePath: path,
-					exportName,
-				})
-			}
-		}
-	}
-
-	const storyTree = buildStoryTree(stories)
-
-	// Find story metadata by URL path
-	function findStoryByPath(tree: StoryTreeNode[], urlPath: string[]): StoryMeta | null {
+		// Navigate/create tree structure
 		let currentLevel = tree
+		for (let i = 0; i < segments.length; i++) {
+			const segment = segments[i] as string
+			const capitalizedSegment = segment.charAt(0).toUpperCase() + segment.slice(1)
 
-		for (let i = 0; i < urlPath.length; i++) {
-			const segment = urlPath[i] as string
-			const node = currentLevel.find((n) => n.segment.toLowerCase() === segment.toLowerCase())
+			let node = currentLevel.find((n) => n.segment.toLowerCase() === segment.toLowerCase())
 
-			if (!node) return null
-
-			if (i === urlPath.length - 1) {
-				return node.story || null
+			if (!node) {
+				node = {
+					name: capitalizedSegment,
+					segment: capitalizedSegment,
+					children: [],
+					// Store filePath on leaf nodes for loading
+					...(i === segments.length - 1 && { filePath }),
+				}
+				currentLevel.push(node)
 			}
 
-			if (!node.children) return null
-			currentLevel = node.children
+			// Move to children for next iteration
+			if (node.children) {
+				currentLevel = node.children
+			}
 		}
-
-		return null
 	}
 
-	// Client component for rendering a story
-	function StoryPage({ path }: { path: string[] }): ReactNode {
-		const storyMeta = findStoryByPath(storyTree, path)
-
-		if (!storyMeta) {
-			return (
-				<div className="flex h-full flex-col items-center justify-center p-8 text-center">
-					<h1 className="mb-4 font-bold text-neutral-900 text-xl dark:text-neutral-100">Story not found</h1>
-					<p className="text-neutral-600 dark:text-neutral-400">The requested story does not exist.</p>
-				</div>
-			)
-		}
-
-		const loader = loaders[storyMeta.filePath]
-		if (!loader) {
-			return (
-				<div className="flex h-full flex-col items-center justify-center p-8 text-center">
-					<h1 className="mb-4 font-bold text-neutral-900 text-xl dark:text-neutral-100">Loader not found</h1>
-					<p className="text-neutral-600 dark:text-neutral-400">No loader for: {storyMeta.filePath}</p>
-				</div>
-			)
-		}
-
-		const title = storyMeta.path.join(" / ")
-
-		return <StoryViewer loader={loader} exportName={storyMeta.exportName} title={title} />
-	}
-
-	return { storyTree, StoryPage }
+	return { storyTree: tree, loaders }
 }

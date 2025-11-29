@@ -164,11 +164,17 @@ function getControlType(schema: z.ZodType): ControlTypeResult | null {
 
 /**
  * Get the type name from a Zod schema.
- * Works with both Zod 3 (_def.typeName) and Zod 4 (_zod.def.typeName) patterns.
+ * Works with both Zod 3 (_def.typeName) and Zod 4 (_zod.def.type) patterns.
  */
 function getTypeName(schema: z.ZodType): string | undefined {
-	// Zod 4 pattern
-	const zod4Def = (schema as unknown as { _zod?: { def?: { typeName?: string } } })._zod?.def
+	// Zod 4 pattern - uses "type" instead of "typeName"
+	const zod4Def = (schema as unknown as { _zod?: { def?: { type?: string; typeName?: string } } })._zod?.def
+	if (zod4Def?.type) {
+		// Zod 4 uses lowercase type names like "default", "string", "enum"
+		// Convert to ZodXxx format for compatibility
+		const type = zod4Def.type
+		return `Zod${type.charAt(0).toUpperCase()}${type.slice(1)}`
+	}
 	if (zod4Def?.typeName) {
 		return zod4Def.typeName
 	}

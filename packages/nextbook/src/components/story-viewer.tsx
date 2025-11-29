@@ -3,8 +3,33 @@
 import { useEffect, useState } from "react"
 import type { z } from "zod"
 import type { ControlConfig, Story } from "../types"
+import { cn } from "../utils/cn"
 import { getSchemaDefaults, schemaToControls } from "../utils/schema"
 import { ControlsPanel } from "./controls-panel"
+
+type BackgroundType = "default" | "striped" | "magenta"
+
+const BACKGROUNDS: { type: BackgroundType; label: string; className: string; style?: React.CSSProperties }[] = [
+	{
+		type: "default",
+		label: "Default",
+		className: "bg-neutral-50/50 dark:bg-neutral-900/50",
+	},
+	{
+		type: "striped",
+		label: "Striped",
+		className: "",
+		style: {
+			backgroundImage: "repeating-linear-gradient(45deg, #fff, #fff 10px, #e5e5e5 10px, #e5e5e5 20px)",
+		},
+	},
+	{
+		type: "magenta",
+		label: "Magenta",
+		className: "",
+		style: { backgroundColor: "#FF00FF" },
+	},
+]
 
 type StoryViewerProps = {
 	loader: () => Promise<Record<string, unknown>>
@@ -19,6 +44,7 @@ export function StoryViewer({ loader, exportName, title }: StoryViewerProps) {
 	const [controls, setControls] = useState<ControlConfig[]>([])
 	const [values, setValues] = useState<Record<string, unknown>>({})
 	const [defaultValues, setDefaultValues] = useState<Record<string, unknown>>({})
+	const [background, setBackground] = useState<BackgroundType>("default")
 
 	// Load the story module
 	useEffect(() => {
@@ -27,7 +53,10 @@ export function StoryViewer({ loader, exportName, title }: StoryViewerProps) {
 
 		loader()
 			.then((mod) => {
-				const exportedStory = mod[exportName]
+				// Case-insensitive export lookup (URLs are lowercase)
+				const matchingKey = Object.keys(mod).find((key) => key.toLowerCase() === exportName.toLowerCase())
+				const exportedStory = matchingKey ? mod[matchingKey] : undefined
+
 				if (exportedStory && typeof exportedStory === "object" && "__nextbook" in exportedStory) {
 					setStory(exportedStory as Story<z.ZodType | undefined>)
 				} else {
@@ -76,7 +105,7 @@ export function StoryViewer({ loader, exportName, title }: StoryViewerProps) {
 	// Render the story
 	const renderStory = () => {
 		if (loading) {
-			return <div className="text-neutral-500">Loading...</div>
+			return null
 		}
 
 		if (error) {
@@ -114,17 +143,26 @@ export function StoryViewer({ loader, exportName, title }: StoryViewerProps) {
 		}
 	}
 
+	const currentBg = BACKGROUNDS.find((bg) => bg.type === background) ?? BACKGROUNDS[0]
+
 	return (
 		<div className="flex h-full flex-col">
 			{/* Header */}
-			<header className="flex-shrink-0 border-neutral-200 border-b px-6 py-4 dark:border-neutral-800">
+			<header className="flex flex-shrink-0 items-center justify-between border-neutral-200 border-b px-6 py-4 dark:border-neutral-800">
 				<h1 className="font-semibold text-lg text-neutral-900 dark:text-neutral-100">{title}</h1>
+				<BackgroundSwitcher value={background} onChange={setBackground} />
 			</header>
 
 			{/* Story canvas */}
 			<div className="flex-1 overflow-auto bg-white p-6 dark:bg-neutral-950">
 				<div className="flex min-h-full items-start justify-center">
-					<div className="rounded-lg border border-neutral-200 border-dashed bg-neutral-50/50 p-8 dark:border-neutral-800 dark:bg-neutral-900/50">
+					<div
+						className={cn(
+							"rounded-lg border border-neutral-200 border-dashed p-8 dark:border-neutral-800",
+							currentBg?.className,
+						)}
+						style={currentBg?.style}
+					>
 						{renderStory()}
 					</div>
 				</div>
@@ -134,6 +172,42 @@ export function StoryViewer({ loader, exportName, title }: StoryViewerProps) {
 			{controls.length > 0 && (
 				<ControlsPanel controls={controls} values={values} onChange={handleChange} onReset={handleReset} />
 			)}
+		</div>
+	)
+}
+
+function BackgroundSwitcher({ value, onChange }: { value: BackgroundType; onChange: (value: BackgroundType) => void }) {
+	return (
+		<div className="flex items-center gap-1.5">
+			{BACKGROUNDS.map((bg) => (
+				<button
+					key={bg.type}
+					type="button"
+					onClick={() => onChange(bg.type)}
+					className={cn(
+						"relative h-7 w-7 overflow-hidden rounded border-2 transition-all",
+						value === bg.type
+							? "border-neutral-900 ring-2 ring-neutral-900/20 dark:border-neutral-100 dark:ring-neutral-100/20"
+							: "border-neutral-300 hover:border-neutral-400 dark:border-neutral-600 dark:hover:border-neutral-500",
+					)}
+					title={bg.label}
+				>
+					{bg.type === "default" && (
+						<span className="absolute inset-0 flex items-center justify-center bg-neutral-100 font-medium text-[10px] text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400">
+							Aa
+						</span>
+					)}
+					{bg.type === "striped" && (
+						<span
+							className="absolute inset-0"
+							style={{
+								backgroundImage: "repeating-linear-gradient(45deg, #fff, #fff 2px, #d4d4d4 2px, #d4d4d4 4px)",
+							}}
+						/>
+					)}
+					{bg.type === "magenta" && <span className="absolute inset-0" style={{ backgroundColor: "#FF00FF" }} />}
+				</button>
+			))}
 		</div>
 	)
 }

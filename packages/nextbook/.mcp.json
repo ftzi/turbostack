@@ -1,0 +1,22 @@
+{
+	"mcpServers": {
+		"next-devtools": {
+			"type": "stdio",
+			"command": "bunx",
+			"args": ["next-devtools-mcp@latest"],
+			"env": {}
+		},
+		"context7": {
+			"type": "stdio",
+			"command": "bunx",
+			"args": ["@upstash/context7-mcp"],
+			"env": {}
+		},
+		"chrome-devtools": {
+			"type": "stdio",
+			"command": "npx",
+			"args": ["chrome-devtools-mcp@latest"],
+			"env": {}
+		}
+	}
+}
