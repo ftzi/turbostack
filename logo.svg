@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="t" x1="0%" y1="50%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#bfdbfe"/>
+      <stop offset="50%" stop-color="#e0f2fe"/>
+      <stop offset="100%" stop-color="#bfdbfe"/>
+    </linearGradient>
+    <linearGradient id="m" x1="0%" y1="50%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#06b6d4"/>
+      <stop offset="50%" stop-color="#22d3ee"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+    <linearGradient id="b" x1="0%" y1="50%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#0e7490"/>
+      <stop offset="50%" stop-color="#0891b2"/>
+      <stop offset="100%" stop-color="#0e7490"/>
+    </linearGradient>
+    <filter id="g" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="0.8" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <g fill="none" stroke-width="1.8" stroke-linecap="butt" stroke-linejoin="miter" filter="url(#g)">
+    <!-- Ring 3 (bottom) - complete rhombus -->
+    <path d="M50 66 L90 82 L50 98 L10 82Z" stroke="url(#b)"/>
+
+    <!-- Ring 2 (middle) - with gaps for ring 1 -->
+    <path d="M50 44 L90 60" stroke="url(#m)"/>
+    <path d="M50 44 L10 60" stroke="url(#m)"/>
+    <path d="M90 60 L76 68" stroke="url(#m)"/>
+    <path d="M62 74 L50 80" stroke="url(#m)"/>
+    <path d="M10 60 L24 68" stroke="url(#m)"/>
+    <path d="M38 74 L50 80" stroke="url(#m)"/>
+
+    <!-- Ring 1 (top) - with gaps behind ring 2 -->
+    <path d="M50 22 L90 38" stroke="url(#t)"/>
+    <path d="M50 22 L10 38" stroke="url(#t)"/>
+    <path d="M90 38 L76 46" stroke="url(#t)"/>
+    <path d="M62 52 L50 58" stroke="url(#t)"/>
+    <path d="M10 38 L24 46" stroke="url(#t)"/>
+    <path d="M38 52 L50 58" stroke="url(#t)"/>
+  </g>
+</svg>

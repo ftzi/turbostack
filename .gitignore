@@ -39,3 +39,6 @@ tsconfig.tsbuildinfo
 # Claude Code
 .claude/activity.log
 .env*.local
+
+# PGlite local database
+.pglite/

@@ -2,3 +2,7 @@ telemetry = false
 
 [install]
 exact = true
+
+[test]
+# Tests run from packages/api, preload resolves relative to that directory
+preload = ["./packages/api/src/test-setup.ts"]

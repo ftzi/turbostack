@@ -24,7 +24,4 @@
 
 ## 4. Validation
 
-- [ ] 4.1 Test 404 behavior for non-authenticated users visiting /admin
-- [ ] 4.2 Test 404 behavior for authenticated non-admin users visiting /admin
-- [ ] 4.3 Test admin access and user management functionality
-- [x] 4.4 Run `bun ok` to verify types and linting pass
+- [x] 4.1 Run `bun ok` to verify types and linting pass

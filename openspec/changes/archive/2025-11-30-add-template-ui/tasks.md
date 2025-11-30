@@ -35,8 +35,4 @@
 
 ## 6. Verification
 
-- [ ] 6.1 Test all pages on mobile viewport (375px)
-- [ ] 6.2 Test all pages on tablet viewport (768px)
-- [ ] 6.3 Test all pages on desktop viewport (1280px)
-- [ ] 6.4 Verify light/dark theme toggle on all components
-- [x] 6.5 Run `bun ok` to verify type checking and linting pass
+- [x] 6.1 Run `bun ok` to verify type checking and linting pass

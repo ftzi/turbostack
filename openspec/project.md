@@ -23,8 +23,8 @@ Turbostack is a monorepo template/starter based on shadcn and NextStack template
 ### Backend
 
 - **API Layer:** oRPC (contract-first, type-safe RPC)
-- **Authentication:** Better Auth with Drizzle adapter
-- **Database:** PostgreSQL via Neon serverless with Drizzle ORM
+- **Authentication:** Better Auth with Drizzle adapter (flexible: Google OAuth + magic link + email/password fallback)
+- **Database:** PostgreSQL via PGlite (local dev) or Neon serverless (production) with Drizzle ORM
 - **Logging:** Pino with structured logging
 
 ### Tooling
@@ -101,7 +101,11 @@ This is a starter template, not a domain-specific application. The patterns esta
 
 ## External Dependencies
 
-- **Neon** - Serverless PostgreSQL database
-- **Resend** - Email delivery service
-- **Google OAuth** - Authentication provider (configured in Better Auth)
+**Required for production only (optional for local dev):**
+
+- **Neon** - Serverless PostgreSQL database (local dev uses PGlite)
+- **Resend** - Email delivery service (local dev logs magic links to console)
+- **Google OAuth** - Authentication provider (local dev uses email/password fallback)
 - **Vercel** - Deployment platform (env vars via `bun env`)
+
+**Zero-config local development:** Run `bun dev` immediately after cloning - no external services needed.

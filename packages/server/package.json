@@ -9,6 +9,7 @@
 		"db:migrate": "drizzle-kit migrate"
 	},
 	"dependencies": {
+		"@electric-sql/pglite": "0.2.17",
 		"@neondatabase/serverless": "1.0.2",
 		"@t3-oss/env-nextjs": "0.13.8",
 		"@workspace/shared": "workspace:*",

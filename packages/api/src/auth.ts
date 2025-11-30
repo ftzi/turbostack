@@ -11,32 +11,45 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { nextCookies } from "better-auth/next-js"
 import { magicLink } from "better-auth/plugins"
 
-if (!serverConsts.email.sender) {
-	throw new Error("Email sender not configured")
-}
-if (!serverEnv.RESEND_API_KEY) {
-	throw new Error("RESEND_API_KEY not configured")
+// Flexible configuration based on available credentials
+const hasGoogleOAuth = Boolean(serverEnv.GOOGLE_CLIENT_ID && serverEnv.GOOGLE_CLIENT_SECRET)
+const hasResend = Boolean(serverEnv.RESEND_API_KEY && serverConsts.email.sender)
+const hasSecret = Boolean(serverEnv.BETTER_AUTH_SECRET)
+
+// Development secret warning
+const DEV_SECRET = "dev-secret-do-not-use-in-production-minimum-32-chars"
+if (!hasSecret) {
+	console.warn("⚠️  BETTER_AUTH_SECRET not set - using dev secret (not secure for production)")
 }
 
-const emailSender = createEmailSender({
-	apiKey: serverEnv.RESEND_API_KEY,
-	from: serverConsts.email.sender,
-})
+// Create email sender only if Resend is configured
+const emailSender =
+	hasResend && serverEnv.RESEND_API_KEY && serverConsts.email.sender
+		? createEmailSender({
+				apiKey: serverEnv.RESEND_API_KEY,
+				from: serverConsts.email.sender,
+			})
+		: null
 
 export const auth = betterAuth({
 	database: drizzleAdapter(db, {
 		provider: "pg",
 		usePlural: true,
 	}),
+	// Email/password: enabled as fallback when no OAuth available
 	emailAndPassword: {
-		enabled: false,
+		enabled: !hasGoogleOAuth,
 	},
-	socialProviders: {
-		google: {
-			clientId: serverEnv.GOOGLE_CLIENT_ID,
-			clientSecret: serverEnv.GOOGLE_CLIENT_SECRET,
-		},
-	},
+	// Google OAuth: enabled only when credentials provided
+	socialProviders:
+		hasGoogleOAuth && serverEnv.GOOGLE_CLIENT_ID && serverEnv.GOOGLE_CLIENT_SECRET
+			? {
+					google: {
+						clientId: serverEnv.GOOGLE_CLIENT_ID,
+						clientSecret: serverEnv.GOOGLE_CLIENT_SECRET,
+					},
+				}
+			: {},
 	// Reference: https://www.better-auth.com/docs/guides/optimizing-for-performance#caching
 	session: {
 		cookieCache: {
@@ -56,24 +69,33 @@ export const auth = betterAuth({
 		},
 	},
 	plugins: [
+		// Magic link: always available, delivery method varies
 		magicLink({
 			sendMagicLink: async ({ email: userEmail, token, url }) => {
-				await emailSender.sendEmail({
-					to: userEmail,
-					subject: `Log in to ${consts.appName}`,
-					template: MagicLinkEmail({
-						token,
-						magicLink: url,
-						appName: consts.appName,
-						appUrl: env.NEXT_PUBLIC_URL,
-					}),
-				})
+				if (emailSender) {
+					// Send via Resend
+					await emailSender.sendEmail({
+						to: userEmail,
+						subject: `Log in to ${consts.appName}`,
+						template: MagicLinkEmail({
+							token,
+							magicLink: url,
+							appName: consts.appName,
+							appUrl: env.NEXT_PUBLIC_URL,
+						}),
+					})
+				} else {
+					// Console log for local development
+					console.log(`\n🔗 Magic link for ${userEmail}:`)
+					console.log(`   ${url}`)
+					console.log(`   Token: ${token}\n`)
+				}
 			},
 		}),
 		// Reference: https://www.better-auth.com/docs/integrations/next#server-action-cookies
 		nextCookies(),
 	],
-	secret: serverEnv.BETTER_AUTH_SECRET,
+	secret: serverEnv.BETTER_AUTH_SECRET ?? DEV_SECRET,
 	baseURL: serverEnv.BETTER_AUTH_URL ?? env.NEXT_PUBLIC_URL,
 })
 

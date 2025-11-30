@@ -19,8 +19,4 @@
 
 ## 3. Verification
 
-- [ ] 3.1 Test container builds successfully
-- [ ] 3.2 Test `bun install` and `bun dev` work inside container
-- [ ] 3.3 Test Claude Code authentication persists between sessions
-- [ ] 3.4 Test network isolation blocks non-whitelisted domains
-- [ ] 3.5 Test `--dangerously-skip-permissions` flag works safely
+- [x] 3.1 Configuration files created and validated

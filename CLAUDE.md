@@ -25,6 +25,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Workflow Rule:** Always run `bun ok` after finishing a task or when facing issues. This command runs type checking and linting across the entire codebase and must fully pass before considering a task complete.
 
+**No Manual Tests:** Never include manual verification tasks in OpenSpec proposals or task lists. All validation must be automated (`bun ok`, automated tests, etc.). Manual browser testing, viewport testing, and similar human-required verification steps are forbidden.
+
 **Context7 Integration:** Always use context7 when I need code generation, setup or configuration steps, or library/API documentation. This means you should automatically use the Context7 MCP tools to resolve library id and get library docs without me having to explicitly ask.
 
 **MCP Servers:** This repository uses `.mcp.json` for team-wide MCP server configuration:
@@ -98,8 +100,8 @@ Turbostack is a monorepo based on shadcn and NextStack templates. It uses Turbor
 
 ### Development
 
-- `bun dev` - Install dependencies and start dev server with TypeScript watch mode
-- `bun dev` - Start all apps in development mode (runs `turbo dev tsw`)
+- `bun dev` - Zero-config start: initializes PGlite database, installs dependencies, starts dev server
+- `bun setup` - Production setup wizard: configure Vercel, Neon, Resend for deployments
 - `bun tsw` - Run TypeScript in watch mode across all workspaces
 
 ### Type Checking & Linting
@@ -107,6 +109,7 @@ Turbostack is a monorepo based on shadcn and NextStack templates. It uses Turbor
 - `bun ts` - Type check all workspaces with TypeScript
 - `bun lint` - Format and lint with Biome across all workspaces
 - `bun ok` - Run both ts and lint (quick verification)
+- `bun test` - Run all tests (delegates to packages/api)
 - `bun knip` - Find unused files, dependencies, and exports (Reference: https://knip.dev)
   - Note: Knip may report infrastructure files (auth-client.ts, orpc/client.ts, etc.) as unused until features are built
   - Review Knip output carefully - not all reports are actionable
@@ -117,11 +120,13 @@ Turbostack is a monorepo based on shadcn and NextStack templates. It uses Turbor
 
 ### Database (Drizzle ORM)
 
-- `bun db:studio` - Open Drizzle Studio (delegates to packages/server)
+- `bun db:init` - Initialize PGlite database and apply migrations (runs automatically with `bun dev`)
+- `bun db:studio` - Open Drizzle Studio (works with both PGlite and Neon)
 - `bun db:generate` - Generate database migrations (delegates to packages/server)
 - `bun db:migrate` - Run database migrations (delegates to packages/server)
 - Configuration and migrations live in `packages/server/` where the database code is
-- Can also run directly from server package: `bun run --cwd packages/server db:studio`
+- **Local development uses PGlite** (WASM PostgreSQL) - no external database needed
+- **Production uses Neon** - set `DATABASE_URL` to switch
 
 ### Environment Variables
 
@@ -291,20 +296,26 @@ test("should update user successfully", async () => {
 
 **Structure:**
 
-- `drizzle.config.ts` - Drizzle Kit configuration
+- `drizzle.config.ts` - Drizzle Kit configuration (auto-detects PGlite vs Neon)
 - `drizzle/` - Database migrations (committed to git for schema history)
 - `src/consts.ts` - Server-only static constants (payment config, integrations, email settings)
-- `src/env.ts` - Server-only env vars with Zod validation (DATABASE_URL, API keys, etc.)
+- `src/env.ts` - Server-only env vars with Zod validation
 - `src/db/` - Database schema and Drizzle client
   - `schema.ts` - Drizzle schema with Better Auth tables and performance indexes
-  - `index.ts` - Database client using Neon serverless
+  - `index.ts` - Database client (auto-switches between PGlite and Neon)
   - `CLAUDE.md` - Critical documentation about manual index management
+
+**Database Driver Selection:**
+
+- **No `DATABASE_URL`** → Uses PGlite with file persistence in `.pglite/`
+- **`DATABASE_URL` set** → Uses Neon serverless driver
+- `isPglite` export indicates which driver is active
 
 **Exports:**
 
 - `@workspace/server/consts` - Server-only static constants
-- `@workspace/server/env` - Server-only env vars
-- `@workspace/server/db` - Database client
+- `@workspace/server/env` - Server-only env vars + `isLocalDev` flag
+- `@workspace/server/db` - Database client + `isPglite` flag
 - `@workspace/server/db/schema` - Database schema
 
 ### API Package (packages/api/)
@@ -416,6 +427,7 @@ try {
 
 **UI Requirements (MUST follow):**
 
+- **MUST be mobile-friendly**: Every web page MUST be fully responsive and work perfectly on mobile devices. This is non-negotiable.
 - **Responsive-first**: All components MUST work on mobile (375px+), tablet (768px+), and desktop (1280px+)
 - **Theme-friendly**: All components MUST support light and dark themes via CSS variables
 - **Accessibility**: Use semantic HTML, proper ARIA attributes, keyboard navigation
@@ -465,8 +477,35 @@ Use shadcn CLI to add components: `npx shadcn@latest add <component-name>`
 
 ## Environment Variables
 
-- Configured in `lib/consts.ts` (client) and `server/serverConsts.ts` (server)
-- Feature flags control which env vars are required (e.g., `emailEnabled` in `lib/consts.ts`)
+**Zero-Config Local Development:**
+
+Most environment variables are optional for local development. The system auto-configures:
+
+| Variable | Local Dev (no DATABASE_URL) | Production |
+|----------|----------------------------|------------|
+| `DATABASE_URL` | Optional (uses PGlite) | Required |
+| `BETTER_AUTH_SECRET` | Optional (uses dev secret with warning) | Required |
+| `GOOGLE_CLIENT_ID/SECRET` | Optional (disables Google OAuth) | Optional |
+| `RESEND_API_KEY` | Optional (magic links logged to console) | Optional |
+
+**Auth Behavior Based on Credentials:**
+
+| Credentials Set | Google OAuth | Magic Link | Email/Password |
+|-----------------|--------------|------------|----------------|
+| None            | ❌           | ✅ (console) | ✅ (fallback)  |
+| Google only     | ✅           | ✅ (console) | ❌             |
+| Resend only     | ❌           | ✅ (email)   | ✅ (fallback)  |
+| Google + Resend | ✅           | ✅ (email)   | ❌             |
+
+**Configuration Files:**
+
+- `packages/shared/src/consts.ts` - Client-side static constants
+- `packages/shared/src/env.ts` - Client-side env vars (`NEXT_PUBLIC_*`)
+- `packages/server/src/consts.ts` - Server-side static constants
+- `packages/server/src/env.ts` - Server-side env vars (flexible based on `DATABASE_URL` presence)
+
+**Additional Notes:**
+
 - All env vars must be declared in `turbo.json` under `globalEnv`
 - Skip validation with `SKIP_ENV_VALIDATION=1` - **ONLY** use for runtime commands in environments without env vars (Docker builds, CI pipelines)
 - **NEVER use `SKIP_ENV_VALIDATION=1` with type checking or linting** - these commands don't execute code and don't need env vars
@@ -619,5 +658,7 @@ Reference: https://code.claude.com/docs/en/devcontainer
 - **Route Groups:** Next.js routes use parentheses for grouping (e.g., `(home)/page.tsx`)
 - **Server Components:** Default to Server Components; use `"use client"` directive only when needed
 - **Import Paths:** Use workspace aliases (`@workspace/ui`, `@workspace/typescript-config`, etc.)
-- **Authentication:** Configured for Google OAuth (client ID and secret in server env)
+- **Local Database:** PGlite (WASM PostgreSQL) stored in `.pglite/` - auto-created on first `bun dev`
+- **Production Database:** Neon serverless - configure via `bun setup` or set `DATABASE_URL`
+- **Authentication:** Flexible - Google OAuth if credentials provided, email/password fallback otherwise
 - **API Routes with JSX:** Use `.tsx` extension for API routes that contain JSX (required for Biome formatting)
