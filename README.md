@@ -24,8 +24,8 @@ An immersive, full-stack TypeScript Turborepo monorepo. Built with [Next.js 16](
 - **Database** - Drizzle ORM with Neon serverless PostgreSQL
 - **UI Components** - shadcn/ui with Radix UI primitives
 - **Modern Tooling** - Biome for linting, TypeScript 5.9, Tailwind CSS 4.1
-- **AI-Ready** - Powered by [Claude Code](https://claude.ai/code) with comprehensive CLAUDE.md, custom skills, hooks, and specialized agents for optimal AI-assisted development
-- **Spec-Driven Ready** - Compatible with [OpenSpec](https://github.com/Fission-AI/OpenSpec), [Spec-Kit](https://github.com/github/spec-kit), and [spec-workflow-mcp](https://github.com/Pimzino/spec-workflow-mcp) for structured development workflows
+- **Spec-Driven** - Compatible with [OpenSpec](https://github.com/Fission-AI/OpenSpec) for structured development workflows
+- **AI-Ready** - Comprehensive CLAUDE.md for optimal AI-assisted development
 
 ## 🚀 Quick Start
 
@@ -105,13 +105,8 @@ This project is optimized for [Claude Code](https://claude.ai/code), providing a
 
 - **Comprehensive CLAUDE.md** - Extensive documentation covering architecture, patterns, conventions, and workflows
 - **Custom Slash Commands** - `/ok` for quick type checking and linting verification
-- **Custom Hooks** - Automated checks for code quality, type safety, and best practices
-- **Specialized Agents** - Pre-configured agents for codebase exploration, planning, and implementation
 - **MCP Servers** - Integrated Better Auth, Next.js DevTools, and Context7 for enhanced AI capabilities
-- **Immersive Integration** - Everything from setup to development happens seamlessly within the workflow
-- **Spec-Driven Ready** - Compatible with spec-driven development tools like [OpenSpec](https://github.com/Fission-AI/OpenSpec), [Spec-Kit](https://github.com/github/spec-kit), and [spec-workflow-mcp](https://github.com/Pimzino/spec-workflow-mcp)
-
-The CLAUDE.md file ensures Claude Code has deep understanding of the codebase structure, coding standards, and development workflows, making AI pair programming seamless and productive.
+- **OpenSpec** - Compatible with [OpenSpec](https://github.com/Fission-AI/OpenSpec) for structured development workflows
 
 ## 🐳 Safe YOLO Mode (Devcontainer)
 

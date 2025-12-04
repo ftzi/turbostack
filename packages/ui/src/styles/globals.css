@@ -123,6 +123,11 @@
 	body {
 		@apply bg-background text-foreground;
 	}
+	/* Pointer cursor on non-disabled buttons: https://github.com/shadcn-ui/ui/issues/6843#issuecomment-2698105214 */
+	button:not([disabled]),
+	[role="button"]:not([disabled]) {
+		cursor: pointer;
+	}
 }
 html {
 	/* When accessing `example.com/#faq`, it will scroll to the element with that id. */

@@ -27,6 +27,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **No Manual Tests:** Never include manual verification tasks in OpenSpec proposals or task lists. All validation must be automated (`bun ok`, automated tests, etc.). Manual browser testing, viewport testing, and similar human-required verification steps are forbidden.
 
+**NEVER commit or push:** Do NOT run `git add`, `git commit`, or `git push`. The user handles all git operations manually.
+
 **Context7 Integration:** Always use context7 when I need code generation, setup or configuration steps, or library/API documentation. This means you should automatically use the Context7 MCP tools to resolve library id and get library docs without me having to explicitly ask.
 
 **MCP Servers:** This repository uses `.mcp.json` for team-wide MCP server configuration:
@@ -516,6 +518,9 @@ Most environment variables are optional for local development. The system auto-c
 
 **Development Workflow:**
 
+- **IMPORTANT: Never run `bun dev` or `next dev` directly.** The dev server causes lock file issues and port conflicts. Instead:
+  - For e2e tests: Use `bun e2e` which starts the dev server automatically via Playwright's webServer config
+  - For manual testing: Ask the user to run the dev server themselves
 - Do NOT attempt to run development servers - they're already running and not accessible to Claude Code
 - Do NOT try to call API endpoints - you don't have authentication access
 - NEVER use `sleep` commands - they are unnecessary and wasteful
@@ -562,6 +567,7 @@ Most environment variables are optional for local development. The system auto-c
 - Example: Use `import { getErrorMessage } from "@workspace/shared/utils/error"` instead of `import { getErrorMessage } from "@workspace/shared"`
 - Package exports should point directly to source files, not to barrel files
 - This improves tree-shaking, makes dependencies explicit, and reduces circular dependency issues
+- **Avoid dynamic imports** - Prefer static `import` over `await import()`. Only use dynamic imports for genuine code splitting or conditional loading based on runtime conditions.
 
 **Function Parameters:**
 
@@ -616,6 +622,9 @@ try {
 
 **Testing:**
 
+- **Unit tests are REQUIRED** - Always add unit tests when adding or modifying functions/utilities. Tests ensure a solid and reliable product.
+- Test files should be co-located with source files (e.g., `handler.ts` → `handler.test.ts`)
+- Run `bun test` to execute all unit tests
 - NEVER use `timeout` parameters when running tests - run tests normally without artificial timeouts
 - Trust the test framework's default timeout behavior
 

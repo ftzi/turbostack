@@ -10,6 +10,9 @@
 
 import { existsSync } from "node:fs"
 import { resolve } from "node:path"
+import { PGlite } from "@electric-sql/pglite"
+import { drizzle } from "drizzle-orm/pglite"
+import { migrate } from "drizzle-orm/pglite/migrator"
 
 const DATABASE_URL = process.env.DATABASE_URL
 const PGLITE_DIR = process.env.PGLITE_DIR ?? ".pglite"
@@ -29,11 +32,6 @@ async function main() {
 	if (isNewDatabase) {
 		console.log(`📁 Creating new PGlite database at ${PGLITE_DIR}/`)
 	}
-
-	// Import PGlite and Drizzle
-	const { PGlite } = await import("@electric-sql/pglite")
-	const { drizzle } = await import("drizzle-orm/pglite")
-	const { migrate } = await import("drizzle-orm/pglite/migrator")
 
 	// Initialize PGlite
 	const client = new PGlite(pglitePath)
