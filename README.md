@@ -1,7 +1,7 @@
 <div align="center">
 
 <br/>
-<img src="logo.png" alt="Turbostack Logo" width="350"/>
+<img src="logo.svg" alt="Turbostack Logo" width="180"/>
 
 # Turbostack
 
@@ -21,7 +21,7 @@ An immersive, full-stack TypeScript Turborepo monorepo. Built with [Next.js 16](
 - **Next.js 16** - App Router with React Server Components and React Compiler
 - **Type-Safe API** - oRPC for end-to-end type safety between client and server
 - **Authentication** - Better Auth with Drizzle adapter
-- **Database** - Drizzle ORM with Neon serverless PostgreSQL
+- **Database** - [Drizzle ORM](https://orm.drizzle.team/) with [PGlite](https://pglite.dev/) for instant local dev (no setup), [Neon](https://neon.tech/) for production
 - **UI Components** - shadcn/ui with Radix UI primitives
 - **Modern Tooling** - Biome for linting, TypeScript 5.9, Tailwind CSS 4.1
 - **Spec-Driven** - Compatible with [OpenSpec](https://github.com/Fission-AI/OpenSpec) for structured development workflows
@@ -71,7 +71,7 @@ packages/
 
 ```bash
 bun dev           # Your main command - runs setup (first time) + dev server + TypeScript watch
-bun ok            # Type check + lint (run this before commits!)
+bun ok            # Type check + lint + test (runs automatically on pre-commit via Husky)
 bun build         # Build all apps and packages
 
 # Database commands
@@ -89,7 +89,7 @@ bun knip          # Find unused files and dependencies
 - **Framework**: [Next.js 16](https://nextjs.org/), [React 19.2](https://react.dev/)
 - **Language**: [TypeScript 5.9](https://www.typescriptlang.org/)
 - **API**: [oRPC](https://orpc.unnoq.com/) with [TanStack Query](https://tanstack.com/query)
-- **Database**: [Drizzle ORM](https://orm.drizzle.team/) + [Neon](https://neon.tech/)
+- **Database**: [Drizzle ORM](https://orm.drizzle.team/) + [PGlite](https://pglite.dev/) (local) / [Neon](https://neon.tech/) (prod)
 - **Auth**: [Better Auth](https://www.better-auth.com/)
 - **UI**: [shadcn/ui](https://ui.shadcn.com/) + [Tailwind CSS 4.1](https://tailwindcss.com/)
 - **Tooling**: [Turborepo](https://turbo.build/), [Bun](https://bun.sh/), [Biome](https://biomejs.dev/)
@@ -101,7 +101,7 @@ For detailed information about the project architecture, conventions, and workfl
 
 ## 🤖 AI-Assisted Development
 
-This project is optimized for [Claude Code](https://claude.ai/code), providing an exceptional AI-assisted development experience:
+This project is optimized for [Claude Code](https://claude.ai/code):
 
 - **Comprehensive CLAUDE.md** - Extensive documentation covering architecture, patterns, conventions, and workflows
 - **Custom Slash Commands** - `/ok` for quick type checking and linting verification

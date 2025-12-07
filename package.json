@@ -15,7 +15,9 @@
 		"db:studio": "bun run --cwd packages/server db:studio",
 		"db:generate": "bun run --cwd packages/server db:generate",
 		"db:migrate": "bun run --cwd packages/server db:migrate",
-		"env": "bunx vercel env pull"
+		"env": "bunx vercel env pull",
+		"prepare": "husky",
+		"pre-commit": "bun ok"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.3.7",
