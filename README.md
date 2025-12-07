@@ -108,16 +108,3 @@ This project is optimized for [Claude Code](https://claude.ai/code), providing a
 - **MCP Servers** - Integrated Better Auth, Next.js DevTools, and Context7 for enhanced AI capabilities
 - **OpenSpec** - Compatible with [OpenSpec](https://github.com/Fission-AI/OpenSpec) for structured development workflows
 
-## 🐳 Safe YOLO Mode (Devcontainer)
-
-Use Claude Code's `--dangerously-skip-permissions` flag safely inside an isolated container:
-
-1. Install the [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension in VS Code
-2. Open project in VS Code → Click "Reopen in Container" when prompted
-3. Run `claude --dangerously-skip-permissions`
-
-The container provides network isolation (only essential domains allowed) and filesystem isolation (only the project directory is mounted). Your host system is protected.
-
-**Customize network whitelist:** Edit `.devcontainer/init-firewall.sh`
-
-[Learn more about devcontainers →](https://code.claude.com/docs/en/devcontainer)

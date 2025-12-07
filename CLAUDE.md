@@ -627,6 +627,11 @@ try {
 - Run `bun test` to execute all unit tests
 - NEVER use `timeout` parameters when running tests - run tests normally without artificial timeouts
 - Trust the test framework's default timeout behavior
+- **Post-task test verification** - After completing any task, verify test coverage for changed files:
+  - Modified behavior → Update affected tests to match
+  - New functionality → Add tests for it
+  - Tests must catch regressions to enable confident iteration
+  - A task is not complete until its tests are updated and passing
 
 **Implementation Standards:**
 

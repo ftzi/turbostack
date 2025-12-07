@@ -6,11 +6,11 @@
 		},
 		"next-devtools": {
 			"command": "bunx",
-			"args": ["next-devtools-mcp@latest"],
+			"args": ["next-devtools-mcp@latest"]
 		},
 		"context7": {
 			"command": "bunx",
-			"args": ["@upstash/context7-mcp"],
+			"args": ["@upstash/context7-mcp"]
 		}
 	}
 }
