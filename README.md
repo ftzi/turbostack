@@ -1,7 +1,7 @@
 <div align="center">
 
 <br/>
-<img src="logo.svg" alt="Turbostack Logo" width="180"/>
+<img src="logo.svg" alt="Turbostack Logo" height="140"/>
 
 # Turbostack
 
@@ -107,4 +107,3 @@ This project is optimized for [Claude Code](https://claude.ai/code):
 - **Custom Slash Commands** - `/ok` for quick type checking and linting verification
 - **MCP Servers** - Integrated Better Auth, Next.js DevTools, and Context7 for enhanced AI capabilities
 - **OpenSpec** - Compatible with [OpenSpec](https://github.com/Fission-AI/OpenSpec) for structured development workflows
-

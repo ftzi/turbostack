@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 370">
   <defs>
     <!-- Base cube shape at origin -->
     <path id="left-face" d="M0 40 L-152 -36 L-152 -76 L0 0 Z"/>
@@ -6,7 +6,7 @@
     <path id="top-face" d="M-152 -76 L0 -152 L152 -76 L0 0 Z"/>
   </defs>
 
-  <g transform="translate(256, 152)">
+  <g transform="translate(152, 152)">
     <!-- Bottom cube - sky blue -->
     <g transform="translate(0, 174)">
       <use href="#left-face" fill="#00b0e6"/>

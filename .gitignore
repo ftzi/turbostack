@@ -42,3 +42,4 @@ tsconfig.tsbuildinfo
 
 # PGlite local database
 .pglite/
+.DS_Store
