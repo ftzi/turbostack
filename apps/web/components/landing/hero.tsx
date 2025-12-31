@@ -41,9 +41,9 @@ export function Hero() {
 				</div>
 			</Container>
 
-			<div className="-z-10 pointer-events-none absolute inset-0 overflow-hidden">
-				<div className="-translate-x-1/2 -translate-y-1/2 absolute top-1/4 left-1/2 size-[600px] rounded-full bg-primary/5 blur-3xl" />
-				<div className="-translate-y-1/2 absolute top-3/4 right-0 size-[400px] rounded-full bg-primary/10 blur-3xl" />
+			<div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+				<div className="absolute top-1/4 left-1/2 size-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/5 blur-3xl" />
+				<div className="absolute top-3/4 right-0 size-[400px] -translate-y-1/2 rounded-full bg-primary/10 blur-3xl" />
 			</div>
 		</Section>
 	)
