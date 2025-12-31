@@ -1,29 +1,18 @@
+# Turbostack Development Guide
 
+---
 
-# CLAUDE.md
+# 1. Meta & Maintenance
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## About This File
 
-**Important:** If you discover any information in this file that is no longer accurate or has become outdated, please update it immediately to reflect the current state of the codebase.
+**Keyword Usage:** When writing or updating specification files, CLAUDE.md, project.md, or other instructional files, use **MUST** and **NEVER** keywords to enforce critical requirements. These keywords signal mandatory behavior that AI agents must follow without exception.
 
-**Workflow Rule:** Always run `bun ok` after finishing a task or when facing issues. This command runs type checking and linting across the entire codebase and must fully pass before considering a task complete.
+**File Maintenance:** If you discover any information in this file that is no longer accurate or has become outdated, update it immediately to reflect the current state of the codebase.
 
-**No Manual Tests:** Never include manual verification tasks in OpenSpec proposals or task lists. All validation must be automated (`bun ok`, automated tests, etc.). Manual browser testing, viewport testing, and similar human-required verification steps are forbidden.
+**README Sync:** README.md MUST be kept in sync with the project. When changing features, workflows, or conventions, update README.md to reflect those changes.
 
-**NEVER commit or push:** Do NOT run `git add`, `git commit`, or `git push`. The user handles all git operations manually.
-
-**Context7 Integration:** Always use context7 when I need code generation, setup or configuration steps, or library/API documentation. This means you should automatically use the Context7 MCP tools to resolve library id and get library docs without me having to explicitly ask.
-
-**MCP Servers:** This repository uses `.mcp.json` for team-wide MCP server configuration:
-
-- **better-auth** - Better Auth documentation and assistance
-- **next-devtools** - Next.js 16 debugging and diagnostics
-- **context7** - Library documentation and code generation
-- Team members will be prompted to trust these servers on first use
-
-**When starting work on a Next.js project, ALWAYS call the `init` tool from next-devtools-mcp FIRST to set up proper context and establish documentation requirements. Do this automatically without being asked.**
-
-## Maintaining This File
+## When to Update This File
 
 Update CLAUDE.md when you make changes that affect:
 
@@ -41,6 +30,10 @@ Do NOT update for:
 - Generic best practices unrelated to this specific project
 
 Keep entries brief and structural. Focus on "why" and "how the pieces fit together", not "what's in each file".
+
+---
+
+# 2. Quick Start
 
 ## Project Overview
 
@@ -91,9 +84,189 @@ Turbostack is a monorepo based on shadcn and NextStack templates. It uses Turbor
 - `bun lint` - Format and lint with Biome (auto-fix enabled)
 - `bun lint:dry` - Check formatting and linting without auto-fix
 
-## Architecture
+## Essential Tech Stack
 
-### Monorepo Structure
+- **Package Manager:** Always use `bun` instead of npm/yarn/pnpm
+- **Node Version:** Requires Node.js >= 20
+- **React Version:** Uses React 19.2.0 (latest)
+- **Next.js Version:** Uses Next.js 16 with App Router
+- **Route Groups:** Next.js routes use parentheses for grouping (e.g., `(home)/page.tsx`)
+- **Server Components:** Default to Server Components; use `"use client"` directive only when needed
+- **Import Paths:** Use workspace aliases (`@workspace/ui`, `@workspace/typescript-config`, etc.)
+- **Local Database:** PGlite (WASM PostgreSQL) stored in `.pglite/` - auto-created on first `bun dev`
+- **Production Database:** Neon serverless - configure via `bun setup` or set `DATABASE_URL`
+- **Authentication:** Flexible - Google OAuth if credentials provided, email/password fallback otherwise
+- **API Routes with JSX:** Use `.tsx` extension for API routes that contain JSX (required for Biome formatting)
+
+---
+
+# 3. Development Workflow
+
+## Quality Verification
+
+- **ALWAYS run `bun ok` after finishing any task or when facing issues**
+- This command runs type checking, linting, and tests across the entire codebase
+- A task is NOT complete until `bun ok` passes fully
+- **CRITICAL: `bun ok` MUST ALWAYS be run from the project root directory**
+  - NEVER run it from subdirectories like `apps/web` or `packages/*`
+  - Always navigate to the root first: `cd <project-root> && bun ok`
+  - This is a Turborepo monorepo - the command must run from root to check all packages
+- **ALWAYS use `bun ok`** for type checking and linting - never use `bun ts`, `bun lint`, or `tsc` directly
+- **NEVER run `tsc` directly** - not even for single files - always use `bun ok`
+
+## Test Requirements
+
+- **Unit tests are REQUIRED** - Always add unit tests when adding or modifying functions/utilities
+- **Post-task test verification** - After completing any task, verify test coverage for changed files:
+  - Modified behavior → Update affected tests to match
+  - New functionality → Add tests for it
+  - Tests must catch regressions to enable confident iteration
+- **No Manual Tests** - Never include manual verification tasks in OpenSpec proposals or task lists. All validation must be automated (`bun ok`, automated tests, etc.). Manual browser testing, viewport testing, and similar human-required verification steps are forbidden.
+- Test files should be co-located with source files (e.g., `handler.ts` → `handler.test.ts`)
+- Run `bun test` to execute all unit tests
+- NEVER use `timeout` parameters when running tests - trust the test framework's default timeout behavior
+
+## Development Server
+
+- **IMPORTANT: Never run `bun dev` or `next dev` directly** - The dev server causes lock file issues and port conflicts
+  - For e2e tests: Use `bun e2e` which starts the dev server automatically via Playwright's webServer config
+  - For manual testing: Ask the user to run the dev server themselves
+- Do NOT attempt to run development servers - they're already running and not accessible to Claude Code
+- Do NOT try to call API endpoints - you don't have authentication access
+- NEVER use `sleep` commands - they are unnecessary and wasteful
+
+## Database Operations
+
+- **NEVER run Drizzle Kit commands directly** - `bun db:generate`, `drizzle-kit generate`, `drizzle-kit migrate`, etc. require interactive input
+- After making schema changes, ALWAYS prompt the user to run `bun db:generate` manually
+- Format: "Schema changes complete. Please run: `bun db:generate`"
+- Never attempt to run these commands - they need user interaction for table renames/drops
+
+## Git Operations
+
+**NEVER commit or push code** - All git operations must be explicitly requested by the user:
+- Do NOT run `git add`, `git commit`, or `git push`
+- NEVER run `git stash` or `git stash pop` - do not hide or restore changes without explicit instruction
+- The user handles all git operations manually
+
+## Tools & Integration
+
+**MCP Servers:** This repository uses `.mcp.json` for team-wide MCP server configuration:
+- **better-auth** - Better Auth documentation and assistance
+- **next-devtools** - Next.js 16 debugging and diagnostics
+- **context7** - Library documentation and code generation
+- Team members will be prompted to trust these servers on first use
+
+**Context7 Integration:**
+- Always use context7 when I need code generation, setup or configuration steps, or library/API documentation
+- This means you should automatically use the Context7 MCP tools to resolve library id and get library docs without me having to explicitly ask
+
+**Next.js DevTools:**
+- When starting work on a Next.js project, ALWAYS call the `init` tool from next-devtools-mcp FIRST to set up proper context and establish documentation requirements
+- Do this automatically without being asked
+
+---
+
+# 4. Code Standards
+
+## Code Principles
+
+Follow Clean Code + SOLID + KISS + YAGNI:
+
+- **Clean Code**: Self-documenting, readable code with meaningful names and single responsibility
+- **SOLID**: Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, Dependency Inversion
+- **KISS**: Simplest solution that solves the problem, avoid over-engineering
+- **YAGNI**: Don't add functionality until actually needed
+
+## TypeScript Conventions
+
+- **NEVER use `any` type** - Use `unknown` if type is truly unknown, but even that should be avoided
+- **NEVER use `as any` assertions** - Find the proper type or use specific type assertions. Use `as unknown` only if absolutely necessary
+- **NEVER use `interface`** - Always use `type` instead
+- Reuse existing types - don't create duplicate types
+- Use Zod schemas for runtime validation when appropriate
+- Add comments to object type properties only when not self-explanatory (skip obvious ones like `className`)
+- Prefer optional chaining for callbacks: `onComplete?.(data)` instead of `if (onComplete) onComplete(data)`
+
+## Import Conventions
+
+- **NEVER use barrel files** - Barrel files (index.ts files that re-export everything) are forbidden
+- **NEVER re-export from external libraries** - Always import directly from the library where it's needed
+  - Example: Import `getLogger` from `@orpc/experimental-pino` directly in the file that uses it
+  - Do NOT create wrapper functions that just re-export library functions - this adds unnecessary indirection
+  - Re-exporting makes it unclear where the actual implementation lives and breaks IDE navigation
+- **Always import directly from source files** - Import from the actual file where the code is defined
+- Example: Use `import { getErrorMessage } from "@workspace/shared/utils/error"` instead of `import { getErrorMessage } from "@workspace/shared"`
+- Package exports should point directly to source files, not to barrel files
+- This improves tree-shaking, makes dependencies explicit, and reduces circular dependency issues
+- **Avoid dynamic imports** - Prefer static `import` over `await import()`. Only use dynamic imports for genuine code splitting or conditional loading based on runtime conditions.
+
+## Function Parameters
+
+- Prefer object parameters over multiple direct parameters
+- Example: `function foo({ name, age }: { name: string; age: number })` instead of `function foo(name: string, age: number)`
+
+## Error Handling
+
+- Always use `getErrorMessage()` from `@workspace/shared/utils/error` for error handling
+- NEVER use `catch (error: any)` - use `catch (error)` and let the utility handle type narrowing
+- Provide contextual fallback messages: `getErrorMessage(error, "Failed to update user")`
+- Example:
+
+```typescript
+import { getErrorMessage } from "@workspace/shared/utils/error";
+
+try {
+  await someOperation();
+} catch (error) {
+  const message = getErrorMessage(error, "Operation failed");
+  console.error(message);
+  toast({ title: message, variant: "destructive" });
+}
+```
+
+## Comments
+
+- Do NOT add comments explaining what changes you just made
+- Only add comments for complex logic that isn't self-evident
+- Use JSDoc-style comments for public APIs
+- **Always add reference links** when implementing code from documentation or external sources (unless it's common/trivial code)
+  - Format: `// Reference: https://example.com/docs/feature`
+  - Helps understand implementation decisions and find updated documentation later
+  - Example: `// Reference: https://www.better-auth.com/docs/concepts/typescript#inferring-additional-fields`
+
+## Console Logging
+
+- Always stringify objects: `console.log('DEBUG:', JSON.stringify(data, null, 2))`
+- Use a common keyword prefix (e.g., `DEBUG:`, `LOG:`) for easy filtering and bulk copying
+- **Always clean up debug code** - Remove all console logs and debugging code once the root cause is found
+
+## React Conventions
+
+- **ALWAYS follow the Rules of Hooks**:
+  - Only call hooks at the top level - never inside loops, conditions, or nested functions
+  - Do not return early if there's a hook later in the component
+  - Hooks must be called in the same order every render
+- **React 19.2 Usage**:
+  - `<Activity mode="hidden">` - Keeps UI mounted but hidden while preserving state (useful for pre-rendering tabs, loading background data)
+  - `useEffectEvent()` - Separates event-like logic from reactive Effects when you need fresh props/state without re-triggering the effect (solves stale closure problems)
+  - Avoid manual `useMemo`/`useCallback` - React Compiler handles memoization automatically unless profiling shows specific need
+
+## Implementation Standards
+
+- When asked to implement something, implement it FULLY and completely
+- NEVER add placeholder comments like "to be implemented later" or "this will be done when API supports it"
+- If something cannot be completed, explain why explicitly rather than leaving incomplete code
+- **NEVER create documentation files** - No `.md` files, no READMEs, no CHANGELOG files, no migration guides, NOTHING unless explicitly requested
+  - This includes: CHANGELOG.md, MIGRATION.md, NOTES.md, GUIDE.md, or any other documentation
+  - The only exception: updating existing CLAUDE.md when architecture changes
+  - If you want to communicate what changed, tell the user directly - don't create files
+
+---
+
+# 5. Architecture
+
+## Monorepo Structure
 
 This is a Turborepo monorepo with two main workspace types:
 
@@ -108,13 +281,13 @@ This is a Turborepo monorepo with two main workspace types:
   - **ui/** - Shared UI component library (shadcn-based)
   - **typescript-config/** - Shared TypeScript configurations
 
-### Package Management
+## Package Management
 
 - Uses **Bun 1.3.1** as package manager (defined in package.json)
 - Workspace catalog manages shared dependencies (React 19.2.0, TypeScript 5.9.3, Zod 4.1.12, etc.)
 - All internal packages use `workspace:*` protocol for dependencies
 
-### Web App (apps/web/)
+## Web App (apps/web/)
 
 **Framework:** Next.js 16 with App Router and React Server Components
 
@@ -224,23 +397,33 @@ This is a Turborepo monorepo with two main workspace types:
   - **Test naming**: Use "should X when Y" pattern for clarity
   - **Coverage**: Test both success and error paths, including auth rejection
 - Example test structure:
+
 ```typescript
-import { callAuthenticated, expectORPCError, type MockAuth } from "../../../test-utils/helpers"
-import { createMockUser } from "../../../test-utils/fixtures"
+import {
+  callAuthenticated,
+  expectORPCError,
+  type MockAuth,
+} from "../../../test-utils/helpers";
+import { createMockUser } from "../../../test-utils/fixtures";
 
 test("should update user successfully", async () => {
-  const updatedUser = createMockUser({ name: "Updated" })
-  mockDb.update().set().where().returning.mockResolvedValueOnce([updatedUser])
+  const updatedUser = createMockUser({ name: "Updated" });
+  mockDb.update().set().where().returning.mockResolvedValueOnce([updatedUser]);
 
-  const result = await callAuthenticated(updateUser, { name: "Updated" }, mockAuth)
+  const result = await callAuthenticated(
+    updateUser,
+    { name: "Updated" },
+    mockAuth
+  );
 
-  expect(result.name).toBe("Updated")
-})
+  expect(result.name).toBe("Updated");
+});
 ```
+
 - Run tests: `bun test` (from project root or `packages/api`)
 - Tests run automatically with `SKIP_ENV_VALIDATION=1` to bypass env validation
 
-### Server Package (packages/server/)
+## Server Package (packages/server/)
 
 **Purpose:** Server-only code including database, server constants, and environment variables
 
@@ -268,7 +451,7 @@ test("should update user successfully", async () => {
 - `@workspace/server/db` - Database client + `isPglite` flag
 - `@workspace/server/db/schema` - Database schema
 
-### API Package (packages/api/)
+## API Package (packages/api/)
 
 **Purpose:** Backend logic package containing authentication and oRPC procedures
 
@@ -277,22 +460,13 @@ test("should update user successfully", async () => {
 - `src/auth.ts` - Better Auth configuration with Drizzle adapter
 - `src/logger.ts` - Pino logger configuration
 - `src/orpc/` - oRPC server implementation
-  - `errors.ts` - Common error definitions (UNAUTHORIZED, OPERATION_FAILED) shared across all procedures
+  - `errors.ts` - Common error definitions shared across all procedures
   - `contract/index.ts` - Main contract that composes domain contracts
   - `procedures/` - Domain-organized procedures (contracts + handlers side-by-side)
-    - `ping/` - Public ping endpoint
-      - `ping.contract.ts` - Ping contract definition
-      - `ping.handler.ts` - Ping handler implementation
-    - `auth/` - Authentication endpoints
-      - `auth.contract.ts` - Auth contract definition
-      - `auth.handler.ts` - Auth handler implementations
-    - `user/` - User management endpoints
-      - `user.contract.ts` - User contract definition
-      - `user.handler.ts` - User handler implementations
   - `base.ts` - Base implementer with logger middleware
   - `router.ts` - Main router exported to API routes
   - `server-client.ts` - Direct server-side client (no HTTP overhead)
-  - `middleware/auth.ts` - Better Auth session validation middleware (throws UNAUTHORIZED error)
+  - `middleware/auth.ts` - Better Auth session validation middleware
 
 **Exports:**
 
@@ -317,7 +491,7 @@ test("should update user successfully", async () => {
 - Main contract composes domain contracts: `contract/index.ts` imports from procedure directories
 - Frontend imports: Use `@workspace/api/orpc/contract` for composed contract, or `@workspace/api/orpc/procedures/{domain}/{domain}.contract` for domain-specific contracts
 
-### Shared Package (packages/shared/)
+## Shared Package (packages/shared/)
 
 **Purpose:** Client + server shared code including constants, env validation, and error handling utilities
 
@@ -359,7 +533,7 @@ try {
 - `@workspace/shared/env` - Client-side env vars
 - `@workspace/shared/utils/error` - Error handling utilities
 
-### UI Package (packages/ui/)
+## UI Package (packages/ui/)
 
 **Component Library:** Based on shadcn/ui with Radix UI primitives
 
@@ -401,6 +575,12 @@ try {
 - `Logo.tsx` - Full logo with text
 - `LogoIcon.tsx` - Icon-only version
 
+**Adding New Components:**
+
+Use shadcn CLI to add components: `npx shadcn@latest add <component-name>`
+
+## Build Tools & Configuration
+
 ### Linting & Code Quality
 
 - **Biome** - Code formatting and linting (TypeScript, React, accessibility)
@@ -421,9 +601,9 @@ try {
 - All environment variables must be declared in `turbo.json` under `globalEnv`
 - Tasks configured in `turbo.json` with dependency chains for build, lint, and type checking
 
-## Adding New UI Components
+---
 
-Use shadcn CLI to add components: `npx shadcn@latest add <component-name>`
+# 6. Configuration
 
 ## Environment Variables
 
@@ -431,17 +611,17 @@ Use shadcn CLI to add components: `npx shadcn@latest add <component-name>`
 
 Most environment variables are optional for local development. The system auto-configures:
 
-| Variable | Local Dev (no DATABASE_URL) | Production |
-|----------|----------------------------|------------|
-| `DATABASE_URL` | Optional (uses PGlite) | Required |
-| `BETTER_AUTH_SECRET` | Optional (uses dev secret with warning) | Required |
-| `GOOGLE_CLIENT_ID/SECRET` | Optional (disables Google OAuth) | Optional |
-| `RESEND_API_KEY` | Optional (magic links logged to console) | Optional |
+| Variable                  | Local Dev (no DATABASE_URL)              | Production |
+| ------------------------- | ---------------------------------------- | ---------- |
+| `DATABASE_URL`            | Optional (uses PGlite)                   | Required   |
+| `BETTER_AUTH_SECRET`      | Optional (uses dev secret with warning)  | Required   |
+| `GOOGLE_CLIENT_ID/SECRET` | Optional (disables Google OAuth)         | Optional   |
+| `RESEND_API_KEY`          | Optional (magic links logged to console) | Optional   |
 
 **Auth Behavior Based on Credentials:**
 
-| Credentials Set | Google OAuth | Magic Link | Email/Password |
-|-----------------|--------------|------------|----------------|
+| Credentials Set | Google OAuth | Magic Link   | Email/Password |
+| --------------- | ------------ | ------------ | -------------- |
 | None            | ❌           | ✅ (console) | ✅ (fallback)  |
 | Google only     | ✅           | ✅ (console) | ❌             |
 | Resend only     | ❌           | ✅ (email)   | ✅ (fallback)  |
@@ -459,144 +639,3 @@ Most environment variables are optional for local development. The system auto-c
 - All env vars must be declared in `turbo.json` under `globalEnv`
 - Skip validation with `SKIP_ENV_VALIDATION=1` - **ONLY** use for runtime commands in environments without env vars (CI pipelines)
 - **NEVER use `SKIP_ENV_VALIDATION=1` with type checking or linting** - these commands don't execute code and don't need env vars
-
-## Code Quality Standards
-
-**Development Workflow:**
-
-- **IMPORTANT: Never run `bun dev` or `next dev` directly.** The dev server causes lock file issues and port conflicts. Instead:
-  - For e2e tests: Use `bun e2e` which starts the dev server automatically via Playwright's webServer config
-  - For manual testing: Ask the user to run the dev server themselves
-- Do NOT attempt to run development servers - they're already running and not accessible to Claude Code
-- Do NOT try to call API endpoints - you don't have authentication access
-- NEVER use `sleep` commands - they are unnecessary and wasteful
-- **ALWAYS use `bun ok`** for type checking and linting - never use `bun ts`, `bun lint`, or `tsc` directly
-- **NEVER run `tsc` directly** - not even for single files - always use `bun ok`
-- **CRITICAL: `bun ok` MUST ALWAYS be run from the project root directory**
-  - NEVER run it from subdirectories like `apps/web` or `packages/*`
-  - Always navigate to the root first: `cd <project-root> && bun ok`
-  - This is a Turborepo monorepo - the command must run from root to check all packages
-- `bun ok` runs both type checking and linting, leverages Turbo cache, and is always preferred
-- **NEVER run Drizzle Kit commands directly** - `bun db:generate`, `drizzle-kit generate`, `drizzle-kit migrate`, etc. require interactive input
-  - After making schema changes, ALWAYS prompt the user to run `bun db:generate` manually
-  - Format: "Schema changes complete. Please run: `bun db:generate`"
-  - Never attempt to run these commands - they need user interaction for table renames/drops
-- NEVER commit or push code - all git operations must be explicitly requested by the user
-- NEVER run `git stash` or `git stash pop` - do not hide or restore changes without explicit instruction
-
-**Code Principles:** Follow Clean Code + SOLID + KISS + YAGNI
-
-- **Clean Code**: Self-documenting, readable code with meaningful names and single responsibility
-- **SOLID**: Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, Dependency Inversion
-- **KISS**: Simplest solution that solves the problem, avoid over-engineering
-- **YAGNI**: Don't add functionality until actually needed
-
-**TypeScript Conventions:**
-
-- **NEVER use `any` type** - Use `unknown` if type is truly unknown, but even that should be avoided
-- **NEVER use `as any` assertions** - Find the proper type or use specific type assertions. Use `as unknown` only if absolutely necessary
-- **NEVER use `interface`** - Always use `type` instead
-- Reuse existing types - don't create duplicate types
-- Use Zod schemas for runtime validation when appropriate
-- Add comments to object type properties only when not self-explanatory (skip obvious ones like `className`)
-- Prefer optional chaining for callbacks: `onComplete?.(data)` instead of `if (onComplete) onComplete(data)`
-
-**Import Conventions:**
-
-- **NEVER use barrel files** - Barrel files (index.ts files that re-export everything) are forbidden
-- **NEVER re-export from external libraries** - Always import directly from the library where it's needed
-  - Example: Import `getLogger` from `@orpc/experimental-pino` directly in the file that uses it
-  - Do NOT create wrapper functions that just re-export library functions - this adds unnecessary indirection
-  - Re-exporting makes it unclear where the actual implementation lives and breaks IDE navigation
-- **Always import directly from source files** - Import from the actual file where the code is defined
-- Example: Use `import { getErrorMessage } from "@workspace/shared/utils/error"` instead of `import { getErrorMessage } from "@workspace/shared"`
-- Package exports should point directly to source files, not to barrel files
-- This improves tree-shaking, makes dependencies explicit, and reduces circular dependency issues
-- **Avoid dynamic imports** - Prefer static `import` over `await import()`. Only use dynamic imports for genuine code splitting or conditional loading based on runtime conditions.
-
-**Function Parameters:**
-
-- Prefer object parameters over multiple direct parameters
-- Example: `function foo({ name, age }: { name: string; age: number })` instead of `function foo(name: string, age: number)`
-
-**Error Handling:**
-
-- Always use `getErrorMessage()` from `@workspace/shared/utils/error` for error handling
-- NEVER use `catch (error: any)` - use `catch (error)` and let the utility handle type narrowing
-- Provide contextual fallback messages: `getErrorMessage(error, "Failed to update user")`
-- Example:
-
-```typescript
-import { getErrorMessage } from "@workspace/shared/utils/error";
-
-try {
-  await someOperation();
-} catch (error) {
-  const message = getErrorMessage(error, "Operation failed");
-  console.error(message);
-  toast({ title: message, variant: "destructive" });
-}
-```
-
-**Comments:**
-
-- Do NOT add comments explaining what changes you just made
-- Only add comments for complex logic that isn't self-evident
-- Use JSDoc-style comments for public APIs
-- **Always add reference links** when implementing code from documentation or external sources (unless it's common/trivial code)
-  - Format: `// Reference: https://example.com/docs/feature`
-  - Helps understand implementation decisions and find updated documentation later
-  - Example: `// Reference: https://www.better-auth.com/docs/concepts/typescript#inferring-additional-fields`
-
-**Console Logging:**
-
-- Always stringify objects: `console.log('DEBUG:', JSON.stringify(data, null, 2))`
-- Use a common keyword prefix (e.g., `DEBUG:`, `LOG:`) for easy filtering and bulk copying
-- **Always clean up debug code** - Remove all console logs and debugging code once the root cause is found
-
-**React Conventions:**
-
-- **ALWAYS follow the Rules of Hooks**:
-  - Only call hooks at the top level - never inside loops, conditions, or nested functions
-  - Do not return early if there's a hook later in the component
-  - Hooks must be called in the same order every render
-- **React 19.2 Usage**:
-  - `<Activity mode="hidden">` - Keeps UI mounted but hidden while preserving state (useful for pre-rendering tabs, loading background data)
-  - `useEffectEvent()` - Separates event-like logic from reactive Effects when you need fresh props/state without re-triggering the effect (solves stale closure problems)
-  - Avoid manual `useMemo`/`useCallback` - React Compiler handles memoization automatically unless profiling shows specific need
-
-**Testing:**
-
-- **Unit tests are REQUIRED** - Always add unit tests when adding or modifying functions/utilities. Tests ensure a solid and reliable product.
-- Test files should be co-located with source files (e.g., `handler.ts` → `handler.test.ts`)
-- Run `bun test` to execute all unit tests
-- NEVER use `timeout` parameters when running tests - run tests normally without artificial timeouts
-- Trust the test framework's default timeout behavior
-- **Post-task test verification** - After completing any task, verify test coverage for changed files:
-  - Modified behavior → Update affected tests to match
-  - New functionality → Add tests for it
-  - Tests must catch regressions to enable confident iteration
-  - A task is not complete until its tests are updated and passing
-
-**Implementation Standards:**
-
-- When asked to implement something, implement it FULLY and completely
-- NEVER add placeholder comments like "to be implemented later" or "this will be done when API supports it"
-- If something cannot be completed, explain why explicitly rather than leaving incomplete code
-- **NEVER create documentation files** - No `.md` files, no READMEs, no CHANGELOG files, no migration guides, NOTHING unless explicitly requested
-  - This includes: CHANGELOG.md, MIGRATION.md, NOTES.md, GUIDE.md, or any other documentation
-  - The only exception: updating existing CLAUDE.md when architecture changes
-  - If you want to communicate what changed, tell the user directly - don't create files
-
-## Important Notes
-
-- **Package Manager:** Always use `bun` instead of npm/yarn/pnpm
-- **Node Version:** Requires Node.js >= 20
-- **React Version:** Uses React 19.2.0 (latest)
-- **Route Groups:** Next.js routes use parentheses for grouping (e.g., `(home)/page.tsx`)
-- **Server Components:** Default to Server Components; use `"use client"` directive only when needed
-- **Import Paths:** Use workspace aliases (`@workspace/ui`, `@workspace/typescript-config`, etc.)
-- **Local Database:** PGlite (WASM PostgreSQL) stored in `.pglite/` - auto-created on first `bun dev`
-- **Production Database:** Neon serverless - configure via `bun setup` or set `DATABASE_URL`
-- **Authentication:** Flexible - Google OAuth if credentials provided, email/password fallback otherwise
-- **API Routes with JSX:** Use `.tsx` extension for API routes that contain JSX (required for Biome formatting)
