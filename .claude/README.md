@@ -12,17 +12,12 @@ This directory contains all Claude Code configuration for the Turbostack project
 ├── activity.log                 # Activity audit trail (gitignored)
 ├── PERMISSIONS.md               # Detailed permission documentation
 ├── HOOKS.md                     # Advanced hooks guide
-├── hooks/                       # Automation hooks
-│   ├── README.md                # Hook documentation
-│   ├── session-start.sh         # Project context on startup
-│   ├── post-edit.sh             # Auto-format after edits
-│   ├── post-schema-edit.sh      # Migration workflow reminder
-│   └── pre-bash.sh              # Block problematic commands
-└── skills/                      # Specialized review capabilities
-    ├── README.md                # Skills documentation
-    ├── audit-orpc-contract.md   # oRPC contract auditor
-    ├── review-db-schema.md      # Database schema reviewer
-    └── check-code-standards.md  # Code quality checker
+└── hooks/                       # Automation hooks
+    ├── README.md                # Hook documentation
+    ├── session-start.sh         # Project context on startup
+    ├── post-edit.sh             # Auto-format after edits
+    ├── post-schema-edit.sh      # Migration workflow reminder
+    └── pre-bash.sh              # Block problematic commands
 ```
 
 ## 🚀 Quick Start
@@ -30,11 +25,9 @@ This directory contains all Claude Code configuration for the Turbostack project
 All team members automatically inherit this configuration. The setup includes:
 
 1. **Status Line** - Live project status in status bar
-2. **Sub-Agent Instructions** - In main `CLAUDE.md` for proactive AI assistance
-3. **Automation Hooks** - Command hooks + AI-powered agent hooks
-4. **Custom Skills** - Specialized quality checks
-5. **Optimized Permissions** - Streamlined workflow with safety guardrails
-6. **Activity Logging** - Audit trail of all operations
+2. **Automation Hooks** - Command hooks + AI-powered agent hooks
+3. **Optimized Permissions** - Streamlined workflow with safety guardrails
+4. **Activity Logging** - Audit trail of all operations
 
 ## 🎯 Key Features
 
@@ -53,14 +46,6 @@ Every session starts with:
 
 Immediate orientation = fewer mistakes.
 
-### Sub-Agents (Automatic)
-Claude automatically spawns specialized agents for:
-- **Explore Agent** - "Where is X handled?" / "How does Y work?"
-- **Plan Agent** - Complex multi-step implementations
-- **General-Purpose** - Open-ended research requiring iteration
-
-Configuration in main `CLAUDE.md` - no manual invocation needed.
-
 ### Hooks (Automatic)
 
 **Command Hooks:**
@@ -76,16 +61,6 @@ Configuration in main `CLAUDE.md` - no manual invocation needed.
 
 **Notification Hooks:**
 - **Activity Logger** - Creates audit trail in `.claude/activity.log`
-
-### Skills (On-Demand)
-Invoke specialized reviewers:
-```
-"Audit the user contract with audit-orpc-contract"
-"Review the database schema with review-db-schema"
-"Check code standards with check-code-standards"
-```
-
-Each skill provides detailed checklist-based audits with actionable fixes.
 
 ### Permissions (Automatic)
 Optimized for productivity and safety:
@@ -116,7 +91,6 @@ Each subsystem has detailed documentation:
 - **HOOKS.md** - Advanced hooks guide with agent hooks, patterns, examples
 - **PERMISSIONS.md** - Permission system: syntax, examples, testing
 - **hooks/README.md** - All available hooks with triggers and purposes
-- **skills/README.md** - Skill creation guide and usage patterns
 
 ## 🔧 Customization
 
@@ -124,11 +98,6 @@ Each subsystem has detailed documentation:
 1. Create script in `.claude/hooks/`
 2. Make executable: `chmod +x .claude/hooks/your-hook.sh`
 3. Document in `hooks/README.md`
-
-### Creating New Skills
-1. Create `.md` file in `.claude/skills/`
-2. Follow checklist template (see `skills/README.md`)
-3. Document in `skills/README.md`
 
 ### Updating Permissions
 1. Edit `.claude/settings.local.json`
@@ -139,13 +108,10 @@ Each subsystem has detailed documentation:
 
 ### For Developers
 - **Trust the automation** - Hooks and permissions are designed for smooth workflow
-- **Use skills proactively** - Before finalizing features, run relevant audits
 - **Read the docs** - Each README has useful context and examples
 
 ### For AI (Claude)
-- **Spawn agents proactively** - Don't wait for explicit user request
 - **Use TodoWrite extensively** - Track all multi-step work
-- **Invoke skills before completion** - Ensure quality before marking tasks done
 - **Follow CLAUDE.md strictly** - All rules exist for good reasons
 
 ## 🏆 Benefits
@@ -153,10 +119,8 @@ Each subsystem has detailed documentation:
 **Productivity:**
 - No interruptions for common safe commands
 - Automatic formatting on edits
-- Sub-agents handle complex exploration
 
 **Quality:**
-- Skills enforce project standards
 - Hooks prevent common mistakes
 - Consistent codebase via automation
 
@@ -170,7 +134,6 @@ Each subsystem has detailed documentation:
 All configuration is checked into git:
 - `.claude/settings.local.json` - Shared permissions
 - `.claude/hooks/` - Shared automation
-- `.claude/skills/` - Shared quality checks
 
 Every team member gets the same optimized experience automatically.
 
@@ -178,7 +141,6 @@ Every team member gets the same optimized experience automatically.
 
 - Main project docs: `/CLAUDE.md`
 - Hook details: `hooks/README.md`
-- Skill creation: `skills/README.md`
 - Permission system: `PERMISSIONS.md`
 
 ## 💡 Tips
@@ -207,24 +169,6 @@ Edit schema.ts → Automatic reminder about migrations
 → Never forget db:generate
 ```
 
-**For exploratory questions:**
-```
-"Where is authentication handled?"
-→ Claude spawns Explore agent automatically
-```
-
-**For implementations:**
-```
-"Add user profile feature"
-→ Claude spawns Plan agent, breaks down work with TodoWrite
-```
-
-**For quality checks:**
-```
-"Audit the auth contract"
-→ Claude invokes audit-orpc-contract skill
-```
-
 **For all work:**
 ```
 Always ends with `bun ok` to verify types and lint
@@ -241,7 +185,7 @@ Check .claude/activity.log to see what Claude did
 Improvements welcome! When modifying:
 
 1. **Update docs** - Keep READMEs current
-2. **Test thoroughly** - Verify hooks/skills work as expected
+2. **Test thoroughly** - Verify hooks work as expected
 3. **Keep it simple** - KISS principle applies to configuration too
 4. **Document why** - Explain reasoning for future maintainers
 
@@ -250,7 +194,6 @@ Improvements welcome! When modifying:
 - Configuration issues? Check individual READMEs
 - Permission problems? See `PERMISSIONS.md`
 - Hook not working? Check `hooks/README.md`
-- Skill creation? See `skills/README.md`
 
 ---
 

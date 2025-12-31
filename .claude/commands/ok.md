@@ -1,1 +1,0 @@
-Ensure `bun ok` passes.

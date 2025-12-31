@@ -42,7 +42,7 @@ export const env = createEnv({
 				: "http://localhost:3000"), // Local Development URL
 		NEXT_PUBLIC_EMAIL_DOMAIN: emailEnabled ? (process.env.NEXT_PUBLIC_EMAIL_DOMAIN ?? disabledEnv) : disabledEnv,
 	},
-	/** Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. Useful for Docker builds.  */
+	/** Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. Useful for CI pipelines.  */
 	skipValidation: Boolean(process.env.SKIP_ENV_VALIDATION),
 })
 

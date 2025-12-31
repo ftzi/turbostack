@@ -1,129 +1,4 @@
-<!-- LIVESPEC:START -->
-# Livespec
 
-This project uses **Livespec** for living specification management. Specs are living documentation that evolves with code.
-
-## Projects
-
-<!-- Run /livespec to populate this table with your projects -->
-
-| Code | Project | Specs | Codebase |
-|------|---------|-------|----------|
-| | | | |
-
-## Before Any Task
-
-- [ ] Check relevant specs in `livespec/projects/[project]/`
-- [ ] Check active plans in `livespec/plans/active/` for conflicts
-- [ ] If modifying behavior, note which specs may need updating
-
-## Decision Tree: Plan or Direct Fix?
-
-```
-├─ Bug fix restoring spec behavior? → Fix directly
-├─ Typo/format/comment only? → Fix directly
-├─ Small enhancement within existing spec? → Fix directly, update spec
-├─ New feature or capability? → Create plan
-├─ Breaking change (API, behavior)? → Create plan
-├─ Cross-cutting (multiple specs)? → Create plan
-└─ Unclear scope? → Create plan (safer)
-```
-
-## Livespec Workflow
-
-When creating significant features (plan needed):
-
-1. **Create plan** in `livespec/plans/active/[name]/plan.md`
-2. **Get approval** — Present plan, STOP, wait for user approval
-3. **Implement** — Work through tasks
-4. **Update specs** — Add/modify specs in `livespec/projects/[project]/`
-5. **Archive automatically** — Move to `livespec/plans/archived/YYYY-MM-DD-[name]/`
-
-## Plan Format
-
-```markdown
-# Plan: [Brief Description]
-
-## Summary
-1-2 sentences on what this plan achieves.
-
-## Why
-Problem or opportunity being addressed.
-
-## What Changes
-- Bullet list of changes
-- Mark breaking changes with **BREAKING**
-
-## Tasks
-- [ ] Task 1
-- [ ] Task 2
-
-## Affected Specs
-- `[PRJ.feature]` — ADDED/MODIFIED/REMOVED
-```
-
-Plan naming: kebab-case, verb-led (`add-`, `update-`, `refactor-`, `fix-`)
-
-## Spec Format
-
-```markdown
-# Feature Name [PRJ.feature]
-
-Narrative explanation of what this feature is and why it exists.
-
----
-
-## Requirement Name [PRJ.feature.requirement]
-
-### Scenario: Behavior description [PRJ.feature.requirement.scenario]
-Testing: e2e
-
-- WHEN precondition
-- THEN expected outcome
-```
-
-- **Spec IDs**: `[PRJ.path.to.item]` — always in brackets, hierarchical with dots
-- **Testing declaration**: Every scenario needs `Testing: unit|e2e|integration`
-- **Reference in code**: `/** @spec [PRJ.sidebar.tabs] */`
-
-## Directory Structure
-
-```
-livespec/
-├── AGENTS.md           # Detailed conventions (read when writing specs)
-├── manifest.md         # Projects registry
-├── projects/[project]/ # Specs organized by feature
-├── plans/active/       # In-progress plans
-└── plans/archived/     # Completed plans
-```
-
-## Quick Commands
-
-- "Run housekeeping" — Check spec health, find gaps
-- "Continue [plan]" — Resume an active plan
-- `/livespec [request]` — Full workflow with planning
-
-<!-- LIVESPEC:END -->
-
-
-<!-- OPENSPEC:START -->
-# OpenSpec Instructions
-
-These instructions are for AI assistants working in this project.
-
-Always open `@/openspec/AGENTS.md` when the request:
-- Mentions planning or proposals (words like proposal, spec, change, plan)
-- Introduces new capabilities, breaking changes, architecture shifts, or big performance/security work
-- Sounds ambiguous and you need the authoritative spec before coding
-
-Use `@/openspec/AGENTS.md` to learn:
-- How to create and apply change proposals
-- Spec format and conventions
-- Project structure and guidelines
-
-Keep this managed block so 'openspec update' can refresh the instructions.
-
-<!-- OPENSPEC:END -->
 
 # CLAUDE.md
 
@@ -147,43 +22,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Team members will be prompted to trust these servers on first use
 
 **When starting work on a Next.js project, ALWAYS call the `init` tool from next-devtools-mcp FIRST to set up proper context and establish documentation requirements. Do this automatically without being asked.**
-
-## AI Assistant Workflow
-
-**Sub-Agent Usage (Proactive):**
-Use specialized sub-agents automatically for these scenarios - do NOT run direct searches:
-
-- **Explore Agent** - For codebase exploration and understanding:
-  - "Where is X handled?" / "How does Y work?" / "What's the structure of Z?"
-  - "Show me the authentication flow" / "Explain the API architecture"
-  - Questions about multiple files or complex patterns
-  - Use `thoroughness: "medium"` by default, `"very thorough"` for complex investigations
-
-- **Plan Agent** - Before implementing multi-step changes:
-  - Adding new features that touch multiple files
-  - Refactoring that affects multiple domains
-  - Complex migrations or architectural changes
-  - Use this BEFORE starting implementation to break down work
-
-- **General-Purpose Agent** - For complex searches requiring iteration:
-  - Finding patterns across the codebase that may require multiple search attempts
-  - When the first search attempt doesn't yield clear results
-  - Open-ended investigations that need refinement
-
-**Implementation Pattern:**
-
-1. For exploratory questions → Spawn Explore agent first
-2. For complex implementations → Use Plan agent to break down work
-3. Track all work with TodoWrite tool
-4. Implement step-by-step
-5. ALWAYS run `bun ok` after completion
-
-**Task Tracking:**
-
-- Use TodoWrite for all multi-step tasks (3+ steps)
-- Mark tasks `in_progress` before starting work
-- Mark `completed` immediately after finishing each task
-- Keep descriptions clear and actionable
 
 ## Maintaining This File
 
@@ -619,7 +457,7 @@ Most environment variables are optional for local development. The system auto-c
 **Additional Notes:**
 
 - All env vars must be declared in `turbo.json` under `globalEnv`
-- Skip validation with `SKIP_ENV_VALIDATION=1` - **ONLY** use for runtime commands in environments without env vars (Docker builds, CI pipelines)
+- Skip validation with `SKIP_ENV_VALIDATION=1` - **ONLY** use for runtime commands in environments without env vars (CI pipelines)
 - **NEVER use `SKIP_ENV_VALIDATION=1` with type checking or linting** - these commands don't execute code and don't need env vars
 
 ## Code Quality Standards
@@ -645,7 +483,6 @@ Most environment variables are optional for local development. The system auto-c
   - Never attempt to run these commands - they need user interaction for table renames/drops
 - NEVER commit or push code - all git operations must be explicitly requested by the user
 - NEVER run `git stash` or `git stash pop` - do not hide or restore changes without explicit instruction
-- **Use sub-agents proactively** - Spawn Explore agents for codebase questions, Plan agents for complex implementations (see AI Assistant Workflow section)
 
 **Code Principles:** Follow Clean Code + SOLID + KISS + YAGNI
 
@@ -750,29 +587,6 @@ try {
   - This includes: CHANGELOG.md, MIGRATION.md, NOTES.md, GUIDE.md, or any other documentation
   - The only exception: updating existing CLAUDE.md when architecture changes
   - If you want to communicate what changed, tell the user directly - don't create files
-
-## Development Container (Safe YOLO Mode)
-
-For autonomous AI coding with `--dangerously-skip-permissions`, use the devcontainer:
-
-1. Open project in VS Code
-2. Click "Reopen in Container" when prompted
-3. Run `claude --dangerously-skip-permissions`
-
-**Security layers:**
-- Filesystem isolation: Only project directory is mounted
-- Network isolation: Default-deny firewall, only essential domains allowed
-- Credential isolation: `~/.claude` mounted read-only
-
-**Whitelisted domains:**
-- `api.anthropic.com` - Claude API
-- `github.com`, `*.githubusercontent.com` - Git operations
-- `registry.npmjs.org` - npm packages
-- `bun.sh` - Bun downloads
-
-**To add domains:** Edit `.devcontainer/init-firewall.sh`
-
-Reference: https://code.claude.com/docs/en/devcontainer
 
 ## Important Notes
 

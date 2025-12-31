@@ -54,7 +54,7 @@ export const serverEnv = createEnv({
 
 		PGLITE_DIR: process.env.PGLITE_DIR,
 	},
-	/** Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. Useful for Docker builds.  */
+	/** Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. Useful for CI pipelines.  */
 	skipValidation: Boolean(process.env.SKIP_ENV_VALIDATION),
 	emptyStringAsUndefined: true,
 })
