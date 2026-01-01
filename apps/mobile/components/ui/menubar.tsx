@@ -110,7 +110,12 @@ function MenubarSubTrigger({
 		inset?: boolean
 	}) {
 	const { open } = MenubarPrimitive.useSubContext()
-	const icon = Platform.OS === "web" ? ChevronRight : open ? ChevronUp : ChevronDown
+	let icon: typeof ChevronRight
+	if (Platform.OS === "web") {
+		icon = ChevronRight
+	} else {
+		icon = open ? ChevronUp : ChevronDown
+	}
 	return (
 		<TextClassContext.Provider
 			value={cn("text-sm select-none group-active:text-accent-foreground", open && "text-accent-foreground")}

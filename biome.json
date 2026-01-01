@@ -18,9 +18,17 @@
 			"!**/coverage",
 			"!**/.vercel",
 			"!**/.cache",
+			"!**/.bun",
+			"!**/.pglite",
+			"!**/.expo",
+			"!**/test-results",
+			"!**/playwright-report",
+			"!**/web-build",
+			"!**/*.log",
+			"!**/expo-env.d.ts",
+			"!**/uniwind-types.d.ts",
 			"!apps/mobile/**/*.config.js",
 			"!apps/mobile/global.css",
-			"!apps/mobile/components/social-connections.tsx",
 			"!packages/email/.react-email"
 		]
 	},
