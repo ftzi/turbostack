@@ -28,7 +28,7 @@ export function RootLayoutWrapper({ children, fontClasses }: RootLayoutWrapperPr
 	// Normal app routes - render with full html/body/providers
 	return (
 		<html lang="en" suppressHydrationWarning>
-			<body className={`${fontClasses} font-sans antialiased`}>
+			<body className={`${fontClasses} font-sans antialiased`} suppressHydrationWarning>
 				<Providers>{children}</Providers>
 			</body>
 		</html>
