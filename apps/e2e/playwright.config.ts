@@ -5,7 +5,7 @@ import { defineConfig, devices } from "@playwright/test"
  * Reference: https://playwright.dev/docs/test-configuration
  */
 export default defineConfig({
-	testDir: "./tests/e2e",
+	testDir: "./tests",
 	testMatch: "**/*.e2e.ts",
 	fullyParallel: true,
 	forbidOnly: !!process.env.CI,
@@ -23,7 +23,7 @@ export default defineConfig({
 		},
 	],
 	webServer: {
-		command: "bun dev:e2e",
+		command: "cd ../.. && bun dev:e2e",
 		url: "http://localhost:3000",
 		reuseExistingServer: !process.env.CI,
 		timeout: 120000,
