@@ -8,14 +8,14 @@ export function CTA() {
 		<Section background="accent">
 			<Container>
 				<div className="mx-auto max-w-2xl text-center">
-					<h2 className="font-bold text-3xl tracking-tight sm:text-4xl">Ready to get started?</h2>
+					<h2 className="font-bold text-3xl tracking-tight sm:text-4xl">Ready to transform your life?</h2>
 					<p className="mt-4 text-lg text-primary-foreground/80">
-						Clone the repo, run one command, and start building your next big thing.
+						Join thousands using AI-powered coaching to build better habits and achieve their goals.
 					</p>
 					<div className="mt-8">
 						<Button size="lg" variant="secondary" asChild>
-							<a href="/app">
-								Start Building Now
+							<a href="/auth">
+								Start Your Journey Free
 								<ArrowRight className="size-4" />
 							</a>
 						</Button>

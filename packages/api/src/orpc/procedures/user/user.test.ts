@@ -36,6 +36,7 @@ describe("getCurrentUser handler", () => {
 		mockAuth.api.getSession.mockClear()
 	})
 
+	/** @spec [HAB.api.user.get-current.success] */
 	test("should return user data when user exists", async () => {
 		const mockUser = createMockUser()
 		mockDb.query.users.findFirst.mockResolvedValueOnce(mockUser)
@@ -53,6 +54,7 @@ describe("getCurrentUser handler", () => {
 		expect(mockDb.query.users.findFirst).toHaveBeenCalledTimes(1)
 	})
 
+	/** @spec [HAB.api.user.get-current.not-authenticated] */
 	test("should return null when user not found in database", async () => {
 		mockDb.query.users.findFirst.mockResolvedValueOnce(null)
 
@@ -62,6 +64,7 @@ describe("getCurrentUser handler", () => {
 		expect(mockDb.query.users.findFirst).toHaveBeenCalledTimes(1)
 	})
 
+	/** @spec [HAB.api.user.get-current.success] */
 	test("should query database with correct user ID from context", async () => {
 		const mockUser = createMockUser()
 		mockDb.query.users.findFirst.mockResolvedValueOnce(mockUser)
@@ -73,6 +76,7 @@ describe("getCurrentUser handler", () => {
 		})
 	})
 
+	/** @spec [HAB.api.user.get-current.not-authenticated] */
 	test("should throw UNAUTHORIZED error when not authenticated", async () => {
 		mockAuth.api.getSession.mockResolvedValueOnce({
 			session: null,
@@ -93,6 +97,7 @@ describe("updateUser handler", () => {
 		mockAuth.api.getSession.mockClear()
 	})
 
+	/** @spec [HAB.api.user.update.name] */
 	test("should update user name successfully", async () => {
 		const updatedUser = createMockUser({ name: "Updated Name" })
 		mockDb.update().set().where().returning.mockResolvedValueOnce([updatedUser])
@@ -109,6 +114,7 @@ describe("updateUser handler", () => {
 		})
 	})
 
+	/** @spec [HAB.api.user.update.image] */
 	test("should update user image successfully", async () => {
 		const updatedUser = createMockUser({ image: "https://example.com/new-avatar.jpg" })
 		mockDb.update().set().where().returning.mockResolvedValueOnce([updatedUser])
@@ -118,6 +124,7 @@ describe("updateUser handler", () => {
 		expect(result.image).toBe("https://example.com/new-avatar.jpg")
 	})
 
+	/** @spec [HAB.api.user.update.partial] */
 	test("should update both name and image", async () => {
 		const updatedUser = createMockUser({
 			name: "Updated Name",
@@ -138,6 +145,7 @@ describe("updateUser handler", () => {
 		expect(result.image).toBe("https://example.com/new-avatar.jpg")
 	})
 
+	/** @spec [HAB.api.user.update.clear-image] */
 	test("should allow setting image to null", async () => {
 		const updatedUser = createMockUser({ image: null })
 		mockDb.update().set().where().returning.mockResolvedValueOnce([updatedUser])
@@ -147,6 +155,7 @@ describe("updateUser handler", () => {
 		expect(result.image).toBeNull()
 	})
 
+	/** @spec [HAB.api.user.update.ownership] */
 	test("should throw OPERATION_FAILED when database update returns empty array", async () => {
 		mockDb.update().set().where().returning.mockResolvedValueOnce([])
 
@@ -157,6 +166,7 @@ describe("updateUser handler", () => {
 		)
 	})
 
+	/** @spec [HAB.api.user.update.ownership] */
 	test("should throw UNAUTHORIZED error when not authenticated", async () => {
 		mockAuth.api.getSession.mockResolvedValueOnce({
 			session: null,

@@ -9,7 +9,7 @@
 	},
 	"scripts": {
 		"build": "email build",
-		"dev": "email dev",
+		"dev": "email dev --port 3002",
 		"export": "email export"
 	},
 	"dependencies": {

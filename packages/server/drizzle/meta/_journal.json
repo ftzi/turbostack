@@ -22,6 +22,20 @@
 			"when": 1763956600353,
 			"tag": "0002_nasty_korath",
 			"breakpoints": true
+		},
+		{
+			"idx": 3,
+			"version": "7",
+			"when": 1767227195904,
+			"tag": "0003_legal_sunspot",
+			"breakpoints": true
+		},
+		{
+			"idx": 4,
+			"version": "7",
+			"when": 1767228440351,
+			"tag": "0004_peaceful_captain_midlands",
+			"breakpoints": true
 		}
 	]
 }

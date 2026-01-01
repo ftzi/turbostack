@@ -36,6 +36,7 @@ describe("listUsers handler", () => {
 		mockAuth.api.getSession.mockClear()
 	})
 
+	/** @spec [HAB.api.admin.list-users.success] */
 	test("should return all users when called by admin", async () => {
 		const mockUsers = [
 			createMockUser({ id: "user-1", name: "User One", role: "user" }),
@@ -57,6 +58,7 @@ describe("listUsers handler", () => {
 		expect(mockDb.query.users.findMany).toHaveBeenCalledTimes(1)
 	})
 
+	/** @spec [HAB.api.admin.list-users.success] */
 	test("should return empty array when no users exist", async () => {
 		mockDb.query.users.findMany.mockResolvedValueOnce([])
 
@@ -65,6 +67,7 @@ describe("listUsers handler", () => {
 		expect(result).toEqual([])
 	})
 
+	/** @spec [HAB.api.admin.list-users.unauthorized] */
 	test("should throw UNAUTHORIZED error when called by non-admin user", async () => {
 		await expectORPCError(
 			() => callAuthenticated(listUsers, {}, mockAuth, { role: "user" }),
@@ -73,6 +76,7 @@ describe("listUsers handler", () => {
 		)
 	})
 
+	/** @spec [HAB.api.admin.list-users.unauthorized] */
 	test("should throw UNAUTHORIZED error when not authenticated", async () => {
 		mockAuth.api.getSession.mockResolvedValueOnce({
 			session: null,
@@ -93,6 +97,7 @@ describe("updateUserRole handler", () => {
 		mockAuth.api.getSession.mockClear()
 	})
 
+	/** @spec [HAB.api.admin.update-role.promote] */
 	test("should update user role to admin successfully", async () => {
 		const updatedUser = createMockUser({ id: "target-user", role: "admin" })
 		mockDb.update().set().where().returning.mockResolvedValueOnce([updatedUser])
@@ -103,6 +108,7 @@ describe("updateUserRole handler", () => {
 		expect(result.id).toBe("target-user")
 	})
 
+	/** @spec [HAB.api.admin.update-role.demote] */
 	test("should update user role to user successfully", async () => {
 		const updatedUser = createMockUser({ id: "target-user", role: "user" })
 		mockDb.update().set().where().returning.mockResolvedValueOnce([updatedUser])
@@ -112,6 +118,7 @@ describe("updateUserRole handler", () => {
 		expect(result.role).toBe("user")
 	})
 
+	/** @spec [HAB.api.admin.update-role.require-id] */
 	test("should throw OPERATION_FAILED when user not found", async () => {
 		mockDb.update().set().where().returning.mockResolvedValueOnce([])
 
@@ -122,6 +129,7 @@ describe("updateUserRole handler", () => {
 		)
 	})
 
+	/** @spec [HAB.api.admin.update-role.unauthorized] */
 	test("should throw UNAUTHORIZED error when called by non-admin user", async () => {
 		await expectORPCError(
 			() => callAuthenticated(updateUserRole, { userId: "target", role: "admin" }, mockAuth, { role: "user" }),
@@ -130,6 +138,7 @@ describe("updateUserRole handler", () => {
 		)
 	})
 
+	/** @spec [HAB.api.admin.update-role.unauthorized] */
 	test("should throw UNAUTHORIZED error when not authenticated", async () => {
 		mockAuth.api.getSession.mockResolvedValueOnce({
 			session: null,

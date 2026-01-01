@@ -3,8 +3,8 @@ export const emailEnabled = false as boolean
 
 /** Consts used by the client and server. */
 export const consts = {
-	appName: "MyProject",
-	description: "My Project Description",
+	appName: "Habbits",
+	description: "Track your habits and achieve your goals with AI-powered insights",
 
 	/** Whether email functionality is enabled. */
 	emailEnabled,
@@ -33,5 +33,5 @@ export const consts = {
 	},
 
 	/** Where to redirect to after a successful authentication. */
-	pathWhenLoggedIn: "/app",
+	pathWhenLoggedIn: "/dashboard",
 } as const

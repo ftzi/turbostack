@@ -1,38 +1,41 @@
 import { Container } from "@workspace/ui/components/container"
 import { Section } from "@workspace/ui/components/section"
-import { Database, Lock, Palette, Rocket, Server, Zap } from "lucide-react"
+import { Brain, Calendar, Heart, Target, TrendingUp, Zap } from "lucide-react"
 
 const features = [
 	{
-		icon: Lock,
-		title: "Authentication Ready",
+		icon: Brain,
+		title: "AI Life Coach",
 		description:
-			"Better Auth configured with social logins, email verification, and session management out of the box.",
+			"Get personalized recommendations, insights, and motivation tailored to your unique personality and goals.",
 	},
 	{
-		icon: Database,
-		title: "Database Included",
-		description: "Drizzle ORM with Neon PostgreSQL. Type-safe queries, migrations, and a beautiful studio interface.",
+		icon: Target,
+		title: "Smart Goal Setting",
+		description:
+			"Define meaningful goals and receive AI-powered action plans that adapt to your progress and life changes.",
 	},
 	{
-		icon: Server,
-		title: "Type-Safe API",
-		description: "oRPC for end-to-end type safety. Define once, use everywhere with full IntelliSense support.",
+		icon: Heart,
+		title: "Holistic Wellness",
+		description:
+			"Track nutrition, exercise, sleep, and mental health with integrated insights that show how everything connects.",
 	},
 	{
-		icon: Palette,
-		title: "Beautiful UI",
-		description: "shadcn/ui components with Radix primitives. Accessible, customizable, and ready for dark mode.",
+		icon: Calendar,
+		title: "Smart Scheduling",
+		description: "AI-powered time blocking that optimizes your schedule based on energy patterns and priorities.",
+	},
+	{
+		icon: TrendingUp,
+		title: "Progress Analytics",
+		description: "Visualize your growth with detailed analytics that reveal patterns and celebrate your achievements.",
 	},
 	{
 		icon: Zap,
-		title: "Lightning Fast",
-		description: "Turborepo for blazing builds, Bun for speedy installs, and Next.js 16 with React Compiler.",
-	},
-	{
-		icon: Rocket,
-		title: "Deploy Anywhere",
-		description: "Optimized for Vercel but works anywhere. Environment variables managed with type safety.",
+		title: "Privacy First",
+		description:
+			"Your data stays yours. Anonymous tracking, encrypted storage, and complete control over your information.",
 	},
 ]
 
@@ -41,9 +44,10 @@ export function Features() {
 		<Section background="muted">
 			<Container>
 				<div className="mx-auto max-w-2xl text-center">
-					<h2 className="font-bold text-3xl tracking-tight sm:text-4xl">Everything you need to ship</h2>
+					<h2 className="font-bold text-3xl tracking-tight sm:text-4xl">Everything You Need to Thrive</h2>
 					<p className="mt-4 text-lg text-muted-foreground">
-						Stop wasting time on boilerplate. Start building what makes your product unique.
+						Habbits combines cutting-edge AI with proven self-improvement methodologies to create your personal growth
+						companion.
 					</p>
 				</div>
 

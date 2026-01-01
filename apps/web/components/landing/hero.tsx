@@ -10,32 +10,30 @@ export function Hero() {
 				<div className="mx-auto max-w-3xl text-center">
 					<div className="mb-6 inline-flex items-center gap-2 rounded-full border bg-muted/50 px-4 py-1.5 text-sm">
 						<Sparkles className="size-4 text-primary" />
-						<span>Ship faster with modern tools</span>
+						<span>AI-powered self-improvement</span>
 					</div>
 
 					<h1 className="font-bold text-4xl tracking-tight sm:text-5xl lg:text-6xl">
-						Build amazing products{" "}
+						Track your habits{" "}
 						<span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-							with confidence
+							achieve your goals
 						</span>
 					</h1>
 
 					<p className="mt-6 text-lg text-muted-foreground sm:text-xl">
-						A production-ready template with everything you need to build, ship, and scale your next big idea.
-						Authentication, database, API, and beautiful UI included.
+						Transform your life with personalized AI coaching, smart habit tracking, and holistic wellness insights.
+						Become the best version of yourself.
 					</p>
 
 					<div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
 						<Button size="lg" asChild>
-							<a href="/app">
-								Get Started
+							<a href="/auth">
+								Start Your Journey
 								<ArrowRight className="size-4" />
 							</a>
 						</Button>
 						<Button size="lg" variant="outline" asChild>
-							<a href="https://github.com" target="_blank" rel="noopener noreferrer">
-								View on GitHub
-							</a>
+							<a href="#features">Learn More</a>
 						</Button>
 					</div>
 				</div>

@@ -1,0 +1,449 @@
+<!-- livespec-version: 1.0.10 -->
+
+# Livespec Instructions
+
+This project uses Livespec for living, synchronized, spec-driven development. This document is your complete guide on how to use it.
+
+---
+
+# Part 1: Reference
+
+## 1. Philosophy
+
+Livespec treats specifications as **living documentation** that evolves with code:
+
+- **Specs are the source of truth** — code implements specs, not the other way around
+- **Bidirectional sync** — when code drifts from specs, prompt the user to decide: fix code or update spec
+- **Context-rich** — specs include the "why", not just the "what"
+- **AI-native** — sync and maintenance done by AI, not scripts
+- **Test-linked** — features are made of scenarios, each with automated tests to ensure correctness and prevent regressions
+- **Cohesive grouping** — one spec file per capability, keeping related screens, modals, and logic together
+
+This empowers creative iteration — you can explore freely knowing specs keep everything aligned.
+
+## 2. Glossary
+
+| Term | Definition |
+|------|------------|
+| **Spec** | A markdown file containing testable scenarios for a feature |
+| **Scenario** | A single testable behavior with WHEN/THEN structure and spec ID |
+| **Spec ID** | Unique identifier like `[PRJ.sidebar.tabs]` linking specs ↔ tests ↔ code |
+| **Feature** | A cohesive capability including its screens, modals, and logic |
+| **Plan** | A proposal for changes, lives in `plans/active/` until complete |
+| **Sync** | Periodic check between specs, code, and tests |
+| **Entry point** | A route or action where users begin interacting with a feature |
+
+## 3. Project Codes
+
+Each project has a 3-character code prefix for spec IDs. Examples:
+
+| Code | Project | Path |
+|------|---------|------|
+| APP | Main App | `livespec/projects/app/` |
+| API | Backend API | `livespec/projects/api/` |
+
+## 4. Directory Structure
+
+```
+livespec/
+├── livespec.md            # This file - AI instructions
+├── sync/                  # Sync reports (keeps last 10)
+│   └── YYYY-MM-DD-HHMMSS.md
+├── projects/
+│   └── [project-name]/
+│       ├── project.md     # Project context, codebase location, domain knowledge
+│       └── [feature]/
+│           └── spec.md    # Specs with context + scenarios
+├── plans/
+│   ├── active/            # In-progress plans
+│   │   └── [plan-name]/
+│   │       ├── plan.md    # Proposal + tasks + design (combined)
+│   │       └── specs/     # Draft specs (promote when done)
+│   └── archived/          # Completed plans (historical record)
+│       └── YYYY-MM-DD-[plan-name]/
+```
+
+## 5. Spec File
+
+### 5.1 Format
+
+```markdown
+# Feature Name [PRJ.feature]
+
+Narrative explanation of what this feature is and why it exists.
+
+## Entry Points
+
+Optional section. Where users access this feature.
+
+| Route / Trigger | Description |
+|-----------------|-------------|
+| /path/to/page | Main screen for this feature |
+| Modal from [PRJ.other-feature] | Triggered by action in another feature |
+
+## UI
+
+Optional section. Layout structure, components, and available actions.
+
+**Navigation Requirements:**
+- **MUST document all links and buttons** - Every clickable element that navigates must specify its destination
+- **Format:** "Button/Link [text] → `/route` or `#anchor` or [Feature.Spec]"
+- **External links:** Note if link goes to external site
+- **Examples:**
+  - "Sign In button → `/auth` (Better Auth)"
+  - "Learn More button → `#features` anchor"
+  - "Settings link → `/settings` [HAB.settings]"
+
+### Figma
+
+Optional subsection. Link to Figma designs.
+
+https://figma.com/file/...
+
+## Design Decisions
+
+Optional section. Rationale for non-obvious choices.
+
+---
+
+## Requirement Name [PRJ.feature.requirement]
+
+Brief description of what this requirement ensures.
+
+### Scenario: Specific behavior [PRJ.feature.requirement.behavior]
+Testing: e2e
+
+- WHEN precondition or action
+- THEN expected outcome
+- AND additional outcomes
+
+### Scenario: Another behavior [PRJ.feature.requirement.other]
+
+- WHEN different condition
+- THEN different outcome
+```
+
+### 5.2 Splitting Large Specs
+
+When a segment (e.g., `[PRJ.users.profile]`) grows too large:
+
+1. Create a subdirectory: `users/profile/spec.md`
+2. The ID prefix matches the path: `[PRJ.users.profile]`
+3. Parent spec links to child or remains as overview
+
+```
+users/
+├── spec.md                    # [PRJ.users] - overview + common scenarios
+└── profile/
+    └── spec.md                # [PRJ.users.profile] - detailed scenarios
+```
+
+### 5.3 Spec IDs
+
+- Format: `[PRJ.path.to.item]` where PRJ is the 3-char project code
+- Dot-separated: `[PRJ.sidebar.tabs]` (dashes allowed but shorter names preferred)
+- Lowercase, descriptive names
+- **NEVER** change existing IDs unless requested — changing IDs breaks test and code references
+
+### 5.4 Testing Declaration
+
+**Unit tests are the default.** Only declare `Testing:` when using a different type:
+
+```markdown
+### Scenario: Tab display on navigation [PRJ.sidebar.tabs-display]
+
+Testing: e2e
+```
+
+Valid test types:
+
+- `unit` — Unit tests (fast, isolated) — **DEFAULT, don't declare**. **MUST be preferred** — extremely fast. Interactive code (prompts, CLI) can be unit tested by mocking the prompt library.
+- `e2e` — End-to-end tests (browser, full flow)
+- `integration` — Integration tests (API, database)
+- `none` — No automated test — **MUST** be avoided; find a way to test the behavior
+
+### 5.5 Batching E2E Tests
+
+Related e2e scenarios can share a single test session when they follow a natural user flow. This is faster than spinning up separate browser sessions for each scenario.
+
+```typescript
+/**
+ * @spec [PRJ.checkout.add-item]
+ * @spec [PRJ.checkout.update-quantity]
+ * @spec [PRJ.checkout.remove-item]
+ */
+test('checkout cart operations', async ({ page }) => {
+  // ... tests for all three scenarios in sequence
+})
+```
+
+**When to batch:** Scenarios that form a logical flow where each step builds on the previous state.
+
+## 6. Test Discovery
+
+Tests for specified behavior **MUST** reference specs via `@spec` in JSDoc-like comments:
+
+```typescript
+/** @spec [PRJ.sidebar.tabs-display] */
+it('shows all exports as tabs', () => { ... })
+```
+
+Internal implementation tests (helpers, utilities) don't need `@spec` references.
+
+`Sync` uses these annotations to verify test coverage. **MUST** use `/** */` (or equivalent for used language) over `//` for spec references.
+
+## 7. Referencing Specs in Code
+
+Use JSDoc-like comments for implementation code:
+
+```typescript
+/**
+ * Handles tab overflow with horizontal scrolling.
+ * @spec [PRJ.sidebar.tabs-overflow]
+ */
+function handleTabOverflow() { ... }
+```
+
+Code references are optional but help with traceability.
+
+## 8. Plan File Format
+
+Plans combine proposal, tasks, and design into one file:
+
+```markdown
+# Plan: [Brief Description]
+
+## Summary
+1-2 sentences on what this plan achieves.
+
+## Why
+Problem or opportunity being addressed.
+
+## What Changes
+- Bullet list of changes
+- Mark breaking changes with **BREAKING**
+
+## Design Decisions (if needed)
+
+### Decision: [What]
+**Choice:** [Selected option]
+**Alternatives considered:** [Other options and why not]
+**Rationale:** [Why this choice]
+
+## Tasks
+
+### Phase 1: [Name]
+- [ ] Task description
+- [ ] Another task
+
+### Phase 2: [Name]
+- [ ] Dependent task
+
+## Affected Specs
+- `[PRJ.sidebar.tabs]` — ADDED/MODIFIED/REMOVED
+```
+
+### 8.1 Plan Naming
+
+- Use kebab-case: `add-msw-mocking`, `refactor-sidebar`
+- Verb-led prefixes: `add-`, `update-`, `remove-`, `refactor-`, `fix-`
+- Short and descriptive
+- Ensure uniqueness within `plans/active/`
+
+## 9. Navigation Documentation
+
+**All navigation links, buttons, and clickable elements MUST be documented in specs.**
+
+### 9.1 Requirements
+
+- **Document destination:** Every link/button must specify where it goes
+- **Use correct format:** Route paths, anchors, or external URLs
+- **Validate routes:** All internal routes must exist in codebase
+- **Reference specs:** Link to feature spec when navigating to feature
+
+### 9.2 Examples
+
+Good navigation documentation:
+
+```markdown
+- "Start Your Journey" button → `/auth` (Better Auth)
+- "Learn More" button → `#features` anchor
+- "Tasks" sidebar link → `/tasks` [HAB.tasks]
+- Settings dropdown item → `/settings` [HAB.settings]
+- "Sign out" action → `authClient.signOut()` → `/` redirect
+```
+
+Bad navigation documentation:
+
+```markdown
+- Button navigates to sign-in ❌ (no route specified)
+- Click to open dashboard ❌ (no destination)
+- Links to settings page ❌ (no route path)
+```
+
+### 9.3 Route Validation
+
+`/livespec` command validates:
+- All documented routes exist as page files
+- Navigation links in sidebar match actual routes
+- Buttons and links in UI specs point to valid destinations
+- Feature specs exist for referenced spec IDs
+
+## 10. Project File
+
+Each project has a `project.md` with context and conventions:
+
+```markdown
+# Project Name
+
+## Overview
+What this project does, codebase location.
+
+## Domain Knowledge
+Key concepts, terminology, gotchas.
+
+## Entry Points
+
+| Route | Feature | Description |
+|-------|---------|-------------|
+| /home | [PRJ.home] | Authenticated landing |
+| /checkout | [PRJ.checkout] | Purchase flow |
+
+## UI Conventions
+- Use X component for buttons
+- Theme-aware colors only
+```
+
+## 11. Commands
+
+**`/livespec`** — Ensure everything is aligned:
+- **Structure check:** Validates Projects table and project.md files, fixes issues if found
+- **Route validation:** Checks all routes exist, validates navigation links
+- **Spec validation:** Checks spec format, test coverage, test type matches
+- **Navigation check:** Verifies all documented links/buttons point to valid routes
+- **Auto-actions:** Promote completed plan specs, archive completed plans
+- **Reports:** Creates sync report in `livespec/sync/` with errors, warnings, and suggestions
+- **Circuit breaker:** Stops after 20 errors to avoid wasting time on broken state
+- **Partial sync:** For large projects, offers scoped sync (by project, feature, or changed files)
+
+### 11.1 New Project Setup
+
+When creating a new project from scratch (not just setting up Livespec in an existing codebase), you **MUST** gather requirements before implementation:
+
+1. **Prompt the user for** (only what wasn't already specified):
+   - Programming language(s)
+   - Tech stack and frameworks
+   - Package manager preference
+   - Testing framework preference
+   - Any architectural constraints or preferences
+
+2. **For JavaScript/TypeScript projects:** Recommend `bun` as package manager and test runner — its integrated, extremely fast tests synergize well with Livespec's test-linked approach. Present this as a recommendation, not a requirement.
+
+3. **Document decisions** in the project's `project.md` under a "Tech Stack" section
+
+4. **NEVER** assume defaults — always confirm choices with the user first
+
+---
+
+# Part 2: Workflows
+
+## 1. Before Any Task
+
+You **MUST** run this checklist before starting work:
+
+- [ ] Read `project.md` for conventions and domain context
+- [ ] Read relevant specs in `livespec/projects/[project]/`
+- [ ] If unclear, ask clarifying questions before scaffolding
+
+## 2. Development Workflows
+
+Stay spec-aware during all development:
+
+- **Before coding:** Check if relevant specs exist in `livespec/projects/[project]/`
+- **While coding:** If behavior changes, note that specs may need updating
+- **After coding:** Propose spec updates if behavior diverged
+
+### 2.1 Plan Mode (Significant Features)
+
+**You MUST create a plan before implementing any non-trivial feature.** Do not ask "want me to add this?" — create the plan first, present it, then implement after approval.
+
+1. **Create plan:** `livespec/plans/active/[plan-name]/`
+   - Write `plan.md` with summary, why, what, tasks
+   - Create draft specs in `plans/active/[plan-name]/specs/`
+
+2. **Get approval:** **NEVER** start implementation until plan is approved
+   - Share plan with user for approval
+   - Clarify any ambiguities before proceeding
+
+3. **Implement:** Work through tasks, mark progress with `- [x]`
+
+4. **Update specs:** Promote draft specs to `projects/[project]/`, update existing specs
+
+5. **Archive:** When all tasks complete, move plan to `plans/archived/YYYY-MM-DD-[plan-name]/`
+
+### 2.2 Skip Plans For
+
+- Bug fixes (restore existing spec behavior)
+- Typos, formatting, comments
+- Small enhancements within existing specs
+- Test additions for existing specs
+- Dependency updates (non-breaking)
+- Configuration changes
+
+### 2.3 Specs Are Always Required
+
+**Skipping a plan does NOT mean skipping specs.** Even for small changes, you **MUST**:
+
+- **New behavior** → Add scenario to relevant spec
+- **Changed behavior** → Update existing scenario
+- **New tests** → Add `@spec` reference linking to scenario
+
+The only exceptions are pure refactors (no behavior change) and documentation-only changes.
+
+### 2.4 Tests Are Always Required
+
+When implementing new features or changing behavior, you **MUST** add corresponding tests:
+
+- **Every new scenario** → Add a test with `@spec` reference before considering implementation complete
+- **Changed behavior** → Update existing tests to match new behavior
+- **NEVER** mark a feature as done without test coverage
+
+Tests are not optional. A feature without tests is an incomplete feature.
+
+### 2.5 Before Completing Any Task
+
+You **MUST** verify:
+
+- [ ] Specs added/updated for any new or changed behavior
+- [ ] Tests added with `@spec` references
+- [ ] Type checking, linting, and tests pass (if configured)
+
+**NEVER** consider a task complete without all three.
+
+## 3. Error Recovery
+
+### 3.1 Spec-Code Mismatch
+
+When sync finds mismatches:
+1. Determine which is correct (spec or code)
+2. If spec is correct → fix code
+3. If code is correct → update spec
+4. Document the decision in the sync plan
+
+### 3.2 Orphaned Behavior
+
+Code behavior not documented in specs:
+1. `Sync` creates draft spec proposal
+2. Review if behavior is intentional
+3. If intentional → promote draft to main specs
+4. If unintentional → consider removing code
+
+### 3.3 Missing or Wrong Test Type
+
+Scenario declares `Testing: e2e` but:
+- No test found → sync reports missing
+- Test found in unit files → sync reports type mismatch
+
+---
+
+Remember: Specs are living. Code evolves. Keep them in sync.

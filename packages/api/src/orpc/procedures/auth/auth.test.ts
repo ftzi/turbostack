@@ -12,6 +12,7 @@ describe("authPing handler", () => {
 		mockAuth.api.getSession.mockClear()
 	})
 
+	/** @spec [HAB.api.auth.ping.success] */
 	test("should return pong message with timestamp and user ID when authenticated", async () => {
 		const result = await callAuthenticated(authPing, {}, mockAuth)
 
@@ -22,6 +23,7 @@ describe("authPing handler", () => {
 		})
 	})
 
+	/** @spec [HAB.api.auth.ping.user-id] */
 	test("should include correct user ID from authenticated context", async () => {
 		const result = await callAuthenticated(authPing, {}, mockAuth, {
 			userId: "custom-user-456",
@@ -30,6 +32,7 @@ describe("authPing handler", () => {
 		expect(result.userId).toBe("custom-user-456")
 	})
 
+	/** @spec [HAB.api.auth.ping.success] */
 	test("should return timestamp close to current time", async () => {
 		const beforeTime = Date.now()
 		const result = await callAuthenticated(authPing, {}, mockAuth)
@@ -39,6 +42,7 @@ describe("authPing handler", () => {
 		expect(result.timestamp).toBeLessThanOrEqual(afterTime)
 	})
 
+	/** @spec [HAB.api.auth.ping.unauthorized] */
 	test("should throw UNAUTHORIZED error when not authenticated", async () => {
 		mockAuth.api.getSession.mockResolvedValueOnce({
 			session: null,

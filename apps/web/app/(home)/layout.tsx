@@ -17,7 +17,7 @@ const footerColumns: FooterColumn[] = [
 		links: [
 			{ href: "#features", label: "Features" },
 			{ href: "#testimonials", label: "Testimonials" },
-			{ href: "/app", label: "Get Started" },
+			{ href: "/auth", label: "Get Started" },
 		],
 	},
 	{
@@ -43,7 +43,7 @@ export default function HomeLayout({ children }: Readonly<{ children: React.Reac
 				sticky={consts.stickyHeader}
 				actions={
 					<Button asChild>
-						<a href="/app">Get Started</a>
+						<a href="/auth">Get Started</a>
 					</Button>
 				}
 			/>
