@@ -2,9 +2,7 @@
 const nextConfig = {
 	reactCompiler: true,
 	transpilePackages: ["@workspace/ui"],
-	experimental: {
-		typedRoutes: true,
-	},
+	typedRoutes: true,
 	turbopack: {
 		rules: {
 			"*.svg": {

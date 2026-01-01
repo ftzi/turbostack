@@ -27,6 +27,13 @@ export const env = createEnv({
 		 */
 		NEXT_PUBLIC_URL: z.url(),
 
+		/**
+		 * URL for the mobile app (React Native Web)
+		 * For development, it's `http://localhost:8081`
+		 * For production, it's `https://app.habbits.com`
+		 */
+		NEXT_PUBLIC_APP_URL: z.url().optional(),
+
 		NEXT_PUBLIC_EMAIL_DOMAIN: (emailEnabled ? z.string().min(1) : z.string().optional()) as z.ZodString,
 	},
 	/**
@@ -40,6 +47,7 @@ export const env = createEnv({
 			(process.env.NEXT_PUBLIC_VERCEL_URL
 				? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}` // Preview URL automatically set by Vercel
 				: "http://localhost:3000"), // Local Development URL
+		NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:8081",
 		NEXT_PUBLIC_EMAIL_DOMAIN: emailEnabled ? (process.env.NEXT_PUBLIC_EMAIL_DOMAIN ?? disabledEnv) : disabledEnv,
 	},
 	/** Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. Useful for CI pipelines.  */

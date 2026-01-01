@@ -10,7 +10,12 @@ import type { SVGProps } from "react"
  * which doesn't allow the Link component), use the LogoComponent directly.
  */
 
-export const LogoWithLink = ({ href = "/", ...props }: SVGProps<SVGElement>) => (
+type LogoWithLinkProps = SVGProps<SVGElement> & {
+	href?: string
+}
+
+export const LogoWithLink = ({ href = "/", ...props }: LogoWithLinkProps) => (
+	// @ts-expect-error - href prop type incompatible with Next.js typed routes
 	<Link href={href} aria-label={`Go to ${consts.appName} home`}>
 		<Logo aria-hidden="true" {...props} />
 	</Link>

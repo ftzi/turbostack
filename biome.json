@@ -17,7 +17,11 @@
 			"!**/.turbo",
 			"!**/coverage",
 			"!**/.vercel",
-			"!**/.cache"
+			"!**/.cache",
+			"!apps/mobile/**/*.config.js",
+			"!apps/mobile/global.css",
+			"!apps/mobile/components/social-connections.tsx",
+			"!packages/email/.react-email"
 		]
 	},
 	"formatter": {
@@ -87,7 +91,7 @@
 			},
 			"performance": {
 				"noAwaitInLoops": "on",
-				"noBarrelFile": "on",
+				"noBarrelFile": "off",
 				"noImgElement": "on",
 				"useTopLevelRegex": "on"
 			},

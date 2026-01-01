@@ -27,7 +27,7 @@ export function Hero() {
 
 					<div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
 						<Button size="lg" asChild>
-							<a href="/auth">
+							<a href={process.env.NEXT_PUBLIC_APP_URL || "http://localhost:8081"}>
 								Start Your Journey
 								<ArrowRight className="size-4" />
 							</a>

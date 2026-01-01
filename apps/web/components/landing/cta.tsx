@@ -14,7 +14,7 @@ export function CTA() {
 					</p>
 					<div className="mt-8">
 						<Button size="lg" variant="secondary" asChild>
-							<a href="/auth">
+							<a href={process.env.NEXT_PUBLIC_APP_URL || "http://localhost:8081"}>
 								Start Your Journey Free
 								<ArrowRight className="size-4" />
 							</a>

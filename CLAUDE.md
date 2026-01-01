@@ -299,14 +299,15 @@ try {
 This is a Turborepo monorepo with two main workspace types:
 
 - **apps/** - Application projects
-  - **web/** - Next.js 16 app (frontend: pages, components, UI)
+  - **web/** - Next.js 16 app (marketing site: landing, privacy, terms, API routes)
+  - **mobile/** - Expo app with React Native Web (app: dashboard, auth, all features)
 
 - **packages/** - Shared packages
   - **api/** - Backend logic (Better Auth, oRPC, contracts)
   - **server/** - Server-only code (database, server consts/env)
   - **email/** - Email templates using react-email
   - **shared/** - Client + server utilities (consts, env validation, error handling)
-  - **ui/** - Shared UI component library (shadcn-based)
+  - **ui/** - Web UI component library (shadcn-based for Next.js)
   - **typescript-config/** - Shared TypeScript configurations
 
 ## Package Management
@@ -606,6 +607,41 @@ try {
 **Adding New Components:**
 
 Use shadcn CLI to add components: `npx shadcn@latest add <component-name>`
+
+## Mobile App (apps/mobile/)
+
+**Framework:** Expo with React Native Web for cross-platform mobile + web support
+
+**Architecture:**
+- React Native app that runs on iOS, Android, and Web
+- Uses Expo Router for file-based routing (similar to Next.js App Router)
+- NativeWind for Tailwind-style styling in React Native
+- React Native Reusables for UI components (shadcn equivalent for React Native)
+
+**UI Components (React Native Reusables):**
+- Based on Radix UI primitives ported to React Native
+- Uses NativeWind for styling (Tailwind CSS for React Native)
+- Located in: `apps/mobile/components/ui/`
+- Adding components: `bunx --bun @react-native-reusables/cli@latest add <component-name> -y`
+  - **Always use `-y` flag** to skip interactive prompts
+  - Example: `bunx --bun @react-native-reusables/cli@latest add button -y`
+  - Reference: https://reactnativereusables.com/
+
+**Key Patterns:**
+- File-based routing with route groups: `app/(auth)/`, `app/(dashboard)/`
+- Bottom tab navigation for main sections
+- Better Auth integration for authentication
+- Same oRPC API as web app (shared contracts and types)
+
+**Development:**
+- `bun mobile` - Start Expo dev server (default port: 8081)
+- `bun mobile:web` - Web only
+- `bun mobile:ios` - iOS simulator
+- `bun mobile:android` - Android emulator
+
+**Deployment:**
+- Web build: `bun run --cwd apps/mobile build:web` → static export
+- Mobile builds: Use EAS Build for iOS/Android app store submissions
 
 ## Build Tools & Configuration
 

@@ -1,25 +1,39 @@
 import type { NextRequest } from "next/server"
 import { NextResponse } from "next/server"
 
-// Reference: https://www.better-auth.com/docs/integrations/next#middleware
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:8081"
+
+// Redirect all app routes to mobile app
 export function proxy(request: NextRequest) {
 	const { pathname } = request.nextUrl
 
-	// Check for session cookie
-	const sessionCookie = request.cookies.get("better-auth.session_token")
-	const hasSession = Boolean(sessionCookie?.value)
+	// App routes - redirect to mobile app subdomain
+	const appRoutes = [
+		"/dashboard",
+		"/tasks",
+		"/calendar",
+		"/goals",
+		"/settings",
+		"/admin",
+		"/auth",
+		"/health",
+		"/sleep",
+		"/physical",
+		"/nutrition",
+		"/mind",
+		"/mindset",
+		"/self-esteem",
+		"/personal-care",
+		"/social",
+		"/pets",
+		"/groceries",
+		"/purchases",
+	]
 
-	// Redirect authenticated users away from auth page
-	if (hasSession && pathname === "/auth") {
-		return NextResponse.redirect(new URL("/dashboard", request.url))
-	}
+	const isAppRoute = appRoutes.some((route) => pathname.startsWith(route))
 
-	// Redirect unauthenticated users to auth page for protected routes
-	const protectedRoutes = ["/dashboard", "/tasks", "/calendar", "/goals", "/settings", "/admin"]
-	const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route))
-
-	if (!hasSession && isProtectedRoute) {
-		return NextResponse.redirect(new URL("/auth", request.url))
+	if (isAppRoute) {
+		return NextResponse.redirect(new URL(pathname, APP_URL))
 	}
 
 	return NextResponse.next()
