@@ -24,14 +24,14 @@ async function main() {
 		return
 	}
 
-	console.log("🗄️  Using PGlite local database")
+	// console.log("🗄️  Using PGlite local database")
 
 	const pglitePath = resolve(process.cwd(), PGLITE_DIR)
-	const isNewDatabase = !existsSync(pglitePath)
+	// const isNewDatabase = !existsSync(pglitePath)
 
-	if (isNewDatabase) {
-		console.log(`📁 Creating new PGlite database at ${PGLITE_DIR}/`)
-	}
+	// if (isNewDatabase) {
+	// 	console.log(`📁 Creating new PGlite database at ${PGLITE_DIR}/`)
+	// }
 
 	// Initialize PGlite
 	const client = new PGlite(pglitePath)
@@ -46,10 +46,10 @@ async function main() {
 	}
 
 	// Run migrations
-	console.log("🔄 Applying database migrations...")
+	// console.log("🔄 Applying database migrations...")
 	try {
 		await migrate(db, { migrationsFolder })
-		console.log("✅ Database ready")
+		// console.log("✅ Database ready")
 	} catch (error) {
 		console.error("❌ Migration failed:", error)
 		process.exit(1)

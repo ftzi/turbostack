@@ -1,36 +1,25 @@
-import { getSessionCookie } from "better-auth/cookies"
-import { type NextRequest, NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
+import { NextResponse } from "next/server"
 
-export default function middleware(request: NextRequest) {
-	const sessionCookie = getSessionCookie(request)
+// Reference: https://www.better-auth.com/docs/integrations/next#middleware
+export function proxy(request: NextRequest) {
+	const { pathname } = request.nextUrl
 
-	// Define protected routes - all dashboard routes
-	const protectedRoutes = [
-		"/dashboard",
-		"/tasks",
-		"/calendar",
-		"/goals",
-		"/physical",
-		"/nutrition",
-		"/health",
-		"/sleep",
-		"/mind",
-		"/personal-care",
-		"/social",
-		"/mindset",
-		"/self-esteem",
-		"/pets",
-		"/groceries",
-		"/purchases",
-		"/settings",
-	]
-	const isProtectedRoute = protectedRoutes.some((route) => request.nextUrl.pathname.startsWith(route))
+	// Check for session cookie
+	const sessionCookie = request.cookies.get("better-auth.session_token")
+	const hasSession = Boolean(sessionCookie?.value)
 
-	// Only redirect unauthenticated users from protected routes
-	if (isProtectedRoute && !sessionCookie) {
-		const authUrl = new URL("/auth", request.url)
-		authUrl.searchParams.set("redirect", request.nextUrl.pathname)
-		return NextResponse.redirect(authUrl)
+	// Redirect authenticated users away from auth page
+	if (hasSession && pathname === "/auth") {
+		return NextResponse.redirect(new URL("/dashboard", request.url))
+	}
+
+	// Redirect unauthenticated users to auth page for protected routes
+	const protectedRoutes = ["/dashboard", "/tasks", "/calendar", "/goals", "/settings", "/admin"]
+	const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route))
+
+	if (!hasSession && isProtectedRoute) {
+		return NextResponse.redirect(new URL("/auth", request.url))
 	}
 
 	return NextResponse.next()
@@ -44,7 +33,8 @@ export const config = {
 		 * - _next/static (static files)
 		 * - _next/image (image optimization files)
 		 * - favicon.ico (favicon file)
+		 * - public files (public folder)
 		 */
-		"/((?!api|_next/static|_next/image|favicon.ico).*)",
+		"/((?!api|_next/static|_next/image|favicon.ico|.*\\.png$|.*\\.jpg$|.*\\.jpeg$|.*\\.svg$).*)",
 	],
 }

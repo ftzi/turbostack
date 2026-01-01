@@ -129,8 +129,12 @@ Habbits2 is a full-stack web application for tracking habits, tasks, goals, and 
 ### Testing
 
 - **Unit tests preferred:** Use unit tests by default (fast, isolated)
+- **E2E tests:** Playwright for end-to-end browser testing
+  - Run with: `bun e2e` (headless), `bun e2e:headed` (with browser), `bun e2e:ui` (interactive UI)
+  - Tests located in: `tests/e2e/`
+  - Configuration: `playwright.config.ts` at project root
 - **Spec references required:** All tests must include `@spec [HAB.feature.scenario]` annotations
-- **Test runner:** Bun's built-in test runner
+- **Test runner:** Bun's built-in test runner for unit tests, Playwright for e2e tests
 
 ### Database
 
