@@ -7,7 +7,8 @@ import { authClient } from "@/lib/auth-client"
 export default function More() {
 	const handleSignOut = async () => {
 		await authClient.signOut()
-		router.replace("/(auth)/sign-in")
+		// Navigate to root - will redirect to sign-in since session is cleared
+		router.replace("/")
 	}
 
 	return (

@@ -56,7 +56,8 @@ export function SignUpForm({ onSignInPress }: SignUpFormProps) {
 				return
 			}
 
-			router.replace("/(dashboard)")
+			// Navigate to root - will redirect to dashboard if session is set
+			router.replace("/")
 		} catch (error) {
 			const message = getErrorMessage(error, "Sign up failed")
 			Alert.alert("Error", message)
