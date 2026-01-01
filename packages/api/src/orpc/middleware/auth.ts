@@ -6,6 +6,7 @@ import { contract } from "../contract/index"
 
 /**
  * Better Auth middleware for oRPC
+ * Reference: https://orpc.dev/docs/integrations/better-auth
  * Reference: https://www.better-auth.com/docs/guides/optimizing-for-performance#ssr-optimizations
  * Reference: https://orpc.unnoq.com/docs/middleware
  *

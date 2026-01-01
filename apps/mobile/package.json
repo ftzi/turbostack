@@ -11,6 +11,7 @@
 		"clean": "rm -rf .expo node_modules"
 	},
 	"dependencies": {
+		"@better-auth/expo": "1.4.10",
 		"@orpc/client": "catalog:",
 		"@orpc/contract": "catalog:",
 		"@orpc/server": "1.13.2",
@@ -50,9 +51,11 @@
 		"expo-constants": "~18.0.12",
 		"expo-linking": "~8.0.10",
 		"expo-router": "~6.0.19",
+		"expo-secure-store": "15.0.8",
 		"expo-splash-screen": "~31.0.12",
 		"expo-status-bar": "~3.0.9",
 		"expo-system-ui": "~6.0.9",
+		"expo-web-browser": "15.0.10",
 		"lucide-react-native": "^0.545.0",
 		"react": "19.1.0",
 		"react-dom": "19.1.0",

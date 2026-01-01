@@ -8,6 +8,6 @@ export const authClient = createAuthClient({
 		// Reference: https://www.better-auth.com/docs/concepts/typescript#inferring-additional-fields-on-client
 		inferAdditionalFields<typeof auth>(),
 	],
-})
+}) as ReturnType<typeof createAuthClient>
 
 export type { Session, User } from "@workspace/api/auth"

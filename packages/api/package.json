@@ -17,13 +17,14 @@
 		"test": "SKIP_ENV_VALIDATION=1 bun test"
 	},
 	"dependencies": {
+		"@better-auth/expo": "1.4.10",
 		"@orpc/contract": "catalog:",
 		"@orpc/experimental-pino": "1.11.3",
 		"@orpc/server": "catalog:",
 		"@workspace/email": "workspace:*",
 		"@workspace/server": "workspace:*",
 		"@workspace/shared": "workspace:*",
-		"better-auth": "1.4.0",
+		"better-auth": "1.4.10",
 		"drizzle-orm": "0.44.7",
 		"next": "catalog:",
 		"pino": "10.1.0",

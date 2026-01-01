@@ -6,6 +6,7 @@ import { headers } from "next/headers"
 
 /**
  * oRPC handler for Next.js App Router
+ * Reference: https://orpc.dev/docs/integrations/better-auth
  * Includes compression and structured logging with Pino
  */
 const handler = new RPCHandler(router, {

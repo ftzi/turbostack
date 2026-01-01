@@ -2,6 +2,7 @@ import { defineConfig, devices } from "@playwright/test"
 
 /**
  * Playwright configuration for e2e testing
+ * Tests run against the mobile app's web build
  * Reference: https://playwright.dev/docs/test-configuration
  */
 export default defineConfig({
@@ -13,7 +14,7 @@ export default defineConfig({
 	workers: process.env.CI ? 1 : undefined,
 	reporter: "html",
 	use: {
-		baseURL: "http://localhost:3000",
+		baseURL: "http://localhost:8081",
 		trace: "on-first-retry",
 	},
 	projects: [
@@ -23,8 +24,8 @@ export default defineConfig({
 		},
 	],
 	webServer: {
-		command: "cd ../.. && bun dev:e2e",
-		url: "http://localhost:3000",
+		command: "cd ../mobile && bun run web",
+		url: "http://localhost:8081",
 		reuseExistingServer: !process.env.CI,
 		timeout: 120000,
 		stdout: "ignore",

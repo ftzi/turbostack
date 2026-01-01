@@ -1,4 +1,5 @@
 import "server-only"
+import { expo } from "@better-auth/expo"
 import { MagicLinkEmail } from "@workspace/email/emails/magic-link"
 import { createEmailSender } from "@workspace/email/send"
 import { serverConsts } from "@workspace/server/consts"
@@ -36,6 +37,20 @@ export const auth = betterAuth({
 		provider: "pg",
 		usePlural: true,
 	}),
+	// Reference: https://www.better-auth.com/docs/integrations/expo#scheme-and-trusted-origins
+	trustedOrigins: [
+		"mobile://", // Production mobile app scheme
+		// Development mode - Expo's exp:// scheme with local IP ranges
+		...(process.env.NODE_ENV === "development"
+			? [
+					"exp://*/*", // Trust all Expo development URLs
+					"exp://10.0.0.*:*/*", // Trust 10.0.0.x IP range
+					"exp://192.168.*.*:*/*", // Trust 192.168.x.x IP range
+					"exp://172.*.*.*:*/*", // Trust 172.x.x.x IP range
+					"exp://localhost:*/*", // Trust localhost
+				]
+			: []),
+	],
 	// Email/password: enabled as fallback when no OAuth available
 	emailAndPassword: {
 		enabled: !hasGoogleOAuth,
@@ -69,6 +84,8 @@ export const auth = betterAuth({
 		},
 	},
 	plugins: [
+		// Reference: https://www.better-auth.com/docs/integrations/expo
+		expo(),
 		// Magic link: always available, delivery method varies
 		magicLink({
 			sendMagicLink: async ({ email: userEmail, token, url }) => {

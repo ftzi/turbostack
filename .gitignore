@@ -21,6 +21,8 @@ apps/e2e/test-results/
 apps/e2e/playwright-report/
 apps/e2e/playwright/.cache/
 
+.playwright-mcp
+
 # Turbo
 .turbo
 
@@ -32,6 +34,7 @@ apps/e2e/playwright/.cache/
 out/
 build
 dist
+web-build/
 
 # Debug
 npm-debug.log*
@@ -57,3 +60,7 @@ tsconfig.tsbuildinfo
 
 # Bun
 .bun/
+
+# Expo
+.expo/
+expo-env.d.ts

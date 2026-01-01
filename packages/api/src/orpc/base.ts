@@ -6,6 +6,7 @@ import { contract } from "./contract/index"
 
 /**
  * Base context type with headers and lazy-loaded logger
+ * Reference: https://orpc.dev/docs/integrations/better-auth
  * Reference: https://orpc.unnoq.com/docs/middleware
  */
 export type BaseContext = {
@@ -15,6 +16,7 @@ export type BaseContext = {
 
 /**
  * Base implementer with initial headers context
+ * Headers are required for Better Auth session validation
  */
 const baseImplementer = implement(contract).$context<{ headers: Headers }>()
 
